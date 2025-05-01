@@ -1,26 +1,24 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center bg-green-100 bg-opacity-50">
+  <div class="h-screen flex items-center justify-center bg-cover bg-center full-screen-bg overflow-hidden">
     <!-- Contenedor principal -->
-    <div class="flex flex-col md:flex-row items-center justify-center w-full max-w-4xl p-6">
+    <div class="flex flex-col md:flex-row items-center justify-center w-full max-w-6xl p-6 rounded-lg shadow-lg max-h-full">
       <!-- Sección izquierda con el logo y texto -->
       <div class="flex flex-col items-center md:items-start text-center md:text-left mb-8 md:mb-0 md:mr-12">
-        <div class="mb-4">
-          <h1 class="text-5xl font-bold text-green-700">SIM SIM</h1>
-        </div>
-        <p class="text-xl text-gray-700">
+        <h1 class="text-5xl font-bold text-green-700 mb-4">SIM SIM</h1>
+        <img src="/images/logo.png" alt="Logo SIM SIM" class="w-32 h-32 mb-4" />
+        <p class="text-xl text-gray-700 mb-6">
           Tu dinero, tu ritmo. Pagá fácil, viví sin límites.
         </p>
         <!-- Iconos de redes sociales -->
-        <div class="flex space-x-4 mt-6">
+        <div class="flex space-x-4">
           <a href="#" class="text-gray-600 hover:text-green-700">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2.04c-5.52 0-10 4.48-10 10 0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.12-1.47-1.12-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.64-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.28.1-2.67 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0112 6.82c.85.004 1.71.11 2.52.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.39.2 2.42.1 2.67.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.56.94.56 1.89v2.8c0 .27.19.58.69.48A10.01 10.01 0 0022 12.04c0-5.52-4.48-10-10-10z"/>
-            </svg>
+            <i class="fab fa-facebook fa-lg"></i>
           </a>
           <a href="#" class="text-gray-600 hover:text-green-700">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 2.04c-5.52 0-10 4.48-10 10 0 4.42 2.87 8.17 6.84 9.49.5.09.68-.22.68-.48v-1.7c-2.78.6-3.37-1.34-3.37-1.34-.46-1.16-1.12-1.47-1.12-1.47-.91-.62.07-.61.07-.61 1 .07 1.53 1.03 1.53 1.03.89 1.52 2.34 1.08 2.91.83.09-.65.35-1.08.64-1.33-2.22-.25-4.55-1.11-4.55-4.94 0-1.09.39-1.98 1.03-2.68-.1-.25-.45-1.28.1-2.67 0 0 .84-.27 2.75 1.02A9.58 9.58 0 0112 6.82c.85.004 1.71.11 2.52.33 1.91-1.29 2.75-1.02 2.75-1.02.55 1.39.2 2.42.1 2.67.64.7 1.03 1.59 1.03 2.68 0 3.84-2.34 4.68-4.57 4.93.36.31.56.94.56 1.89v2.8c0 .27.19.58.69.48A10.01 10.01 0 0022 12.04c0-5.52-4.48-10-10-10z"/>
-            </svg>
+            <i class="fab fa-instagram fa-lg"></i>
+          </a>
+          <a href="#" class="text-gray-600 hover:text-green-700">
+            <i class="fab fa-twitter fa-lg"></i>
           </a>
         </div>
       </div>
@@ -80,14 +78,14 @@
             type="submit"
             class="w-full bg-green-600 text-white p-3 rounded-lg hover:bg-green-700 transition duration-300"
           >
-            INICIO
+            Inicio
           </button>
         </form>
 
         <!-- Enlace de Registro -->
         <p class="mt-4 text-center text-gray-600">
           ¿Aún no tienes cuenta?
-          <a href="#" class="text-green-600 hover:underline">Regístrarse</a>
+          <a href="#" class="text-green-600 hover:underline">Regístrate</a>
         </p>
       </div>
     </div>
@@ -109,11 +107,30 @@ export default {
       this.showPassword = !this.showPassword;
     },
     handleSubmit() {
-      // Aquí puedes agregar la lógica para manejar el envío del formulario
       console.log('Email:', this.email);
       console.log('Password:', this.password);
-      // Ejemplo: enviar datos a una API o redirigir al usuario
     },
   },
 };
 </script>
+
+<style scoped>
+.full-screen-bg {
+  background-image: url('/images/fondo.png');
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+  width: 88vw;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: -1;
+  padding: 0;
+}
+
+.h-screen {
+  position: relative;
+  z-index: 1;
+}
+</style>  
