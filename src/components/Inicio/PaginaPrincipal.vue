@@ -98,14 +98,22 @@
       <!-- Saldo y Transacciones -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Saldo -->
-        <div class="bg-[#c6e8c9] p-6 rounded-lg shadow-md text-center">
-          <h2 class="text-lg font-bold text-[#166534]">Saldo</h2>
-          <p class="text-4xl font-bold text-[#14532d] mt-4">$44,500.00</p>
-          <button
-            class="mt-4 bg-[#166534] text-white px-4 py-2 rounded hover:bg-[#15803d] border-none cursor-pointer"
-          >
-            Ver detalles
-          </button>
+        <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-40 flex items-center">
+          <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mr-4" />
+          <div class="flex-1">
+            <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
+            <p class="text-3xl font-bold mt-4 text-left">
+              <!-- Mostrar saldo o asteriscos según el estado -->
+              {{ isSaldoVisible ? '$44,500.00' : '$*****' }}
+            </p>
+            <button
+              class="absolute bottom-12 right-16 bg-[#3C4F2E]/50 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
+              @click="toggleSaldoVisibility"
+            >
+              <!-- Cambiar la imagen según el estado -->
+              <img :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'" alt="Ver saldo" class="w-6 h-6" />
+            </button>
+          </div>
         </div>
 
         <!-- Transferencias Mensuales -->
@@ -167,6 +175,7 @@ export default {
   data() {
     return {
       activeButton: 'inicio', // Botón activo inicial
+      isSaldoVisible: true, // Estado para controlar la visibilidad del saldo
     };
   },
   methods: {
@@ -175,6 +184,9 @@ export default {
     },
     goToInicioSesion() {
       this.$router.push("/");
+    },
+    toggleSaldoVisibility() {
+      this.isSaldoVisible = !this.isSaldoVisible; // Alternar visibilidad del saldo
     },
   },
 };
