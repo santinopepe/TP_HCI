@@ -48,7 +48,7 @@
         <p v-if="error" class="error-message">{{ error }}</p>
       </form>
       <p class="back-link">
-        <router-link to="/login">Volver al Inicio de Sesión</router-link>
+        <router-link to="/">Volver al Inicio de Sesión</router-link>
       </p>
     </div>
   </div>
@@ -76,17 +76,6 @@ export default {
         return;
       }
       this.error = ''; // Limpiar error si todo está bien
-      // Aquí iría la lógica para enviar los datos al backend
-      /*
-      axios.post('/api/register', { name: this.name, email: this.email, dni: this.dni, phone: this.phone })
-        .then(response => {
-          alert('Registro exitoso. Inicia sesión para continuar.');
-          this.$router.push('/login');
-        })
-        .catch(error => {
-          this.error = 'Error al registrar. Intenta de nuevo.';
-        });
-      */
     }
   }
 };

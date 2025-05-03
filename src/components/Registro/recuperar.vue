@@ -17,7 +17,7 @@
         <button type="submit">Enviar</button>
       </form>
       <p class="back-link">
-        <router-link to="/login">Volver al Inicio de Sesión</router-link>
+        <router-link to="/">Volver al Inicio de Sesión</router-link>
       </p>
     </div>
   </div>
@@ -33,19 +33,7 @@ export default {
   },
   methods: {
     handleRecoverPassword() {
-      // Aquí iría la lógica para enviar el email o DNI al backend
       console.log("Enviando solicitud para:", this.emailOrDni);
-      // Por ejemplo, podrías usar axios para hacer una petición POST:
-      /*
-      axios.post('/api/recover-password', { emailOrDni: this.emailOrDni })
-        .then(response => {
-          alert('Se ha enviado un enlace de recuperación a tu correo.');
-          this.$router.push('/login');
-        })
-        .catch(error => {
-          alert('Error al procesar la solicitud. Intenta de nuevo.');
-        });
-      */
     },
   },
 };
