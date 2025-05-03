@@ -117,10 +117,43 @@
         </div>
 
         <!-- Transferencias Mensuales -->
-        <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-          <h2 class="text-lg font-bold text-gray-700">Transferencias Mensuales</h2>
-          <div class="h-48 bg-gray-200 flex items-center justify-center rounded mt-4">
-            <p>Gráfico de transferencias</p>
+        <div class="bg-white p-10 rounded-lg shadow-md absolute right-5 w-1/2 h-80 flex flex-col justify-end">
+          <h2 class="text-2xl font-bold text-[#4B5563] text-left absolute top-6 left-6">Transferencias Mensuales</h2>
+          <p class="absolute top-6 right-6 text-[#A5A2A1] font-semibold text-sm">
+          +$123.44 / Último mes
+          </p>
+          <div class="h-48 flex items-end justify-center mt-auto">
+          <!-- Gráfico simulado -->
+            <div class="flex items-end gap-4 w-full justify-between px-4">
+              <div class="flex flex-col items-center flex-1">
+          <div class="bg-[#83A46A] h-28 w-12 rounded"></div>
+          <span class="text-gray-500 text-sm mt-2">Feb</span>
+              </div>
+              <div class="flex flex-col items-center flex-1">
+          <div class="bg-[#3C4F2E] h-40 w-12 rounded"></div>
+          <span class="text-gray-500 text-sm mt-2">Mar</span>
+              </div>
+              <div class="flex flex-col items-center flex-1">
+          <div class="bg-[#B1DC91] h-16 w-12 rounded"></div>
+          <span class="text-gray-500 text-sm mt-2">Abr</span>
+              </div>
+              <div class="flex flex-col items-center flex-1">
+          <div class="bg-[#83A46A] h-20 w-12 rounded"></div>
+          <span class="text-gray-500 text-sm mt-2">May</span>
+              </div>
+              <div class="flex flex-col items-center flex-1">
+          <div class="bg-[#CBFBA6] h-12 w-12 rounded"></div>
+          <span class="text-gray-500 text-sm mt-2">Jun</span>
+              </div>
+              <div class="flex flex-col items-center flex-1">
+          <div class="bg-[#83A46A] h-28 w-12 rounded"></div>
+          <span class="text-gray-500 text-sm mt-2">Jul</span>
+              </div>
+              <div class="flex flex-col items-center flex-1">
+          <div class="bg-[#B1DC91] h-34 w-12 rounded"></div>
+          <span class="text-gray-500 text-sm mt-2">Ago</span>
+              </div>
+            </div>
           </div>
         </div>
       </div>

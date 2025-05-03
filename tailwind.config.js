@@ -6,6 +6,13 @@ content: [
 ],
 theme: {
   extend: {
+    height:{
+      30: '7.5rem',
+      32: '8rem',
+      34: '8.5rem',
+      40: '10rem',
+      
+    },
     colors: {
       'simsim-green-light': '#d3e4cd',
       'simsim-green-dark': '#2e4b3f',
