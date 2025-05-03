@@ -74,7 +74,7 @@
               <button
                 type="submit"
                 @click="goToPaginaPrincipal"
-                class="w-full p-3 bg-[#2e4b3f] text-white border-none rounded-md text-base cursor-pointer hover:bg-[#3a5c4b]"
+                class="w-full p-3 bg-[#5D8C39] text-white border-none rounded-md text-base cursor-pointer hover:bg-[#3a5c4b]"
               >
                 Inicio
               </button>

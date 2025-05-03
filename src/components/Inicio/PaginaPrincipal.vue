@@ -1,43 +1,96 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
     <!-- Barra lateral -->
-    <aside class="bg-[#166534] text-white w-1/5 p-4 flex flex-col h-full">
+    <aside class="bg-[url('/images/fondo.png')] text-white w-1/5 p-4 flex flex-col h-full bg-cover bg-center">
       <div class="flex items-center mb-8">
-        <img src="/images/logo.png" alt="Logo SIM SIM" class="w-12 h-12 mr-2" />
-        <h1 class="text-xl font-bold">SIM SIM</h1>
+        <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mx-auto" />
       </div>
       <nav class="menu flex flex-col gap-4">
-        <a href="#" class="flex items-center gap-2 p-2 rounded hover:bg-[#15803d]">
-          <i class="fas fa-home"></i>
+        <a
+          href="#"
+          class="flex items-center gap-2 p-2 rounded"
+            :class="{'bg-[#3C4F2E]': activeButton === 'inicio', 'hover:bg-[#3C4F2E]/50': activeButton !== 'inicio'}"
+          @click="setActiveButton('inicio')"
+        >
+          <img src="/images/home.png" alt="Inicio" class="w-6 h-6" />
           <span>Inicio</span>
         </a>
-        <a href="#" class="flex items-center gap-2 p-2 rounded hover:bg-[#15803d]">
-          <i class="fas fa-user"></i>
+        <a
+          href="#"
+          class="flex items-center gap-2 p-2 rounded"
+          :class="{'bg-[#3C4F2E]': activeButton === 'actividad', 'hover:bg-[#3C4F2E]/50': activeButton !== 'actividad'}"
+          @click="setActiveButton('actividad')"
+        >
+          <img src="/images/actividad.png" alt="Actividad" class="w-6 h-6" />
+          <span>Actividad</span>
+        </a>
+        <a
+          href="#"
+          class="flex items-center gap-2 p-2 rounded"
+          :class="{'bg-[#3C4F2E]': activeButton === 'perfil', 'hover:bg-[#3C4F2E]/50': activeButton !== 'perfil'}"
+          @click="setActiveButton('perfil')"
+        >
+          <img src="/images/profile.png" alt="Perfil" class="w-6 h-6" />
           <span>Perfil</span>
         </a>
-        <a href="#" class="flex items-center gap-2 p-2 rounded hover:bg-[#15803d]">
-          <i class="fas fa-exchange-alt"></i>
+        <a
+          href="#"
+          class="flex items-center gap-2 p-2 rounded"
+          :class="{'bg-[#3C4F2E]': activeButton === 'transferir', 'hover:bg-[#3C4F2E]/50': activeButton !== 'transferir'}"
+          @click="setActiveButton('transferir')"
+        >
+          <div class="relative top-1">
+            <img src="/images/flechaArriba.png" alt="Flecha Arriba" class="w-4 h-4 absolute bottom-5 left-1" />
+            <img src="/images/transferir.png" alt="Transferir" class="w-6 h-6" />
+          </div>
           <span>Transferir</span>
         </a>
-        <a href="#" class="flex items-center gap-2 p-2 rounded hover:bg-[#15803d]">
-          <i class="fas fa-chart-line"></i>
+        <a
+          href="#"
+          class="flex items-center gap-2 p-2 rounded"
+          :class="{'bg-[#3C4F2E]': activeButton === 'inversiones', 'hover:bg-[#3C4F2E]/50': activeButton !== 'inversiones'}"
+          @click="setActiveButton('inversiones')"
+        >
+          <img src="/images/Inversiones.png" alt="Inversiones" class="w-6 h-6" />
           <span>Inversiones</span>
         </a>
-        <a href="#" class="flex items-center gap-2 p-2 rounded hover:bg-[#15803d]">
-          <i class="fas fa-credit-card"></i>
+        <a
+          href="#"
+          class="flex items-center gap-2 p-2 rounded"
+          :class="{'bg-[#3C4F2E]': activeButton === 'pagoServicios', 'hover:bg-[#3C4F2E]/50': activeButton !== 'pagoServicios'}"
+          @click="setActiveButton('pagoServicios')"
+        >
+          <img src="/images/pagosDeServicios.png" alt="Pago de Servicios" class="w-6 h-6" />
+          <span>Pago de Servicios</span>
+        </a>
+        <a
+          href="#"
+          class="flex items-center gap-2 p-2 rounded"
+          :class="{'bg-[#3C4F2E]': activeButton === 'tarjetas', 'hover:bg-[#3C4F2E]/50': activeButton !== 'tarjetas'}"
+          @click="setActiveButton('tarjetas')"
+        >
+          <img src="/images/agregarTarjeta.png" alt="Tarjetas" class="w-6 h-6" />
           <span>Tarjetas</span>
         </a>
-        <a href="#" class="flex items-center gap-2 p-2 rounded hover:bg-[#15803d]">
-          <i class="fas fa-bell"></i>
+        <a
+          href="#"
+          class="flex items-center gap-2 p-2 rounded"
+          :class="{'bg-[#3C4F2E]': activeButton === 'notificaciones', 'hover:bg-[#3C4F2E]/50': activeButton !== 'notificaciones'}"
+          @click="setActiveButton('notificaciones')"
+        >
+          <img src="/images/Notificaciones.png" alt="Notificaciones" class="w-6 h-6" />
           <span>Notificaciones</span>
         </a>
       </nav>
-      <button
-        class="flex items-center gap-2 mt-auto bg-[#14532d] hover:bg-[#15803d] p-2 rounded w-full border-none cursor-pointer"
-      >
-        <i class="fas fa-sign-out-alt"></i>
-        <span>Cerrar Sesión</span>
-      </button>
+      <div class="mt-auto flex justify-center">
+        <button
+          class="flex justify-between items-center gap-2 bg-[#5D8C39] hover:bg-[#15803d] p-3 rounded-xl w-60 border-none cursor-pointer"
+          @click="goToInicioSesion"
+        >
+          <span>Cerrar Sesión</span>
+          <img src="/images/logout.png" alt="Cerrar Sesión" class="w-6 h-6" />
+        </button>
+      </div>
     </aside>
 
     <!-- Contenido principal -->
@@ -111,5 +164,18 @@
 <script>
 export default {
   name: "PaginaPrincipal",
+  data() {
+    return {
+      activeButton: 'inicio', // Botón activo inicial
+    };
+  },
+  methods: {
+    setActiveButton(button) {
+      this.activeButton = button; // Cambia el botón activo
+    },
+    goToInicioSesion() {
+      this.$router.push("/");
+    },
+  },
 };
 </script>
