@@ -1,60 +1,62 @@
 <template>
-  <div class="recover-password-container">
+  <div class="flex justify-center items-center h-screen bg-[#d3e4cd] bg-[url('/images/fondo.png')] bg-cover bg-center bg-no-repeat">
     <!-- Contenedor principal -->
-    <div class="login-wrapper">
+    <div class="w-full max-w-3xl p-4 box-border">
       <!-- Card que contiene todo -->
-      <div class="card">
-        <div class="card-content">
+      <div class="bg-white rounded-2xl shadow-md overflow-hidden">
+        <div class="flex flex-col md:flex-row">
           <!-- Sección izquierda con logo y texto -->
-          <div class="left-section">
-            <h1>SIM SIM</h1>
-            <img src="/images/logo.png" alt="Logo SIM SIM" class="logo" />
-            <p class="tagline">Tu dinero, tu ritmo. Pagá fácil, viví sin límites.</p>
+          <div class="flex-1 p-8 bg-gray-100 flex flex-col justify-center items-center text-center text-black">
+            <h1 class="text-5xl font-bold mb-4">SIM SIM</h1>
+            <img src="/images/logo.png" alt="Logo SIM SIM" class="w-24 h-24 mb-6" />
+            <p class="text-lg text-gray-600 mb-8">Tu dinero, tu ritmo. Pagá fácil, viví sin límites.</p>
             <!-- Iconos de redes sociales -->
-            <div class="social-icons">
-              <a href="#" class="social-icon">
+            <div class="flex gap-4">
+              <a href="#" class="text-[#2e4b3f] text-2xl hover:text-[#3a5c4b]">
                 <i class="fab fa-facebook fa-lg"></i>
               </a>
-              <a href="#" class="social-icon">
+              <a href="#" class="text-[#2e4b3f] text-2xl hover:text-[#3a5c4b]">
                 <i class="fab fa-instagram fa-lg"></i>
               </a>
-              <a href="#" class="social-icon">
+              <a href="#" class="text-[#2e4b3f] text-2xl hover:text-[#3a5c4b]">
                 <i class="fab fa-twitter fa-lg"></i>
               </a>
             </div>
           </div>
 
           <!-- Sección derecha con el formulario -->
-          <div class="form-section">
-            <h2>Inicio de Sesión</h2>
+          <div class="flex-1 p-8 flex flex-col justify-center">
+            <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">Inicio de Sesión</h2>
             <form @submit.prevent="handleSubmit">
               <!-- Campo Email -->
-              <div class="input-group">
-                <label for="email">Email o DNI</label>
+              <div class="mb-6 text-left">
+                <label for="email" class="block mb-2 text-sm text-gray-800">Email o DNI</label>
                 <input
                   type="text"
                   id="email"
                   v-model="email"
                   placeholder="Ingresa tu Email o DNI"
+                  class="w-full p-3 border border-gray-300 rounded-l-md rounded-r-md text-base box-border"
                   required
                 />
               </div>
 
               <!-- Campo Contraseña -->
-              <div class="input-group">
-                <label for="password">Contraseña</label>
-                <div class="password-wrapper">
+              <div class="mb-6 text-left">
+                <label for="password" class="block mb-2 text-sm text-gray-800">Contraseña</label>
+                <div class="flex items-center border border-gray-300 rounded-md bg-white overflow-hidden">
                   <input
                     :type="showPassword ? 'text' : 'password'"
                     id="password"
                     v-model="password"
                     placeholder="Ingresa tu contraseña"
+                    class="flex-1 p-3 border-none outline-none"
                     required
                   />
                   <button
                     type="button"
                     @click="togglePasswordVisibility"
-                    class="toggle-password"
+                    class="border-l border-gray-300 text-[#2e4b3f] text-sm p-3 cursor-pointer hover:text-[#3a5c4b] whitespace-nowrap"
                   >
                     {{ showPassword ? 'Ocultar' : 'Mostrar' }}
                   </button>
@@ -62,22 +64,26 @@
                 <button
                   type="button"
                   @click="goToRecuperar"
-                  class="recover-link"
+                  class="text-right text-sm text-[#2e4b3f] mt-2 bg-none border-none cursor-pointer hover:underline"
                 >
                   Recuperar contraseña
                 </button>
               </div>
 
               <!-- Botón de Inicio -->
-              <button type="submit" @click="goToPaginaPrincipal" >
-              Inicio
+              <button
+                type="submit"
+                @click="goToPaginaPrincipal"
+                class="w-full p-3 bg-[#2e4b3f] text-white border-none rounded-md text-base cursor-pointer hover:bg-[#3a5c4b]"
+              >
+                Inicio
               </button>
-            </form> 
+            </form>
 
             <!-- Enlace de Registro -->
-            <p class="back-link">
+            <p class="mt-4 text-sm text-gray-600 text-center">
               ¿Aún no tienes cuenta?
-              <router-link to="/registro">Regístrate</router-link>
+              <router-link to="/registro" class="text-[#2e4b3f] no-underline hover:underline">Regístrate</router-link>
             </p>
           </div>
         </div>

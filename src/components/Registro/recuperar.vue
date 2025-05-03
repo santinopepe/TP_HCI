@@ -1,23 +1,29 @@
 <template>
-  <div class="recover-password-container">
-    <div class="card">
-      <h2>Recuperar Contraseña</h2>
-      <p>Ingresa tu Email o DNI para recuperar tu contraseña.</p>
+  <div class="flex justify-center items-center h-screen bg-[#d3e4cd] bg-[url('/images/fondo.png')] bg-cover bg-center bg-no-repeat">
+    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md text-center">
+      <h2 class="text-2xl text-[#2e4b3f] mb-4">Recuperar Contraseña</h2>
+      <p class="text-gray-600 mb-6">Ingresa tu Email o DNI para recuperar tu contraseña.</p>
       <form @submit.prevent="handleRecoverPassword">
-        <div class="input-group">
-          <label for="email-dni">Email o DNI</label>
+        <div class="mb-6 text-left">
+          <label for="email-dni" class="block mb-2 text-gray-800">Email o DNI</label>
           <input
             type="text"
             id="email-dni"
             v-model="emailOrDni"
             placeholder="Ingresa tu Email o DNI"
+            class="w-full p-3 border border-gray-300 rounded-md text-base"
             required
           />
         </div>
-        <button type="submit">Enviar</button>
+        <button
+          type="submit"
+          class="w-full p-3 bg-[#2e4b3f] text-white border-none rounded-md text-base cursor-pointer hover:bg-[#3a5c4b]"
+        >
+          Enviar
+        </button>
       </form>
-      <p class="back-link">
-        <router-link to="/">Volver al Inicio de Sesión</router-link>
+      <p class="mt-4 text-sm">
+        <router-link to="/" class="text-[#2e4b3f] no-underline hover:underline">Volver al Inicio de Sesión</router-link>
       </p>
     </div>
   </div>
@@ -38,82 +44,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-.recover-password-container {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  height: 100vh;
-  background-color: #d3e4cd; /* Verde claro como en la imagen */
-  background-image: url("public/images/fondo.png"); /* Si tienes un patrón de fondo */
-  background-size: cover;
-}
-
-.card {
-  background-color: white;
-  padding: 2rem;
-  border-radius: 15px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  width: 100%;
-  max-width: 400px;
-  text-align: center;
-}
-
-h2 {
-  color: #2e4b3f; /* Verde oscuro para el título */
-  margin-bottom: 1rem;
-}
-
-p {
-  color: #666;
-  margin-bottom: 1.5rem;
-}
-
-.input-group {
-  margin-bottom: 1.5rem;
-  text-align: left;
-}
-
-label {
-  display: block;
-  margin-bottom: 0.5rem;
-  color: #333;
-}
-
-input {
-  width: 100%;
-  padding: 0.75rem;
-  border: 1px solid #ccc;
-  border-radius: 5px;
-  font-size: 1rem;
-}
-
-button {
-  width: 100%;
-  padding: 0.75rem;
-  background-color: #2e4b3f; /* Verde oscuro para el botón */
-  color: white;
-  border: none;
-  border-radius: 5px;
-  font-size: 1rem;
-  cursor: pointer;
-}
-
-button:hover {
-  background-color: #3a5c4b;
-}
-
-.back-link {
-  margin-top: 1rem;
-}
-
-.back-link a {
-  color: #2e4b3f;
-  text-decoration: none;
-}
-
-.back-link a:hover {
-  text-decoration: underline;
-}
-</style>

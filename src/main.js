@@ -1,10 +1,10 @@
 import { createApp } from 'vue';
 import App from './App.vue';
 import router from './router'; // Importa tu configuración de router
-import './assets/styles.css';
 import { library } from '@fortawesome/fontawesome-svg-core';
 import { faFacebook, faInstagram, faTwitter } from '@fortawesome/free-brands-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
+import './assets/main.css';
 
 library.add(faFacebook, faInstagram, faTwitter);
 
