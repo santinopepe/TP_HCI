@@ -95,35 +95,31 @@
 
     <!-- Contenido principal -->
     <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
-      <!-- Saldo y Transacciones -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Saldo -->
-        <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-40 flex items-center">
+        <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center w-[calc(100%+8rem)]">
           <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mr-4" />
           <div class="flex-1">
             <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
             <p class="text-3xl font-bold mt-4 text-left">
-              <!-- Mostrar saldo o asteriscos según el estado -->
               {{ isSaldoVisible ? '$44,500.00' : '$*****' }}
             </p>
             <button
               class="absolute bottom-12 right-16 bg-[#3C4F2E]/50 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
               @click="toggleSaldoVisibility"
             >
-              <!-- Cambiar la imagen según el estado -->
               <img :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'" alt="Ver saldo" class="w-6 h-6" />
             </button>
           </div>
         </div>
 
         <!-- Transferencias Mensuales -->
-        <div class="bg-white p-10 rounded-lg shadow-md absolute right-5 w-1/2 h-80 flex flex-col justify-end">
+        <div class="bg-white p-6 rounded-lg shadow-md absolute right-4 w-[calc(100%-58rem)] h-72 flex flex-col justify-end col-span-1">
           <h2 class="text-2xl font-bold text-[#4B5563] text-left absolute top-6 left-6">Transferencias Mensuales</h2>
           <p class="absolute top-6 right-6 text-[#A5A2A1] font-semibold text-sm">
           +$123.44 / Último mes
           </p>
           <div class="h-48 flex items-end justify-center mt-auto">
-          <!-- Gráfico simulado -->
             <div class="flex items-end gap-4 w-full justify-between px-4">
               <div class="flex flex-col items-center flex-1">
           <div class="bg-[#83A46A] h-28 w-12 rounded"></div>
@@ -162,38 +158,80 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
         <!-- Últimas Transacciones -->
         <div class="bg-white p-6 rounded-lg shadow-md col-span-2">
-          <h2 class="text-lg font-bold text-gray-700">Últimas Transacciones</h2>
+          <div class="flex justify-between items-center">
+            <h2 class="text-lg font-bold text-gray-700">Últimas Transacciones</h2>
+            <button class="text-sm text-gray-500 flex items-center gap-1">
+              Ordenar por
+              <img  alt="Ordenar" class="w-4 h-4" />
+              <!-- src="/images/arrow-down.png" -->
+            </button>
+          </div>
           <ul class="mt-4 flex flex-col gap-4">
-            <li class="flex justify-between">
-              <span>Pago de SUBE</span>
-              <span class="text-red-500">-230.00</span>
+            <li class="flex justify-between items-center border-b pb-2">
+              <div class="flex items-center gap-4">
+                <img alt="SUBE" class="w-8 h-8" />
+                <!-- src="/images/sube.png" -->
+                <span class="text-gray-700">Pago de SUBE</span>
+              </div>
+              <div class="text-right">
+                <span class="text-red-500 block">-230.00</span>
+                <span class="text-gray-400 text-sm">20 Mar 2025</span>
+              </div>
             </li>
-            <li class="flex justify-between">
-              <span>Ingreso de dinero</span>
-              <span class="text-green-500">+866.00</span>
+            <li class="flex justify-between items-center border-b pb-2">
+              <div class="flex items-center gap-4">
+                <img alt="Visa" class="w-8 h-8" />
+                <!-- src="/images/visa.png" -->
+                <span class="text-gray-700">Ingreso de dinero</span>
+              </div>
+              <div class="text-right">
+                <span class="text-green-500 block">+866.00</span>
+                <span class="text-gray-400 text-sm">18 Mar 2025</span>
+              </div>
             </li>
-            <li class="flex justify-between">
-              <span>Pago de la tarjeta</span>
-              <span class="text-red-500">-453.00</span>
+            <li class="flex justify-between items-center border-b pb-2">
+              <div class="flex items-center gap-4">
+                <img alt="Tarjeta" class="w-8 h-8" />
+                <!-- src="/images/tarjeta.png" -->
+                <span class="text-gray-700">Pago de la tarjeta</span>
+              </div>
+              <div class="text-right">
+                <span class="text-red-500 block">-453.00</span>
+                <span class="text-gray-400 text-sm">1 Mar 2025</span>
+              </div>
             </li>
           </ul>
         </div>
 
         <!-- Inversiones Activas -->
-        <div class="bg-white p-6 rounded-lg shadow-md text-right">
-          <h2 class="text-lg font-bold text-gray-700">Inversiones Activas</h2>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+          <div class="flex justify-between items-center">
+            <h2 class="text-lg font-bold text-gray-700">Inversiones Activas</h2>
+            <button class="text-sm text-gray-500 flex items-center gap-1">
+              <img alt="Expandir" class="w-4 h-4" />
+              <!-- src="/images/arrow-down.png" -->
+            </button>
+          </div>
           <ul class="mt-4 flex flex-col gap-2">
             <li class="flex justify-between py-1">
-              <span>SBS pesos plus</span>
-              <span>$121,042.00</span>
+              <span class="text-gray-700">SBS pesos plus</span>
+              <span class="text-gray-900 font-semibold">$121,042.00</span>
             </li>
             <li class="flex justify-between py-1">
-              <span>Renta Fija</span>
-              <span>$504,070.00</span>
+              <span class="text-gray-700">Renta Fija</span>
+              <span class="text-gray-900 font-semibold">$504,070.00</span>
             </li>
             <li class="flex justify-between py-1">
-              <span>Fondo Fima</span>
-              <span>$1,030,091.00</span>
+              <span class="text-gray-700">Fondo Fima</span>
+              <span class="text-gray-900 font-semibold">$1,030,091.00</span>
+            </li>
+            <li class="flex justify-between py-1">
+              <span class="text-gray-700">CEDEARs</span>
+              <span class="text-gray-900 font-semibold">$308,700.00</span>
+            </li>
+            <li class="flex justify-between py-1">
+              <span class="text-gray-700">MAF Ahorro Pesos</span>
+              <span class="text-gray-900 font-semibold">$947,700.40</span>
             </li>
           </ul>
         </div>
