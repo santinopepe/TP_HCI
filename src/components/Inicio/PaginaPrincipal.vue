@@ -24,7 +24,7 @@
 
         <!-- Transferencias Mensuales -->
         <div class="bg-white p-6 rounded-lg shadow-md absolute right-4 w-[calc(100%-58rem)] h-[17rem] flex flex-col justify-end col-span-1">
-          <h2 class="text-2xl font-bold text-[#4B5563] text-left absolute top-6 left-6">Transferencias Mensuales</h2>
+          <h2 class="text-2xl font-bold text-[#4B5563] text-left absolute top-4 left-6">Transferencias Mensuales</h2>
           <p class="absolute top-6 right-6 text-[#A5A2A1] font-semibold text-sm">
           +$123.44 / Último mes
           </p>
@@ -69,17 +69,11 @@
         <div class="bg-white p-6 rounded-lg shadow-md w-[calc(100%+8rem)]">
           <div class="flex justify-between items-center">
             <h2 class="text-lg font-bold text-gray-700">Últimas Transacciones</h2>
-            <button class="text-sm text-gray-500 flex items-center gap-1">
-              Ordenar por
-              <img alt="Ordenar" class="w-4 h-4" />
-              <!-- src="/images/arrow-down.png" -->
-            </button>
           </div>
           <ul class="mt-4 flex flex-col gap-4">
             <li class="flex justify-between items-center border-b pb-2">
               <div class="flex items-center gap-4">
-                <img alt="SUBE" class="w-8 h-8" />
-                <!-- src="/images/sube.png" -->
+                <img alt="SUBE" src="/images/sube.png" class="w-12 h-8" />
                 <span class="text-gray-700">Pago de SUBE</span>
               </div>
               <div class="text-right">
@@ -89,7 +83,7 @@
             </li>
             <li class="flex justify-between items-center border-b pb-2">
               <div class="flex items-center gap-4">
-                <img  alt="Visa" class="w-8 h-8" />
+                <img  alt="Visa" src="/images/Visa.png" class="w-12 h-4" />
                 <span class="text-gray-700">Ingreso de dinero</span>
               </div>
               <div class="text-right">
@@ -99,13 +93,32 @@
             </li>
             <li class="flex justify-between items-center border-b pb-2">
               <div class="flex items-center gap-4">
-                <img alt="Tarjeta" class="w-8 h-8" />
-                <!-- src="/images/tarjeta.png" -->
+                <img alt="Tarjeta" src="/images/pagoTarjeta.png" class="w-12 h-10" />
                 <span class="text-gray-700">Pago de la tarjeta</span>
               </div>
               <div class="text-right">
                 <span class="text-red-500 block">-453.00</span>
                 <span class="text-gray-400 text-sm">1 Mar 2025</span>
+              </div>
+            </li>
+            <li class="flex justify-between items-center border-b pb-2">
+              <div class="flex items-center gap-4">
+                <img alt="hombre" src="/images/fotoHombre.png" class="w-12 h-10" />
+                <span class="text-gray-700">Transferencia</span>
+              </div>
+              <div class="text-right">
+                <span class="text-red-500 block">-230.00</span>
+                <span class="text-gray-400 text-sm">27 Feb 2025</span>
+              </div>
+            </li>
+            <li class="flex justify-between items-center border-b pb-2">
+              <div class="flex items-center gap-4">
+                <img alt="hombre" src="/images/jevi.png" class="w-12 h-10" />
+                <span class="text-gray-700">Devolución</span>
+              </div>
+              <div class="text-right">
+                <span class="text-green-500 block">+680.00</span>
+                <span class="text-gray-400 text-sm">20 Feb 2025</span>
               </div>
             </li>
           </ul>
@@ -121,23 +134,23 @@
           <!-- Bloque blanco debajo de la barra verde -->
           <div class="bg-white p-6 rounded-lg shadow-md w-[84%] justify-center mx-auto">
             <ul class="mt-4 flex flex-col gap-2">
-              <li class="flex justify-between py-1">
+              <li class="flex justify-between items-center border-b pb-2">
                 <span class="text-gray-700 font-bold">SBS pesos plus</span>
                 <span class="text-gray-900 font-semibold">$121,042.00</span>
               </li>
-              <li class="flex justify-between py-1">
+              <li class="flex justify-between items-center border-b pb-2">
                 <span class="text-gray-700 font-bold">Renta Fija</span>
                 <span class="text-gray-900 font-semibold">$504,070.00</span>
               </li>
-              <li class="flex justify-between py-1">
+              <li class="flex justify-between items-center border-b pb-2">
                 <span class="text-gray-700 font-bold">Fondo Fima</span>
                 <span class="text-gray-900 font-semibold">$1,030,091.00</span>
               </li>
-              <li class="flex justify-between py-1">
+              <li class="flex justify-between items-center border-b pb-2">
                 <span class="text-gray-700 font-bold">CEDEARs</span>
                 <span class="text-gray-900 font-semibold">$308,700.00</span>
               </li>
-              <li class="flex justify-between py-1">
+              <li class="flex justify-between items-center">
                 <span class="text-gray-700 font-bold">MAF Ahorro Pesos</span>
                 <span class="text-gray-900 font-semibold">$947,700.40</span>
               </li>
