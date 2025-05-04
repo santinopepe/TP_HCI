@@ -3,8 +3,8 @@
     <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
 
     <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
-      <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">Actividad</h1>
+      <div class="mb-6">
+        <h1 class="text-3xl font-bold text-gray-800 mb-2">Actividad</h1>
         <input
           type="text"
           v-model="searchQuery"
@@ -30,9 +30,8 @@
 
       
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-
-        
-        <div class="lg:col-span-2 bg-white p-6 rounded-lg shadow-lg overflow-x-auto">
+        <!-- Últimas Transacciones -->
+        <div class="lg:col-span-2 bg-white p-4 rounded-lg shadow-lg overflow-x-auto h-full">
           <h2 class="text-lg font-semibold mb-4 text-gray-700">Últimas Transacciones</h2>
           <table class="w-full text-left min-w-[600px]">
             <thead>
@@ -45,7 +44,7 @@
             </thead>
             <tbody>
               <tr v-if="filteredTransactions.length === 0">
-                 <td colspan="4" class="p-3 text-center text-gray-500">No se encontraron transacciones.</td>
+                <td colspan="4" class="p-3 text-center text-gray-500">No se encontraron transacciones.</td>
               </tr>
               <tr v-for="transaction in filteredTransactions" :key="transaction.id" class="border-b border-gray-100 hover:bg-gray-50">
                 <td class="p-3">{{ transaction.name }}</td>
@@ -55,15 +54,14 @@
               </tr>
             </tbody>
           </table>
-        </div> 
-        
-        <div class="bg-white p-6 rounded-lg shadow-lg flex flex-col">
-          
-          <div class="relative h-80 w-full"> 
-             <Pie :data="chartData" :options="chartOptions" />
-          </div>
         </div>
 
+        <!-- Gráfico de Distribución -->
+        <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col h-full">
+          <div class="relative h-full w-full">
+            <Pie :data="chartData" :options="chartOptions" />
+          </div>
+        </div>
       </div> 
     </main>
   </div>
