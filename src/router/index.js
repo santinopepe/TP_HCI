@@ -5,7 +5,7 @@ import RecoverPassword from '../components/Registro/recuperar.vue';
 import PrincipalPage from '../components/Inicio/PaginaPrincipal.vue';
 import PerfilPage from '../components/Inicio/Perfil.vue';
 import Actividad from '../components/Inicio/Actividad.vue';
-import Transferecias from '../components/Inicio/Transferencias.vue';
+import Transferecias from '../components/Inicio/Transferencias/Transferencias.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginPage },
