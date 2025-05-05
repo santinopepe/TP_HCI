@@ -6,6 +6,7 @@ import PrincipalPage from '../components/Inicio/PaginaPrincipal.vue';
 import PerfilPage from '../components/Inicio/Perfil.vue';
 import Actividad from '../components/Inicio/Actividad.vue';
 import Transferecias from '../components/Inicio/Transferencias.vue';
+import PagoDeServicios from '../components/Inicio/PagoDeServicios.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginPage },
@@ -15,6 +16,7 @@ const routes = [
   { path: '/perfil', name: 'Perfil', component: PerfilPage }, // Agrega la nueva ruta
   { path: '/actividad', name: 'Actividad', component: Actividad},
   { path: '/transferir', name: 'Transferencias', component: Transferecias },
+  { path: '/pagoServicios', name: 'PagoDeServicios', component: PagoDeServicios },
 ];
 
 const router = createRouter({
