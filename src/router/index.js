@@ -6,6 +6,7 @@ import PrincipalPage from '../components/Inicio/PaginaPrincipal.vue';
 import PerfilPage from '../components/Inicio/Perfil.vue';
 import Actividad from '../components/Inicio/Actividad.vue';
 import Transferecias from '../components/Inicio/Transferencias.vue';
+import AdministracionDeTarjetas from '../components/Inicio/AdministracionDeTarjetas.vue';
 import PagoDeServicios from '../components/Inicio/PagoDeServicios.vue';
 import PagoServicio from '../components/Inicio/PagoServicio.vue';
 
@@ -14,9 +15,10 @@ const routes = [
   { path: '/registro', name: 'Register', component: RegisterPage },
   { path: '/recover-password', name: 'RecoverPassword', component: RecoverPassword },
   { path: '/paginaprincipal', name: 'Paginaprincipal', component: PrincipalPage },
-  { path: '/perfil', name: 'Perfil', component: PerfilPage }, // Agrega la nueva ruta
+  { path: '/perfil', name: 'Perfil', component: PerfilPage }, 
   { path: '/actividad', name: 'Actividad', component: Actividad},
   { path: '/transferir', name: 'Transferencias', component: Transferecias },
+  { path: '/tarjetas', name: 'AdministracionDeTarjetas', component: AdministracionDeTarjetas },
   { path: '/pagoServicios', name: 'PagoDeServicios', component: PagoDeServicios },
   { path: '/pagoServicio/:serviceName/:serviceImage', name: 'PagoServicio', component: PagoServicio, props: true },
 ];
