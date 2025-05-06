@@ -35,11 +35,51 @@
         </div>
       </div>
 
-      <!-- Tarjeta -->
+      <!-- Tarjetas -->
       <div v-if="metodo === 'tarjeta'" class="mb-6">
-        <div class="bg-gradient-to-r from-green-300 to-pink-300 p-4 rounded-xl text-white shadow">
-          <p class="text-sm">Tarjeta de Juliana Márquez</p>
-          <p class="text-xl font-bold tracking-widest mt-2">•••• •••• •••• 9987</p>
+        <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
+        <div class="flex items-center gap-4">
+          <!-- Botón anterior -->
+          <button
+            @click="rotarTarjeta('anterior')"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-30"
+          >
+            ←
+          </button>
+
+           <!-- Tarjeta anterior -->
+           <div
+            v-if="tarjetas[tarjetaAnterior]"
+            class="absolute p-4 rounded-xl shadow-lg text-white bg-gradient-to-r from-gray-400 to-gray-300 opacity-50 transform scale-90 -translate-x-0 z-0"
+          >
+            <p class="text-sm">{{ tarjetas[tarjetaAnterior].nombre }}</p>
+            <p class="text-xl font-bold tracking-widest mt-2">{{ tarjetas[tarjetaAnterior].numero }}</p>
+          </div>
+
+          <!-- Tarjeta seleccionada -->
+          <div
+            class="p-4 rounded-xl shadow-lg text-white bg-gradient-to-r from-green-300 to-pink-300 flex-1 text-center z-10"
+          >
+            <p class="text-sm">{{ tarjetas[tarjetaSeleccionada].nombre }}</p>
+            <p class="text-xl font-bold tracking-widest mt-2">{{ tarjetas[tarjetaSeleccionada].numero }}</p>
+          </div>
+
+          <!-- Tarjeta siguiente -->
+          <div
+            v-if="tarjetas[tarjetaSiguiente]"
+            class="absolute p-4 rounded-xl shadow-lg text-white bg-gradient-to-r from-gray-300 to-gray-400 opacity-50 transform scale-90 translate-x-40 z-0"
+          >
+            <p class="text-sm">{{ tarjetas[tarjetaSiguiente].nombre }}</p>
+            <p class="text-xl font-bold tracking-widest mt-2">{{ tarjetas[tarjetaSiguiente].numero }}</p>
+          </div>
+
+          <!-- Botón siguiente -->
+          <button
+            @click="rotarTarjeta('siguiente')"
+            class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-20"
+          >
+            →
+          </button>
         </div>
       </div>
 
@@ -65,7 +105,7 @@
 
       <!-- Botones -->
       <div class="flex justify-between">
-        <button @click="$emit('volver')" class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
+        <button @click="$emit('volver')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
           Cancelar
         </button>
         <button
@@ -121,9 +161,21 @@ export default {
       activo: 'bg-white border border-gray-400 px-4 py-2 rounded-lg shadow',
       inactivo: 'bg-gray-100 text-gray-500 px-4 py-2 rounded-lg',
       cargo: 1.5, // Cargo fijo por transferencia
+      tarjetas: [
+        { nombre: 'Tarjeta de Juliana Márquez', numero: '•••• •••• •••• 9987' },
+        { nombre: 'Tarjeta de Carlos Pérez', numero: '•••• •••• •••• 1234' },
+        { nombre: 'Tarjeta de Lucía Torres', numero: '•••• •••• •••• 5678' },
+      ],
+      tarjetaSeleccionada: 0, // Índice de la tarjeta seleccionada
     };
   },
   computed: {
+    tarjetaAnterior() {
+      return (this.tarjetaSeleccionada - 1 + this.tarjetas.length) % this.tarjetas.length;
+    },
+    tarjetaSiguiente() {
+      return (this.tarjetaSeleccionada + 1) % this.tarjetas.length;
+    },
     fechaActual() {
       const fecha = new Date();
       return fecha.toLocaleDateString('es-ES', {
@@ -139,6 +191,14 @@ export default {
   methods: {
     setMetodo(metodo) {
       this.metodo = metodo;
+    },
+    rotarTarjeta(direccion) {
+      if (direccion === 'anterior') {
+        this.tarjetaSeleccionada =
+          (this.tarjetaSeleccionada - 1 + this.tarjetas.length) % this.tarjetas.length;
+      } else if (direccion === 'siguiente') {
+        this.tarjetaSeleccionada = (this.tarjetaSeleccionada + 1) % this.tarjetas.length;
+      }
     },
     reiniciarFormulario() {
       this.mostrarComprobante = false;
