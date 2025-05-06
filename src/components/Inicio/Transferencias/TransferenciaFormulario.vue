@@ -58,7 +58,7 @@
 
           <!-- Tarjeta seleccionada -->
           <div
-            class="p-4 rounded-xl shadow-lg text-white bg-gradient-to-r from-green-300 to-pink-300 flex-1 text-center z-10"
+            class="p-4 rounded-xl shadow-lg bg-gradient-to-br from-[#243219] to-[#558B2F] text-white flex-1 text-center z-10"
           >
             <p class="text-sm">{{ tarjetas[tarjetaSeleccionada].nombre }}</p>
             <p class="text-xl font-bold tracking-widest mt-2">{{ tarjetas[tarjetaSeleccionada].numero }}</p>
@@ -85,7 +85,7 @@
 
       <!-- Dinero en cuenta -->
       <div v-if="metodo === 'cuenta'" class="mb-6">
-        <div class="bg-gradient-to-r from-blue-300 to-blue-500 p-4 rounded-xl text-white shadow">
+        <div class="bg-gradient-to-br from-[#243219] to-[#558B2F] p-4 rounded-xl text-white shadow">
           <p class="text-sm">Dinero disponible en cuenta</p>
           <p class="text-xl font-bold tracking-widest mt-2">$100,000</p>
         </div>
