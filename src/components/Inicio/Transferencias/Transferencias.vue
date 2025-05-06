@@ -1,8 +1,6 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
-    <!-- Barra lateral -->
-    <BarraLateral />
-
+    <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
     <!-- Contenido principal -->
     <div class="p-8 bg-gray-50 min-h-screen flex-1 overflow-y-auto">
       <div v-if="!contactoSeleccionado && !mostrandoNuevoContacto">
@@ -85,6 +83,7 @@ export default {
   },
   data() {
     return {
+      activeButton: 'transferir',
       contactoSeleccionado: null,
       mostrandoNuevoContacto: false,
       busqueda: '',
