@@ -5,10 +5,11 @@ import RecoverPassword from '../components/Registro/recuperar.vue';
 import PrincipalPage from '../components/Inicio/PaginaPrincipal.vue';
 import PerfilPage from '../components/Inicio/Perfil.vue';
 import Actividad from '../components/Inicio/Actividad.vue';
-import Transferecias from '../components/Inicio/Transferencias.vue';
+import Transferecias from '../components/Inicio/Transferencias/Transferencias.vue';
 import AdministracionDeTarjetas from '../components/Inicio/AdministracionDeTarjetas.vue';
 import PagoDeServicios from '../components/Inicio/PagoDeServicios.vue';
 import PagoServicio from '../components/Inicio/PagoServicio.vue';
+
 
 const routes = [
   { path: '/', name: 'Login', component: LoginPage },
