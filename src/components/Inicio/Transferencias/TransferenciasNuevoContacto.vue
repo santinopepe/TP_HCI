@@ -24,16 +24,6 @@
             required
           />
         </div>
-        <div class="mb-4">
-          <label for="avatar" class="block text-gray-700 font-medium mb-2">Avatar (URL)</label>
-          <input
-            v-model="nuevoContacto.avatar"
-            type="url"
-            id="avatar"
-            placeholder="URL del avatar"
-            class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-300"
-          />
-        </div>
         <div class="flex justify-between">
           <button
             type="button"
@@ -66,9 +56,17 @@
     },
     methods: {
       guardarContacto() {
+        if (!this.nuevoContacto.nombre.trim()) {
+          alert('El nombre no puede estar vacío.');
+          return;
+        }
+        if (!/^\d{22}$/.test(this.nuevoContacto.cbu)) {
+          alert('El CBU/CVU debe tener 22 dígitos.');
+          return;
+        }
         this.$emit('guardar', { ...this.nuevoContacto });
-        this.nuevoContacto = { nombre: '', cbu: '', avatar: '' }; // Limpiar el formulario
-      },
+        this.nuevoContacto = { nombre: '', cbu: '', avatar: '' };
+      }
     },
   };
   </script>

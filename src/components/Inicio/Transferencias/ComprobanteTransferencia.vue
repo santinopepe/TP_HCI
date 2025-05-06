@@ -40,14 +40,24 @@
             <span>${{ (monto + cargo).toFixed(2) }}</span>
           </div>
         </div>
-  
-        <!-- Botón volver -->
-        <button
-          @click="volverAlInicio"
-          class="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition"
-        >
-          Volver al inicio
-        </button>
+        
+        <!-- Botones -->
+        <div class="mt-6 flex-col justify-center gap-4">
+          <!-- Botón compartir -->
+          <button
+            class="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition w-full"
+          >
+            Compartir comprobante
+          </button>
+          
+          <!-- Botón volver -->
+          <button
+            @click="volverAlInicio"
+            class="mt-6 bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition w-full"
+          >
+            Volver al inicio
+          </button>
+        </div>
       </div>
     </div>
   </template>
