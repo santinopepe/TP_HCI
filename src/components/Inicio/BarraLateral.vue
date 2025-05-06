@@ -43,7 +43,7 @@
         </div>
         <span>Transferir</span>
       </a>
-      <a
+      <!-- <a
         href="#"
         class="flex items-center gap-2 p-2 rounded"
         :class="{'bg-[#3C4F2E]': activeButton === 'inversiones', 'hover:bg-[#3C4F2E]/50': activeButton !== 'inversiones'}"
@@ -51,7 +51,7 @@
       >
         <img src="/images/Inversiones.png" alt="Inversiones" class="w-6 h-6" />
         <span>Inversiones</span>
-      </a>
+      </a> -->
       <a
         href="#"
         class="flex items-center gap-2 p-2 rounded"
@@ -124,7 +124,7 @@ export default {
       if (this.$router) this.$router.push('/inversiones');
     },
     goToPagoServicios() {
-      if (this.$router) this.$router.push('/pagoServicios');
+        if (this.$router) this.$router.push('/pagoServicios');
     },
     goToTarjetas() {
       if (this.$router) this.$router.push('/tarjetas');
