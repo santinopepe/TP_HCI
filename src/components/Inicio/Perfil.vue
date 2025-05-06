@@ -25,7 +25,10 @@
           <p class="text-gray-700"><span class="font-semibold text-simsim-green-dark">Género:</span> {{ user.gender }}</p>
         </div>
         <div class="flex justify-center mt-8">
-          <button class="bg-simsim-green-dark text-white py-2 px-6 rounded-lg hover:bg-simsim-green-darker transition duration-200">
+          <button
+            @click="goToChangePassword('perfil')"
+            class="bg-simsim-green-dark text-white py-2 px-6 rounded-lg hover:bg-simsim-green-darker transition duration-200"
+          >
             Cambiar Contraseña
           </button>
         </div>
@@ -58,6 +61,10 @@ export default {
   },
   methods: {
     setActiveButton(button) {
+      this.activeButton = button;
+    },
+    goToChangePassword(button) {
+      this.$router.push('/cambiarcontraseña');
       this.activeButton = button;
     },
   },

@@ -9,6 +9,8 @@ import Transferecias from '../components/Inicio/Transferencias.vue';
 import AdministracionDeTarjetas from '../components/Inicio/AdministracionDeTarjetas.vue';
 import PagoDeServicios from '../components/Inicio/PagoDeServicios.vue';
 import PagoServicio from '../components/Inicio/PagoServicio.vue';
+import Notificaciones from '../components/Inicio/Notificaciones.vue';
+import CambiarContraseña from '../components/Registro/CambiarContraseña.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginPage },
@@ -21,6 +23,8 @@ const routes = [
   { path: '/tarjetas', name: 'AdministracionDeTarjetas', component: AdministracionDeTarjetas },
   { path: '/pagoServicios', name: 'PagoDeServicios', component: PagoDeServicios },
   { path: '/pagoServicio/:serviceName/:serviceImage', name: 'PagoServicio', component: PagoServicio, props: true },
+  { path: '/notificaciones', name: 'Notificaciones', component: Notificaciones},  
+  { path: '/cambiarcontraseña', name: 'CambiarContraseña', component:  CambiarContraseña, props: true }, 
 ];
 
 const router = createRouter({
