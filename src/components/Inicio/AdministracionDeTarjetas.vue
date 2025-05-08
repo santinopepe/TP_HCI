@@ -36,7 +36,8 @@
               class="bg-gradient-to-br from-[#243219] to-[#558B2F] text-white p-6 rounded-lg shadow cursor-pointer
                      transform transition-all duration-300 hover:scale-105 relative
                      w-64 sm:w-72 md:w-80 lg:w-96
-                     mt-[-50px] first:mt-0"
+                     first:mt-0" 
+              :class="{ '-mt-12': index > 0 }" 
               :style="{ zIndex: calculatedZIndex(index) }" >
               <div>
                 <p class="text-xl font-semibold truncate">{{ card.type }} **** **** {{ card.last4 }}</p>
@@ -184,14 +185,11 @@ const handleMouseLeave = () => {
 };
 
 const calculatedZIndex = (index) => {
-  // If this card is being hovered, give it a very high z-index
   if (hoveredIndex.value === index) {
-    return 50; // A high value to ensure it's on top
+    return cards.value.length + 1; // Ensure hovered is always on top of others
   }
-  // Otherwise, calculate z-index for stacking (later cards on top)
-  return cards.value.length - index;
+  return cards.value.length - index; // Stacking order
 };
-// --- End logic for z-index control ---
 
 
 const addCard = () => {
@@ -200,7 +198,8 @@ const addCard = () => {
   }
   const last4 = newCard.value.number.slice(-4);
   const newId = Date.now(); // Simple ID generation
-  cards.value.push({
+  // Add to the beginning of the array to have it appear on top initially
+  cards.value.unshift({ 
     id: newId,
     type: newCard.value.type,
     last4: last4,
@@ -228,11 +227,15 @@ const viewCardDetails = (card) => {
 
 const closeCardDetailModal = () => {
   showCardDetailModal.value = false;
+  // It's good practice to nullify selected card if user explicitly closes detail view
+  // and not proceeding to remove, to avoid stale state.
+  // However, if requestRemoveCard keeps it for context, this might be optional.
+  // For now, let's keep it simple.
 };
 
 const requestRemoveCard = (cardId) => {
   cardIdToRemove.value = cardId;
-  showCardDetailModal.value = false;
+  showCardDetailModal.value = false; // Close detail modal
   showRemoveConfirmModal.value = true;
 };
 
@@ -242,13 +245,12 @@ const confirmRemoveCard = () => {
   }
   cardIdToRemove.value = null;
   showRemoveConfirmModal.value = false;
-  selectedCard.value = null;
+  selectedCard.value = null; // Clear selected card after removal
 };
 
 const cancelRemoveCard = () => {
   cardIdToRemove.value = null;
   showRemoveConfirmModal.value = false;
-  selectedCard.value = null;
+  selectedCard.value = null; 
 };
 </script>
-
