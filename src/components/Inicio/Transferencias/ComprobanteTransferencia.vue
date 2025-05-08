@@ -4,7 +4,7 @@
        
   
         <!-- Logo -->
-        <img src="" alt="Logo" class="w-20 mx-auto mb-4" />
+        <img src="/images/logo.png" alt="Logo" class="w-20 mx-auto mb-4" />
   
         <!-- Título -->
         <h2 class="text-xl font-semibold text-gray-800 mb-4">Comprobante De Pago</h2>
