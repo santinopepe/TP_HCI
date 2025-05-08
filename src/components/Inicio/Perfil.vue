@@ -2,32 +2,70 @@
   <div class="flex h-screen font-sans overflow-hidden">
     <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
 
-    <main class="flex-1 p-6 bg-[#FAFAFA] overflow-y-auto flex items-center justify-center">
-      <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md" style="min-height: 500px;">
-        <header class="flex justify-between items-center mb-8">
-          <h1 class="text-2xl font-bold text-simsim-green-dark">Perfil</h1>
-          <p class="text-sm text-simsim-green-dark font-semibold">CVU: {{ user.cvu }}</p>
-        </header>
-        <div class="flex items-center mb-8">
-          <div class="relative">
-            <img src="https://via.placeholder.com/80" alt="Profile Picture" class="w-20 h-20 rounded-full border-2 border-simsim-green-dark">
-            <span class="absolute bottom-0 right-0 bg-simsim-green-darker text-white w-5 h-5 flex items-center justify-center rounded-full text-xs">✎</span>
+    <!-- Contenedor principal centrado -->
+    <main class="flex-1 bg-[#FAFAFA] flex flex-col items-center justify-center">
+      <!-- Título y CVU en la misma línea -->
+      <div class="w-full max-w-md mb-4 flex items-center justify-between">
+        <h1 class="text-2xl font-bold text-simsim-green-dark">Perfil</h1>
+        <p class="text-2xl text-simsim-green-dark font-semibold">
+          CVU: {{ user.cvu }}
+        </p>
+      </div>
+
+      <!-- Contenedor de los datos del perfil -->
+      <div class="w-full max-w-md">
+        <div class="bg-white p-6 rounded-lg shadow-md text-center">
+          <!-- Imagen de perfil y nombre -->
+          <div class="flex flex-col items-center mb-6">
+            <div class="relative">
+              <img
+                src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Escudo_del_C_A_River_Plate.svg/826px-Escudo_del_C_A_River_Plate.svg.png"
+                alt="Profile Picture"
+                class="w-24 h-24 rounded-full border-2 border-simsim-green-dark"
+              />
+              <span
+                @click="updateImage"
+                class="absolute top-0 right-0 bg-simsim-green-darker text-white w-6 h-6 flex items-center justify-center rounded-full text-xs cursor-pointer"
+              >
+                ✎
+              </span>
+            </div>
+            <h2 class="text-2xl font-bold text-simsim-green-dark mt-4">{{ user.name }}</h2>
           </div>
-          <div class="ml-4">
-            <h2 class="text-xl font-semibold text-simsim-green-dark">{{ user.name }}</h2>
+
+          <!-- Datos del perfil -->
+          <div class="space-y-6 text-left">
+            <div>
+              <p class="text-sm font-semibold text-simsim-green-dark">N° de Documento</p>
+              <p class="text-lg text-gray-700 font-bold border-b pb-2">{{ user.accountNumber }}</p>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-simsim-green-dark">Email</p>
+              <p class="text-lg text-gray-700 font-bold border-b pb-2">{{ user.email }}</p>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-simsim-green-dark">Número telefónico</p>
+              <p class="text-lg text-gray-700 font-bold border-b pb-2">{{ user.phone }}</p>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-simsim-green-dark">Alias</p>
+              <p class="text-lg text-gray-700 font-bold border-b pb-2">{{ user.alias }}</p>
+            </div>
+            <div>
+              <p class="text-sm font-semibold text-simsim-green-dark">Género</p>
+              <p class="text-lg text-gray-700 font-bold">{{ user.gender }}</p>
+            </div>
           </div>
-        </div>
-        <div class="space-y-4">
-          <p class="text-gray-700"><span class="font-semibold text-simsim-green-dark">N° de Documento:</span> {{ user.accountNumber }}</p>
-          <p class="text-gray-700"><span class="font-semibold text-simsim-green-dark">Email:</span> {{ user.email }}</p>
-          <p class="text-gray-700"><span class="font-semibold text-simsim-green-dark">Número teléfono:</span> {{ user.phone }}</p>
-          <p class="text-gray-700"><span class="font-semibold text-simsim-green-dark">Alias:</span> {{ user.alias }}</p>
-          <p class="text-gray-700"><span class="font-semibold text-simsim-green-dark">Género:</span> {{ user.gender }}</p>
-        </div>
-        <div class="flex justify-center mt-8">
-          <button class="bg-simsim-green-dark text-white py-2 px-6 rounded-lg hover:bg-simsim-green-darker transition duration-200">
-            Cambiar Contraseña
-          </button>
+
+          <!-- Botón Cambiar Contraseña -->
+          <div class="flex justify-center mt-8">
+            <button
+              @click="goToChangePassword('perfil')"
+              class="bg-[#5D8C39] text-white py-2 px-6 rounded-lg hover:bg-[#4A6F2E] transition duration-200"
+            >
+              Cambiar Contraseña
+            </button>
+          </div>
         </div>
       </div>
     </main>
@@ -59,6 +97,13 @@ export default {
   methods: {
     setActiveButton(button) {
       this.activeButton = button;
+    },
+    goToChangePassword(button) {
+      this.$router.push('/cambiarcontraseña');
+      this.activeButton = button;
+    },
+    updateImage() {
+      alert('Actualizar imagen de perfil');
     },
   },
 };

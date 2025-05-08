@@ -1,7 +1,7 @@
 <template>
   <aside class="bg-[url('/images/fondo.png')] text-white w-1/5 p-4 flex flex-col h-full bg-cover bg-center">
     <div class="flex items-center mb-8">
-      <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mx-auto" />
+      <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mx-auto cursor-pointer" @click="goToInicio"/>
     </div>
     <nav class="menu flex flex-col gap-4">
       <a
@@ -74,7 +74,7 @@
         href="#"
         class="flex items-center gap-2 p-2 rounded"
         :class="{'bg-[#3C4F2E]': activeButton === 'notificaciones', 'hover:bg-[#3C4F2E]/50': activeButton !== 'notificaciones'}"
-        @click.prevent="setActiveButton('notificaciones')"
+        @click.prevent="goToNotifiacaciones"
       >
         <img src="/images/Notificaciones.png" alt="Notificaciones" class="w-6 h-6" />
         <span>Notificaciones</span>
@@ -128,6 +128,9 @@ export default {
     },
     goToTarjetas() {
       if (this.$router) this.$router.push('/tarjetas');
+    },
+    goToNotifiacaciones() {
+      if (this.$router) this.$router.push('/notificaciones');
     },
   },
 };
