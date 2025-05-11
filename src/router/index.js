@@ -13,6 +13,7 @@ import Inversiones from '../components/Inicio/Inversiones.vue';
 
 import Notificaciones from '../components/Inicio/Notificaciones.vue';
 import CambiarContraseña from '../components/Registro/CambiarContraseña.vue';
+import IngresarDinero from '../components/IngresarDinero.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginPage },
@@ -28,6 +29,7 @@ const routes = [
   { path: '/inversiones' , name: 'Inversiones', component: Inversiones},
   { path: '/notificaciones', name: 'Notificaciones', component: Notificaciones},  
   { path: '/cambiarcontraseña', name: 'CambiarContraseña', component:  CambiarContraseña, props: true }, 
+  { path: '/ingresar-dinero', name: 'IngresarDinero', component: () => import('../components/IngresarDinero.vue')},
 ];
 
 const router = createRouter({

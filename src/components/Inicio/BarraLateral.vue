@@ -82,7 +82,7 @@
     </nav>
     <div class="mt-auto flex justify-center">
       <button
-        class="flex justify-between items-center gap-2 bg-[#5D8C39] hover:bg-[#15803d] p-3 rounded-xl w-60 border-none cursor-pointer"
+        class="flex justify-between items-center gap-2 bg-[#5D8C39] hover:bg-[#5D8C39]/60 p-3 rounded-xl w-60 border-none cursor-pointer"
         @click.prevent="goToInicioSesion"
       >
         <span>Cerrar Sesión</span>

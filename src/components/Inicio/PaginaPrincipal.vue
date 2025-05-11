@@ -5,20 +5,31 @@
     <!-- Contenido principal -->
     <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Saldo -->
-        <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center w-[calc(100%+8rem)]">
-          <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mr-4" />
-          <div class="flex-1">
-            <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
-            <p class="text-3xl font-bold mt-4 text-left">
-              {{ isSaldoVisible ? '$44,500.00' : '$*****' }}
-            </p>
-            <button
-              class="absolute bottom-14 left-62 bg-[#3C4F2E]/50 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
-              @click="toggleSaldoVisibility"
+        <!-- Saldo y Botón Recibir Dinero -->
+        <div class="w-[calc(100%+8rem)]">
+          <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center">
+            <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mr-4" />
+            <div class="flex-1">
+              <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
+              <p class="text-3xl font-bold mt-4 text-left">
+                {{ isSaldoVisible ? '$44,500.00' : '$*****' }}
+              </p>
+              <button
+                class="absolute bottom-14 left-62 bg-[#3C4F2E]/50 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
+                @click="toggleSaldoVisibility"
+              >
+                <img :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'" alt="Ver saldo" class="w-6 h-6" />
+              </button>
+            </div>
+          </div>
+          <!-- Botón Recibir Dinero -->
+          <div class="flex justify-center mt-4">
+            <router-link
+              to="/ingresar-dinero"
+              class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(100%+8rem)] justify-center flex items-center"
             >
-              <img :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'" alt="Ver saldo" class="w-6 h-6" />
-            </button>
+              Ingresar Dinero
+            </router-link>
           </div>
         </div>
 
@@ -26,7 +37,7 @@
         <div class="bg-white p-6 rounded-lg shadow-md absolute right-4 w-[calc(100%-58rem)] h-[17rem] flex flex-col justify-end col-span-1">
           <h2 class="text-2xl font-bold text-[#4B5563] text-left absolute top-4 left-6">Transferencias Mensuales</h2>
           <p class="absolute top-6 right-6 text-[#A5A2A1] font-semibold text-sm">
-          +$123.44 / Último mes
+            +$123.44 / Último mes
           </p>
           <div class="h-48 flex items-end justify-center mt-auto">
             <div class="flex items-end gap-4 w-full justify-between px-4">
@@ -83,7 +94,7 @@
             </li>
             <li class="flex justify-between items-center border-b pb-2">
               <div class="flex items-center gap-4">
-                <img  alt="Visa" src="/images/Visa.png" class="w-12 h-4" />
+                <img alt="Visa" src="/images/Visa.png" class="w-12 h-4" />
                 <span class="text-gray-700">Ingreso de dinero</span>
               </div>
               <div class="text-right">
@@ -125,7 +136,7 @@
         </div>
 
         <!-- Inversiones Activas -->
-        <div class="absolute bottom-[12%] right-4 w-[calc(100%-58rem)]">
+        <div class="absolute bottom-[12%] right-4 w-[calc(100%-58rem)] promu">
           <!-- Barra verde de Inversiones Activas -->
           <div class="bg-[#3C4F2E] text-white p-4 rounded-2xl flex justify-between items-center">
             <h2 class="text-lg font-bold">Inversiones Activas</h2>
