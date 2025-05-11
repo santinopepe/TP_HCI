@@ -4,12 +4,9 @@
 
     <!-- Contenedor principal centrado -->
     <main class="flex-1 bg-[#FAFAFA] flex flex-col items-center justify-center">
-      <!-- Título y CVU en la misma línea -->
-      <div class="w-full max-w-md mb-4 flex items-center justify-between">
+      <!-- Título centrado -->
+      <div class="w-full max-w-md mb-4 text-center">
         <h1 class="text-2xl font-bold text-simsim-green-dark">Perfil</h1>
-        <p class="text-2xl text-simsim-green-dark font-semibold">
-          CVU: {{ user.cvu }}
-        </p>
       </div>
 
       <!-- Contenedor de los datos del perfil -->

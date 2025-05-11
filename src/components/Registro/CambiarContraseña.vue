@@ -1,14 +1,12 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
-    <!-- Barra lateral -->
+
     <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
     
-    <!-- Contenido principal -->
     <main class="flex-1 flex flex-col items-center justify-center bg-gray-100">
       <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
         <h1 class="text-2xl font-bold text-gray-800 mb-4 text-center">Cambiar Contraseña</h1>
 
-        <!-- Verificación del código -->
         <div v-if="!isCodeVerified">
           <p class="text-gray-600 mb-4 text-center">
             Por favor, ingresa el código que se envió a tu correo electrónico.
@@ -43,7 +41,6 @@
           </form>
         </div>
 
-        <!-- Actualización de contraseña -->
         <div v-else>
           <p class="text-gray-600 mb-4 text-center">
             Ingresa tu nueva contraseña y confírmala.
