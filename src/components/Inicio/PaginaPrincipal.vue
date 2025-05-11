@@ -6,7 +6,7 @@
     <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
         <!-- Saldo y Botón Recibir Dinero -->
-        <div class="w-[calc(100%+8rem)]">
+        <div class="w-[calc(100%+8rem)] overflow-hidden">
           <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center">
             <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mr-4" />
             <div class="flex-1">
@@ -34,7 +34,7 @@
         </div>
 
         <!-- Transferencias Mensuales -->
-        <div class="bg-white p-6 rounded-lg shadow-md absolute right-4 w-[calc(100%-58rem)] h-[17rem] flex flex-col justify-end col-span-1">
+        <div class="bg-white p-6 rounded-lg shadow-md absolute right-4 w-[calc(100%-58rem)] h-[17rem] flex flex-col justify-end col-span-1 overflow-hidden">
           <h2 class="text-2xl font-bold text-[#4B5563] text-left absolute top-4 left-6">Transferencias Mensuales</h2>
           <p class="absolute top-6 right-6 text-[#A5A2A1] font-semibold text-sm">
             +$123.44 / Último mes
@@ -50,11 +50,11 @@
                 <span class="text-gray-500 text-sm mt-2">Mar</span>
               </div>
               <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#B1DC91] h-16 w-12 rounded"></div>
+                <div class="bg-[#B1DC91] h-20 w-12 rounded"></div>
                 <span class="text-gray-500 text-sm mt-2">Abr</span>
               </div>
               <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#83A46A] h-20 w-12 rounded"></div>
+                <div class="bg-[#83A46A] h-28 w-12 rounded"></div>
                 <span class="text-gray-500 text-sm mt-2">May</span>
               </div>
               <div class="flex flex-col items-center flex-1">
@@ -66,7 +66,7 @@
                 <span class="text-gray-500 text-sm mt-2">Jul</span>
               </div>
               <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#B1DC91] h-34 w-12 rounded"></div>
+                <div class="bg-[#B1DC91] h-20 w-12 rounded"></div>
                 <span class="text-gray-500 text-sm mt-2">Ago</span>
               </div>
             </div>
@@ -75,9 +75,9 @@
       </div>
 
       <!-- Últimas Transacciones e Inversiones Activas -->
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-6">
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
         <!-- Últimas Transacciones -->
-        <div class="bg-white p-6 rounded-lg shadow-md w-[calc(100%+8rem)]">
+        <div class="bg-white p-6 rounded-lg shadow-md w-[calc(100%+8rem)] overflow-hidden">
           <div class="flex justify-between items-center">
             <h2 class="text-lg font-bold text-gray-700">Últimas Transacciones</h2>
           </div>
@@ -122,18 +122,9 @@
                 <span class="text-gray-400 text-sm">27 Feb 2025</span>
               </div>
             </li>
-            <li class="flex justify-between items-center border-b pb-2">
-              <div class="flex items-center gap-4">
-                <img alt="hombre" src="/images/jevi.png" class="w-12 h-10" />
-                <span class="text-gray-700">Devolución</span>
-              </div>
-              <div class="text-right">
-                <span class="text-green-500 block">+680.00</span>
-                <span class="text-gray-400 text-sm">20 Feb 2025</span>
-              </div>
-            </li>
           </ul>
         </div>
+
 
         <!-- Inversiones Activas -->
         <div class="absolute bottom-[12%] right-4 w-[calc(100%-58rem)] promu">
@@ -174,7 +165,7 @@
 </template>
 
 <script>
-import BarraLateral from './BarraLateral.vue'
+import BarraLateral from '../BarraLateral.vue'
 
 export default {
   name: "PaginaPrincipal",
