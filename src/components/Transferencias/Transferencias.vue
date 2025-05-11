@@ -44,9 +44,9 @@
         <div class="max-w-md mx-auto mt-6 text-center">
           <button
             @click="mostrarFormularioNuevoContacto"
-            class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
+            class="bg-[#5D8C39] text-white px-4 py-2 rounded-lg hover:bg-[#5D8C39]/80"
           >
-            Transferir a un nuevo contacto
+            Nuevo contacto
           </button>
         </div>
       </div>
