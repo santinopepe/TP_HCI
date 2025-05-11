@@ -69,7 +69,7 @@
 
 <script>
 
-import BarraLateral from './BarraLateral.vue';
+import BarraLateral from '../BarraLateral.vue';
 import { defineComponent, ref, computed } from 'vue';
 import { Pie } from 'vue-chartjs';
 import {

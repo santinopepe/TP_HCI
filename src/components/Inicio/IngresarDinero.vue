@@ -45,7 +45,7 @@
 </template>
 
 <script>
-import BotonRetroceder from "./BotonRetroceder.vue";
+import BotonRetroceder from "../BotonRetroceder.vue";
 
 export default {
   name: "IngresarDinero",
@@ -56,7 +56,7 @@ export default {
     return {
       activeButton: 'ingresar-dinero',
       alias: 'martin.gallardo.b',
-      cvu: '0000003100074896910882',
+      cvu: '0023481928201930457639',
     };
   },
   methods: {

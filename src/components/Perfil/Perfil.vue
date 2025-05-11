@@ -19,16 +19,24 @@
           <div class="flex flex-col items-center mb-6">
             <div class="relative">
               <img
-                src="https://upload.wikimedia.org/wikipedia/commons/thumb/a/ac/Escudo_del_C_A_River_Plate.svg/826px-Escudo_del_C_A_River_Plate.svg.png"
+                :src="profileImage"
                 alt="Profile Picture"
                 class="w-24 h-24 rounded-full border-2 border-simsim-green-dark"
               />
               <span
-                @click="updateImage"
+                @click="triggerFileInput"
                 class="absolute top-0 right-0 bg-simsim-green-darker text-white w-6 h-6 flex items-center justify-center rounded-full text-xs cursor-pointer"
               >
                 ✎
               </span>
+              <!-- Input para seleccionar archivo -->
+              <input
+                type="file"
+                ref="fileInput"
+                accept="image/*"
+                class="hidden"
+                @change="handleFileChange"
+              />
             </div>
             <h2 class="text-2xl font-bold text-simsim-green-dark mt-4">{{ user.name }}</h2>
           </div>
@@ -73,7 +81,7 @@
 </template>
 
 <script>
-import BarraLateral from './BarraLateral.vue';
+import BarraLateral from '../BarraLateral.vue';
 
 export default {
   name: 'Perfil',
@@ -92,6 +100,7 @@ export default {
         alias: 'jmarquez01',
         gender: 'Mujer',
       },
+      profileImage: '/images/mujer.png', // Imagen de perfil inicial
     };
   },
   methods: {
@@ -102,8 +111,18 @@ export default {
       this.$router.push('/cambiarcontraseña');
       this.activeButton = button;
     },
-    updateImage() {
-      alert('Actualizar imagen de perfil');
+    triggerFileInput() {
+      this.$refs.fileInput.click();
+    },
+    handleFileChange(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = (e) => {
+          this.profileImage = e.target.result;
+        };
+        reader.readAsDataURL(file);
+      }
     },
   },
 };

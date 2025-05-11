@@ -1,8 +1,6 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
-    <!-- Barra lateral -->
-    <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
-    
+    <BotonRetroceder/>
     <!-- Contenido principal -->
     <main class="flex-1 flex flex-col items-center justify-center bg-gray-100">
       <div class="bg-white p-6 rounded-lg shadow-md w-full max-w-md">
@@ -25,19 +23,12 @@
                 required
               />
             </div>
-            <div class="flex justify-between">
+            <div class="flex items-center justify-center">
               <button
                 type="submit"
-                class="bg-green-600 text-white py-2 px-4 rounded-lg hover:bg-green-700"
+                class="bg-[#5D8C39] text-white py-2 px-4 rounded-lg hover:bg-[#5D8C39]/80"
               >
                 Verificar Código
-              </button>
-              <button
-                type="button"
-                @click="cancel"
-                class="bg-gray-400 text-white py-2 px-4 rounded-lg hover:bg-gray-500"
-              >
-                Cancelar
               </button>
             </div>
           </form>
@@ -95,12 +86,12 @@
 </template>
 
 <script>
-import BarraLateral from '../Inicio/BarraLateral.vue';
+import BotonRetroceder from '../BotonRetroceder.vue';
 
 export default {
   name: "CambiarContraseña",
   components: {
-    BarraLateral,
+    BotonRetroceder,
   },
   data() {
     return {

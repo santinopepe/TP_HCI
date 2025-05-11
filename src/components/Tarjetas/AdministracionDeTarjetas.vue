@@ -153,7 +153,7 @@
 
 <script setup>
 import { ref } from 'vue';
-import BarraLateral from './BarraLateral.vue';
+import BarraLateral from '../BarraLateral.vue';
 
 const activeButton = ref('tarjetas');
 

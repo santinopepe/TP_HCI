@@ -65,7 +65,7 @@
 </template>
 
 <script>
-import BarraLateral from './BarraLateral.vue';
+import BarraLateral from '../BarraLateral.vue';
 
 export default {
   name: 'Notificaciones',
