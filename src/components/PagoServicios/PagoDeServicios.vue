@@ -10,14 +10,9 @@
           <input
             type="text"
             v-model="searchQuery"
-            placeholder="Buscar"
-            class="w-full p-3 pl-10 rounded-lg border border-gray-300 focus:outline-none focus:ring-2 focus:ring-green-500"
+            placeholder="Buscar pago..."
+            class="w-full max-w-md p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           />
-          <span class="absolute inset-y-0 left-3 flex items-center">
-            <svg class="h-5 w-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-            </svg>
-          </span>
         </div>
   
         <!-- Service Categories (Centered Horizontal Bar) -->

@@ -1,5 +1,6 @@
 <template>
     <div class="flex h-screen font-sans overflow-hidden">
+      <BotonRetroceder />
       <div class="flex-1 p-6 overflow-y-auto bg-gray-50">
         <!-- Header -->
         <div class="text-center mb-4">
@@ -41,9 +42,14 @@
     </div>
   </template>
   
-  <script>
+<script>
+import BotonRetroceder from '../BotonRetroceder.vue';
+
   export default {
     name: "PagoServicio",
+    components: {
+      BotonRetroceder
+    },
     props: {
       serviceName: {
         type: String,
@@ -80,4 +86,4 @@
       },
     },
   };
-  </script>
+</script>
