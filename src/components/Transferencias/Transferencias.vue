@@ -1,9 +1,9 @@
+<!-- filepath: c:\Users\marti\OneDrive\Documentos\ITBA\3.Tercer año\Interacción Hombre-Computadora(HCI)\TP\TP_HCI\src\components\Transferencias\Transferencias.vue -->
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
     <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
-    <!-- Contenido principal -->
     <div class="p-8 bg-gray-50 min-h-screen flex-1 overflow-y-auto">
-      <div v-if="!contactoSeleccionado && !mostrandoNuevoContacto">
+      <div v-if="!contactoSeleccionado">
         <!-- Encabezado -->
         <div class="max-w-2xl mx-auto text-center mb-10">
           <h1 class="text-3xl font-bold text-gray-800 mb-2">Elegí un contacto</h1>
@@ -42,28 +42,20 @@
 
         <!-- Botón para transferir a un nuevo contacto -->
         <div class="max-w-md mx-auto mt-6 text-center">
-          <button
-            @click="mostrarFormularioNuevoContacto"
+          <router-link
+            to="/transferirNuevoContacto"
             class="bg-[#5D8C39] text-white px-4 py-2 rounded-lg hover:bg-[#5D8C39]/80"
           >
             Nuevo contacto
-          </button>
+          </router-link>
         </div>
       </div>
 
       <!-- Formulario de transferencia -->
-      <div v-else-if="contactoSeleccionado">
+      <div v-else>
         <TransferenciaFormulario
           :contacto="contactoSeleccionado"
           @volver="contactoSeleccionado = null"
-        />
-      </div>
-
-      <!-- Formulario para nuevo contacto -->
-      <div v-else-if="mostrandoNuevoContacto">
-        <NuevoContactoFormulario
-          @guardar="agregarNuevoContacto"
-          @cancelar="mostrandoNuevoContacto = false"
         />
       </div>
     </div>
