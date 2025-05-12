@@ -3,7 +3,6 @@
     <div class="bg-gradient-to-b from-pink-50 to-white p-6 rounded-3xl max-w-sm w-full shadow-xl text-center font-sans">
       <!-- Encabezado -->
       <div class="text-left mb-4 relative">
-        <button @click="$emit('cancelar')" class="absolute left-0 top-0 text-gray-600 text-xl">←</button>
         <h2 class="text-center font-semibold text-gray-800 text-lg">Confirmación</h2>
       </div>
 
@@ -30,19 +29,24 @@
 
       <!-- Aviso -->
       <div class="bg-green-50 text-green-800 text-sm p-3 rounded-lg flex items-center gap-2 mb-5">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1 4v-4m0 0V8m0 4h.01M12 12v.01" />
-        </svg>
         Se realizará el pago una vez confirmes la transacción.
       </div>
 
-      <!-- Botón -->
-      <button
-        @click="confirmarTransferencia"
-        class="bg-green-600 text-white w-full py-3 rounded-xl text-sm font-medium hover:bg-green-700 transition"
-      >
-        Confirmar y transferir
-      </button>
+      <!-- Botones -->
+      <div class="flex justify-between">
+        <button
+          @click="confirmarTransferencia"
+          class="bg-[#5D8C39] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#5D8C39]/80 transition"
+        >
+          Confirmar
+        </button>
+        <button
+          @click="cancelarTransferencia"
+          class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-400 transition"
+        >
+          Cancelar
+        </button>
+      </div>
     </div>
   </div>
 </template>
@@ -64,6 +68,9 @@ export default {
   methods: {
     confirmarTransferencia() {
       this.$emit('confirmar');
+    },
+    cancelarTransferencia() {
+      this.$emit('cancelar');
     },
   },
 };

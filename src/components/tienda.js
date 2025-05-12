@@ -21,11 +21,20 @@ export const contactStore = reactive({
       avatar: 'https://randomuser.me/api/portraits/women/50.jpg',
     },
   ],
+  transferencias: [], // Store transfer details
   addContacto(contacto) {
     contacto.id = this.contactos.length + 1;
     this.contactos.push(contacto);
   },
   getContactoById(id) {
     return this.contactos.find((c) => c.id === parseInt(id)) || {};
+  },
+  addTransferencia(transferencia) {
+    transferencia.id = this.transferencias.length + 1; // Simple ID generation
+    this.transferencias.push(transferencia);
+    return transferencia.id;
+  },
+  getTransferenciaById(id) {
+    return this.transferencias.find((t) => t.id === parseInt(id)) || {};
   },
 });

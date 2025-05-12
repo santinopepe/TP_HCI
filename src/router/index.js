@@ -8,6 +8,7 @@ import Actividad from '../components/Actividad/Actividad.vue';
 import Transferecias from '../components/Transferencias/Transferencias.vue';
 import TransferenciasNuevoContacto from '../components/Transferencias/TransferenciasNuevoContacto.vue';
 import TransferenciaFormulario from '../components/Transferencias/TransferenciaFormulario.vue';
+import ComprobanteTransferencia from '../components/Transferencias/ComprobanteTransferencia.vue';
 import AdministracionDeTarjetas from '../components/Tarjetas/AdministracionDeTarjetas.vue';
 import PagoDeServicios from '../components/PagoServicios/PagoDeServicios.vue';
 import PagoServicio from '../components/PagoServicios/PagoServicio.vue';
@@ -28,11 +29,12 @@ const routes = [
   { path: '/tarjetas', name: 'AdministracionDeTarjetas', component: AdministracionDeTarjetas },
   { path: '/pagoServicios', name: 'PagoDeServicios', component: PagoDeServicios },
   { path: '/pagoServicio/:serviceName/:serviceImage', name: 'PagoServicio', component: PagoServicio, props: true },
-  { path: '/inversiones' , name: 'Inversiones', component: Inversiones},
-  { path: '/notificaciones', name: 'Notificaciones', component: Notificaciones},  
+  { path: '/inversiones', name: 'Inversiones', component: Inversiones },
+  { path: '/notificaciones', name: 'Notificaciones', component: Notificaciones },  
   { path: '/cambiarcontraseña', name: 'CambiarContraseña', component: CambiarContraseña, props: true }, 
   { path: '/ingresar-dinero', name: 'IngresarDinero', component: IngresarDinero, props: true },
   { path: '/transferenciaFormulario/:contactoId', name: 'TransferenciaFormulario', component: TransferenciaFormulario, props: true },
+  { path: '/comprobanteTransferencia/:transferId', name: 'ComprobanteTransferencia', component: ComprobanteTransferencia, props: true },
 ];
 
 const router = createRouter({
