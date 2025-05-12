@@ -16,6 +16,7 @@ import Inversiones from '../components/Inversiones/Inversiones.vue';
 import Notificaciones from '../components/Notificaciones/Notificaciones.vue';
 import CambiarContraseña from '../components/Perfil/CambiarContraseña.vue';
 import IngresarDinero from '../components/Inicio/IngresarDinero.vue';
+import CobroDeServicios from '../components/CobroDeServicios/cobroDeServicios.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginPage },
@@ -35,6 +36,7 @@ const routes = [
   { path: '/ingresar-dinero', name: 'IngresarDinero', component: IngresarDinero, props: true },
   { path: '/transferenciaFormulario/:contactoId', name: 'TransferenciaFormulario', component: TransferenciaFormulario, props: true },
   { path: '/comprobanteTransferencia/:transferId', name: 'ComprobanteTransferencia', component: ComprobanteTransferencia, props: true },
+  { path: '/cobrodeservicios', name: 'CobroDeServicios', component: CobroDeServicios},
 ];
 
 const router = createRouter({
