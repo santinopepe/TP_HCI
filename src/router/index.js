@@ -30,9 +30,9 @@ const routes = [
   { path: '/pagoServicio/:serviceName/:serviceImage', name: 'PagoServicio', component: PagoServicio, props: true },
   { path: '/inversiones' , name: 'Inversiones', component: Inversiones},
   { path: '/notificaciones', name: 'Notificaciones', component: Notificaciones},  
-  { path: '/cambiarcontraseña', name: 'CambiarContraseña', component:  CambiarContraseña, props: true }, 
+  { path: '/cambiarcontraseña', name: 'CambiarContraseña', component: CambiarContraseña, props: true }, 
   { path: '/ingresar-dinero', name: 'IngresarDinero', component: IngresarDinero, props: true },
-  { path: '/transferenciaFormulario/:contacto', name: 'TransferenciaFormulario', component: TransferenciaFormulario, props: true },
+  { path: '/transferenciaFormulario/:contactoId', name: 'TransferenciaFormulario', component: TransferenciaFormulario, props: true },
 ];
 
 const router = createRouter({

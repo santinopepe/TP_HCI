@@ -1,14 +1,10 @@
 <template>
   <div>
     <!-- Mostrar el formulario o el comprobante según el estado -->
-    <div v-if="!mostrarComprobante" class="max-w-md mx-auto bg-white p-6 rounded-xl shadow-lg">
-      <!-- Volver -->
-      <button @click="$emit('volver')" class="text-sm text-gray-500 mb-4 hover:underline">
-        ← Volver a contactos
-      </button>
-
+    <div v-if="!mostrarComprobante" class="max-w-md mx-auto mt-20 bg-white p-6 rounded-xl shadow-2xl">
+      <BotonRetroceder />
       <!-- Datos del contacto -->
-      <div class="flex items-center gap-4 mb-6">
+      <div v-if="contacto" class="flex items-center gap-4 mb-6">
         <img :src="contacto.avatar" alt="Avatar" class="w-12 h-12 rounded-full" />
         <div>
           <p class="text-lg font-semibold">{{ contacto.nombre }}</p>
@@ -19,19 +15,48 @@
       <!-- Método de pago -->
       <div class="mb-4">
         <p class="text-sm font-medium mb-2">Seleccionar método de pago</p>
-        <div class="flex gap-2">
-          <button
-            @click="setMetodo('tarjeta')"
-            :class="metodo === 'tarjeta' ? activo : inactivo"
-          >
-            💳 Tarjeta
-          </button>
-          <button
-            @click="setMetodo('cuenta')"
-            :class="metodo === 'cuenta' ? activo : inactivo"
-          >
-            💰 Dinero en Cuenta
-          </button>
+        <div class="flex gap-4">
+          <!-- Opción Tarjeta -->
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="metodoPago"
+              value="tarjeta"
+              v-model="metodo"
+              class="hidden"
+            />
+            <div
+              :class="metodo === 'tarjeta' ? 'bg-[#3C4F2E]' : 'bg-gray-300'"
+              class="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center"
+            >
+              <div
+                v-if="metodo === 'tarjeta'"
+                class="w-3 h-3 rounded-full"
+              ></div>
+            </div>
+            <span class="text-sm">Tarjeta</span>
+          </label>
+
+          <!-- Opción Dinero en Cuenta -->
+          <label class="flex items-center gap-2 cursor-pointer">
+            <input
+              type="radio"
+              name="metodoPago"
+              value="cuenta"
+              v-model="metodo"
+              class="hidden"
+            />
+            <div
+              :class="metodo === 'cuenta' ? 'bg-[#3C4F2E]' : 'bg-gray-300'"
+              class="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center"
+            >
+              <div
+                v-if="metodo === 'cuenta'"
+                class="w-3 h-3 rounded-full"
+              ></div>
+            </div>
+            <span class="text-sm">Dinero en Cuenta</span>
+          </label>
         </div>
       </div>
 
@@ -44,17 +69,8 @@
             @click="rotarTarjeta('anterior')"
             class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-30"
           >
-            ←
+            <img src="/images/backComplete.png" alt="Siguiente" class="w-6 h-6 " />
           </button>
-
-           <!-- Tarjeta anterior -->
-           <div
-            v-if="tarjetas[tarjetaAnterior]"
-            class="absolute p-4 rounded-xl shadow-lg text-white bg-gradient-to-r from-gray-400 to-gray-300 opacity-50 transform scale-90 -translate-x-0 z-0"
-          >
-            <p class="text-sm">{{ tarjetas[tarjetaAnterior].nombre }}</p>
-            <p class="text-xl font-bold tracking-widest mt-2">{{ tarjetas[tarjetaAnterior].numero }}</p>
-          </div>
 
           <!-- Tarjeta seleccionada -->
           <div
@@ -64,21 +80,12 @@
             <p class="text-xl font-bold tracking-widest mt-2">{{ tarjetas[tarjetaSeleccionada].numero }}</p>
           </div>
 
-          <!-- Tarjeta siguiente -->
-          <div
-            v-if="tarjetas[tarjetaSiguiente]"
-            class="absolute p-4 rounded-xl shadow-lg text-white bg-gradient-to-r from-gray-300 to-gray-400 opacity-50 transform scale-90 translate-x-40 z-0"
-          >
-            <p class="text-sm">{{ tarjetas[tarjetaSiguiente].nombre }}</p>
-            <p class="text-xl font-bold tracking-widest mt-2">{{ tarjetas[tarjetaSiguiente].numero }}</p>
-          </div>
-
           <!-- Botón siguiente -->
           <button
             @click="rotarTarjeta('siguiente')"
             class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-20"
           >
-            →
+            <img src="/images/forward.png" alt="Siguiente" class="w-6 h-6 " />
           </button>
         </div>
       </div>
@@ -100,17 +107,19 @@
           type="text"
           placeholder="100,000"
           class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
+          :class="{ 'border-red-500': errorMonto }"
         />
+        <p v-if="errorMonto" class="text-red-500 text-sm mt-1">Ingresar monto a transferir</p>
       </div>
 
       <!-- Botones -->
       <div class="flex justify-between">
-        <button @click="$emit('volver')" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
+        <button @click="volver" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400">
           Cancelar
         </button>
         <button
-          class="bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700"
-          @click="mostrarPopup = true"
+          class="bg-[#5D8C39] text-white px-4 py-2 rounded-lg hover:bg-[#5D8C39]/80"
+          @click="validarMonto"
         >
           Transferir
         </button>
@@ -132,7 +141,7 @@
       :fecha="fechaActual"
       :orden="ordenGenerada"
       :metodo="metodo"
-      :destinatario="contacto.nombre"
+      :destinatario="contacto?.nombre || ''"
       :monto="parseFloat(monto)"
       :cargo="cargo"
       @volver="reiniciarFormulario"
@@ -143,23 +152,22 @@
 <script>
 import ConfirmacionPopup from './ConfirmacionPopup.vue';
 import ComprobanteTransferencia from './ComprobanteTransferencia.vue';
+import BotonRetroceder from '../BotonRetroceder.vue';
+import { contactStore } from '../tienda.js'; // Adjust path as needed
 
 export default {
   components: {
     ConfirmacionPopup,
     ComprobanteTransferencia,
-  },
-  props: {
-    contacto: Object,
+    BotonRetroceder,
   },
   data() {
     return {
-      metodo: 'tarjeta',
+      metodo: 'tarjeta', // Valor inicial del método de pago
       monto: '',
       mostrarPopup: false,
       mostrarComprobante: false,
-      activo: 'bg-white border border-gray-400 px-4 py-2 rounded-lg shadow',
-      inactivo: 'bg-gray-100 text-gray-500 px-4 py-2 rounded-lg',
+      errorMonto: false,
       cargo: 1.5, // Cargo fijo por transferencia
       tarjetas: [
         { nombre: 'Tarjeta de Juliana Márquez', numero: '•••• •••• •••• 9987' },
@@ -170,6 +178,10 @@ export default {
     };
   },
   computed: {
+    contacto() {
+      const contactoId = this.$route.params.contactoId;
+      return contactStore.getContactoById(contactoId);
+    },
     tarjetaAnterior() {
       return (this.tarjetaSeleccionada - 1 + this.tarjetas.length) % this.tarjetas.length;
     },
@@ -205,6 +217,18 @@ export default {
       this.monto = '';
       this.metodo = 'tarjeta';
       this.mostrarPopup = false;
+      this.$router.push('/transferir');
+    },
+    validarMonto() {
+      if (!this.monto.trim()) {
+        this.errorMonto = true;
+        return;
+      }
+      this.errorMonto = false;
+      this.mostrarPopup = true;
+    },
+    volver() {
+      this.$router.push('/transferir');
     },
   },
 };
