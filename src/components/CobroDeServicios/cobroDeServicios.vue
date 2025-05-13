@@ -71,32 +71,16 @@
                 </span>
               </td>
               <td class="p-3 text-center flex items-center justify-center space-x-2">
-                <a
-                  :href="link.url"
-                  target="_blank"
+                <button
                   class="text-blue-600 hover:underline font-medium"
                 >
                   Ver Link
-                </a>
+                </button>
                 <button
-                  @click="shareLink(link.url, link.title)"
-                  class="bg-[#5D8C39] hover:bg-[#4A7030] text-white p-1 rounded-full"
+                  class="bg-[#5D8C39] hover:bg-[#4A7030] text-white p-2 rounded-full"
                   title="Compartir Link"
                 >
-                  <svg
-                    class="w-5 h-5"
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                    xmlns="http://www.w3.org/2000/svg"
-                  >
-                    <path
-                      stroke-linecap="round"
-                      stroke-linejoin="round"
-                      stroke-width="2"
-                      d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"
-                    ></path>
-                  </svg>
+                  <img src="/images/share.png" alt="Compartir" class="w-5 h-5" />
                 </button>
               </td>
             </tr>
@@ -119,17 +103,6 @@
           <AddPaymentLinkForm @submit="handleAddLink" @cancel="showAddLinkModal = false" />
         </div>
       </div>
-
-      <!-- Toast Notification -->
-      <transition name="fade">
-        <div
-          v-if="showToast"
-          class="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center"
-        >
-          <span>{{ toastMessage }}</span>
-          <button @click="showToast = false" class="ml-4 text-white hover:text-gray-200">×</button>
-        </div>
-      </transition>
     </main>
   </div>
 </template>
@@ -146,13 +119,14 @@ const formatCurrency = (value) => {
 
 export default defineComponent({
   name: 'CobrosDashboard',
-  components: { BarraLateral, AddPaymentLinkForm },
+  components: { 
+    BarraLateral, 
+    AddPaymentLinkForm 
+  },
   setup() {
-    const activeButton = ref('cobros');
+    const activeButton = ref('CobroDeServicios');
     const searchQuery = ref('');
     const showAddLinkModal = ref(false);
-    const showToast = ref(false);
-    const toastMessage = ref('');
     const sortKey = ref('');
     const sortOrder = ref('asc');
 
@@ -164,7 +138,6 @@ export default defineComponent({
         price: 50000,
         creationDate: '15 Ene 2025',
         status: 'Pagado',
-        url: 'https://yourapp.com/pay/1',
       },
       {
         id: 2,
@@ -173,7 +146,6 @@ export default defineComponent({
         price: 25000,
         creationDate: '20 Feb 2025',
         status: 'Pendiente',
-        url: 'https://yourapp.com/pay/2',
       },
       {
         id: 3,
@@ -182,7 +154,6 @@ export default defineComponent({
         price: 100000,
         creationDate: '10 Mar 2025',
         status: 'Expirado',
-        url: 'https://yourapp.com/pay/3',
       },
       {
         id: 4,
@@ -191,7 +162,6 @@ export default defineComponent({
         price: 35000,
         creationDate: '05 Abr 2025',
         status: 'Pagado',
-        url: 'https://yourapp.com/pay/4',
       },
     ]);
 
@@ -199,45 +169,13 @@ export default defineComponent({
       const newId = Math.max(...paymentLinks.value.map(l => l.id), 0) + 1;
       const date = new Date();
       const formattedDate = date.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
-      const url = `https://yourapp.com/pay/${newId}`;
       paymentLinks.value.push({
         id: newId,
         ...newLink,
         creationDate: formattedDate,
         status: 'Pendiente',
-        url,
       });
       showAddLinkModal.value = false;
-      showToast.value = true;
-      toastMessage.value = 'Link de pago creado con éxito!';
-      setTimeout(() => {
-        showToast.value = false;
-      }, 3000);
-    };
-
-    const shareLink = async (url, title) => {
-      if (navigator.share) {
-        try {
-          await navigator.share({
-            title: `Pagar ${title}`,
-            text: `Realiza el pago por ${title} aquí:`,
-            url,
-          });
-        } catch (err) {
-          console.error('Error al compartir:', err);
-        }
-      } else {
-        try {
-          await navigator.clipboard.writeText(url);
-          showToast.value = true;
-          toastMessage.value = 'Link copiado al portapapeles!';
-          setTimeout(() => {
-            showToast.value = false;
-          }, 3000);
-        } catch (err) {
-          console.error('Error al copiar al portapapeles:', err);
-        }
-      }
     };
 
     const totalCollected = computed(() => {
@@ -299,26 +237,8 @@ export default defineComponent({
       sortBy,
       formatCurrency,
       showAddLinkModal,
-      showToast,
-      toastMessage,
       handleAddLink,
-      shareLink,
     };
   },
 });
 </script>
-
-<style scoped>
-.cursor-pointer {
-  cursor: pointer;
-}
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

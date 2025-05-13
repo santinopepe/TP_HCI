@@ -6,10 +6,11 @@
         v-model="form.title"
         type="text"
         id="title"
-        required
         class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
         placeholder="Ej: Consultoría de Negocios"
+        :class="{ 'border-red-500': errors.title }"
       />
+      <p v-if="errors.title" class="text-red-500 text-sm mt-1">{{ errors.title }}</p>
     </div>
 
     <div>
@@ -21,8 +22,9 @@
         maxlength="200"
         class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
         placeholder="Ej: Sesión de 2 horas sobre estrategia empresarial"
+        :class="{ 'border-red-500': errors.description }"
       ></textarea>
-      <p class="text-sm text-gray-500 mt-1">{{ form.description.length }} / 200 caracteres</p>
+      <p v-if="errors.description" class="text-red-500 text-sm mt-1">{{ errors.description }}</p>
     </div>
 
     <div>
@@ -31,27 +33,28 @@
         v-model.number="form.price"
         type="number"
         id="price"
-        required
         min="0"
         step="0.01"
         class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
         placeholder="Ej: 50000.00"
+        :class="{ 'border-red-500': errors.price }"
       />
+      <p v-if="errors.price" class="text-red-500 text-sm mt-1">{{ errors.price }}</p>
     </div>
 
-    <div class="flex justify-end space-x-4">
+    <div class="flex justify-between items-center">
+      <button
+        type="submit"
+        class="bg-[#5D8C39] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#5D8C39]/80 transition"
+      >
+        Crear Link
+      </button>
       <button
         type="button"
         @click="$emit('cancel')"
-        class="text-gray-600 hover:text-gray-800 font-medium py-2 px-4"
+        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-400 transition"
       >
         Cancelar
-      </button>
-      <button
-        type="submit"
-        class="bg-[#5D8C39] hover:bg-[#4A7030] text-white font-bold py-2 px-4 rounded-lg"
-      >
-        Crear Link
       </button>
     </div>
   </form>
@@ -70,20 +73,58 @@ export default defineComponent({
       price: null,
     });
 
+    const errors = ref({
+      title: '',
+      description: '',
+      price: '',
+    });
+
+    const validateForm = () => {
+      let isValid = true;
+
+      // Validar título
+      if (!form.value.title.trim()) {
+        errors.value.title = 'El título no puede estar vacío.';
+        isValid = false;
+      } else {
+        errors.value.title = '';
+      }
+
+      // Validar descripción (opcional, pero puedes agregar validaciones si es necesario)
+      if (form.value.description.length > 200) {
+        errors.value.description = 'La descripción no puede exceder los 200 caracteres.';
+        isValid = false;
+      } else {
+        errors.value.description = '';
+      }
+
+      // Validar monto
+      if (!form.value.price || form.value.price <= 0) {
+        errors.value.price = 'El monto debe ser mayor a 0.';
+        isValid = false;
+      } else {
+        errors.value.price = '';
+      }
+
+      return isValid;
+    };
+
     const handleSubmit = () => {
-      emit('submit', { ...form.value });
-      form.value = {
-        title: '',
-        description: '',
-        price: null,
-      };
+      if (validateForm()) {
+        emit('submit', { ...form.value });
+        form.value = {
+          title: '',
+          description: '',
+          price: null,
+        };
+      }
     };
 
     return {
       form,
+      errors,
       handleSubmit,
     };
   },
 });
 </script>
-

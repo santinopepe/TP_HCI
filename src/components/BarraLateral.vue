@@ -73,21 +73,20 @@
       <a
         href="#"
         class="flex items-center gap-2 p-2 rounded"
+        :class="{'bg-[#3C4F2E]': activeButton === 'CobroDeServicios', 'hover:bg-[#3C4F2E]/50': activeButton !== 'CobroDeServicios'}"
+        @click.prevent="goToCobroDeServicios"
+      >
+        <img src="/images/cobro.png" alt="Cobro de Servicios" class="w-6 h-6" />
+        <span>Cobro de Servicios</span>
+      </a>
+      <a
+        href="#"
+        class="flex items-center gap-2 p-2 rounded"
         :class="{'bg-[#3C4F2E]': activeButton === 'notificaciones', 'hover:bg-[#3C4F2E]/50': activeButton !== 'notificaciones'}"
         @click.prevent="goToNotifiacaciones"
       >
         <img src="/images/Notificaciones.png" alt="Notificaciones" class="w-6 h-6" />
         <span>Notificaciones</span>
-      </a>
-
-      <a
-        href="#"
-        class="flex items-center gap-2 p-2 rounded"
-        :class="{'bg-[#3C4F2E]': activeButton === 'cobro', 'hover:bg-[#3C4F2E]/50': activeButton !== 'cobro'}"
-        @click.prevent="goToCobroDeServicios"
-      >
-        <img src="/images/cobro.png" alt="Notificaciones" class="w-6 h-6" />
-        <span>Cobro</span>
       </a>
     </nav>
     <div class="mt-auto flex justify-center">
@@ -144,7 +143,7 @@ export default {
       if (this.$router) this.$router.push('/notificaciones');
     },
     goToCobroDeServicios() {
-      if (this.$router) this.$router.push('/cobroDeServicios');
+      if (this.$router) this.$router.push('/cobrodeservicios');
     },
   },
 };
