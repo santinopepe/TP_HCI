@@ -28,7 +28,9 @@
         <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white">
           <h2 class="text-lg font-semibold">Activo Estrella</h2>
           <p v-if="topPerformingAsset" class="text-xl font-bold mt-2">
-            {{ topPerformingAsset.name }} <span>({{ formatPercentage(topPerformingAsset.performance) }})</span>
+            {{ topPerformingAsset.name }} 
+            <br />
+            <span>({{ formatPercentage(topPerformingAsset.performance) }})</span>
           </p>
           <p v-else class="text-xl font-bold mt-2">-</p>
         </div>
