@@ -76,7 +76,7 @@ export default {
     seleccionarContacto(contacto) {
       this.$router.push({
         name: 'TransferenciaFormulario',
-        params: { contactoId: contacto.id },
+        params: { contactoNombre: encodeURIComponent(contacto.nombre) },
       });
     },
     mostrarFormularioNuevoContacto() {

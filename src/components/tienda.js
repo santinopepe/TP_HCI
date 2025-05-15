@@ -16,7 +16,7 @@ export const contactStore = reactive({
     },
     {
       id: 3,
-      nombre: 'Lucía Torres',
+      nombre: 'Lorena Torres',
       cbu: '00000998887776665544',
       avatar: 'https://randomuser.me/api/portraits/women/50.jpg',
     },

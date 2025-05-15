@@ -161,8 +161,8 @@ export default {
   },
   computed: {
     contacto() {
-      const contactoId = this.$route.params.contactoId;
-      return contactStore.getContactoById(contactoId);
+      const nombreParam = decodeURIComponent(this.$route.params.contactoNombre);
+      return contactStore.contactos.find(c => c.nombre === nombreParam);
     },
     tarjetaAnterior() {
       return (this.tarjetaSeleccionada - 1 + this.tarjetas.length) % this.tarjetas.length;
