@@ -8,6 +8,12 @@
         <!-- Saldo y Botón Recibir Dinero -->
         <div class="w-[calc(100%+8rem)] overflow-hidden">
           <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center">
+            <router-link
+              to="/cvu"
+              class="absolute top-4 right-4 bg-white text-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-gray-100 transition-colors text-sm"
+            >
+              Tu CVU
+            </router-link>
             <img src="/images/logo.png" alt="Logo SIM SIM" class="w-16 h-16 mr-4" />
             <div class="flex-1">
               <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
