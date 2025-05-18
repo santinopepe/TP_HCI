@@ -41,26 +41,25 @@
           <div class="flex justify-between items-center mb-4">
             <h2 class="text-lg font-semibold text-gray-700">Mis Inversiones</h2>
           </div>
-          <table class="w-full text-left min-w-[900px]">
+          <table class="w-full text-left min-w-[600px]">
             <thead>
               <tr class="border-b border-gray-200">
-                <th class="p-3 font-semibold text-gray-600 cursor-pointer hover:bg-gray-50" @click="sortBy('name')">Activo ↓↑</th>
-                <th class="p-3 font-semibold text-gray-600">Tipo</th>
+                <th class="p-3 font-semibold text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors" @click="sortBy('name')">Activo ↓↑</th>
+                <!-- Columna Tipo eliminada -->
                 <th class="p-3 font-semibold text-gray-600 text-right">Cantidad</th>
                 <th class="p-3 font-semibold text-gray-600 text-right">Precio Compra</th>
-                <th class="p-3 font-semibold text-gray-600 text-right cursor-pointer hover:bg-gray-50" @click="sortBy('currentValueTotal')">Valor Actual ↓↑</th>
+                <th class="p-3 font-semibold text-gray-600 text-right cursor-pointer hover:bg-gray-50 transition-colors" @click="sortBy('currentValueTotal')">Valor Actual ↓↑</th>
                 <th class="p-3 font-semibold text-gray-600 text-right">G/P No Realizada</th>
-                <th class="p-3 font-semibold text-gray-600 text-right cursor-pointer hover:bg-gray-50" @click="sortBy('performance')">Rendimiento (%) ↓↑</th>
-                <th class="p-3 font-semibold text-gray-600">Fecha Adq.</th>
+                <th class="p-3 font-semibold text-gray-600 text-right cursor-pointer hover:bg-gray-50 transition-colors" @click="sortBy('performance')">Rendimiento (%) ↓↑</th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="sortedInvestments.length === 0">
-                <td colspan="8" class="p-3 text-center text-gray-500">No se encontraron inversiones.</td>
+                <td colspan="6" class="p-3 text-center text-gray-500">No se encontraron inversiones.</td>
               </tr>
-              <tr v-for="investment in sortedInvestments" :key="investment.id" class="border-b border-gray-100 hover:bg-gray-50">
+              <tr v-for="investment in sortedInvestments" :key="investment.id" class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                 <td class="p-3">{{ investment.name }}</td>
-                <td class="p-3">{{ investment.type }}</td>
+                <!-- Celda Tipo eliminada -->
                 <td class="p-3 text-right">{{ investment.quantity.toLocaleString() }}</td>
                 <td class="p-3 text-right">{{ formatCurrency(investment.purchasePricePerUnit) }}</td>
                 <td class="p-3 font-medium text-right">{{ formatCurrency(investment.currentValueTotal) }}</td>
@@ -69,13 +68,12 @@
                 </td>
                 <td
                   :class="[
-                    'p-3 font-medium text-right',
+                    'p-3 font-medium text-right transition-colors',
                     investment.performance >= 0 ? 'text-green-500' : 'text-red-500'
                   ]"
                 >
                   {{ formatPercentage(investment.performance) }}
                 </td>
-                <td class="p-3 text-sm text-gray-500">{{ investment.acquisitionDate }}</td>
               </tr>
             </tbody>
           </table>
@@ -102,13 +100,18 @@
         </div>
       </div>
 
-      <transition name="fade">
+      <transition
+        enter-active-class="transition-opacity duration-500"
+        leave-active-class="transition-opacity duration-500"
+        enter-from-class="opacity-0"
+        leave-to-class="opacity-0"
+      >
         <div
           v-if="showToast"
           class="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center"
         >
           <span>Inversión agregada con éxito!</span>
-          <button @click="showToast = false" class="ml-4 text-white hover:text-gray-200">×</button>
+          <button @click="showToast = false" class="ml-4 text-white hover:text-gray-200 text-xl leading-none">×</button>
         </div>
       </transition>
     </main>
@@ -147,13 +150,14 @@ export default defineComponent({
     const sortKey = ref('');
     const sortOrder = ref('asc');
 
+    // Eliminamos la propiedad 'type' de cada inversión
     const investments = ref([
-      { id: 1, name: 'Acciones Apple (AAPL)', type: 'Acciones EEUU', quantity: 50, purchasePricePerUnit: 150.00, currentValuePerUnit: 175.50, acquisitionDate: '15 Ene 2023' },
-      { id: 2, name: 'Bonos Corp. (MGLO)', type: 'Bonos Corporativos', quantity: 100, purchasePricePerUnit: 980.00, currentValuePerUnit: 1020.00, acquisitionDate: '20 Feb 2023' },
-      { id: 3, name: 'Fondo Común "Beta Latam"', type: 'FCI Renta Variable', quantity: 250, purchasePricePerUnit: 100.00, currentValuePerUnit: 95.00, acquisitionDate: '10 Abr 2023' },
-      { id: 4, name: 'Ethereum (ETH)', type: 'Criptomonedas', quantity: 5, purchasePricePerUnit: 1800.00, currentValuePerUnit: 2100.00, acquisitionDate: '20 May 2023' },
-      { id: 5, name: 'ETF S&P 500 (SPY)', type: 'ETFs', quantity: 30, purchasePricePerUnit: 400.00, currentValuePerUnit: 450.00, acquisitionDate: '05 Jun 2023' },
-      { id: 6, name: 'Plazo Fijo Banco Z', type: 'Renta Fija', quantity: 1, purchasePricePerUnit: 50000.00, currentValuePerUnit: 52500.00, acquisitionDate: '01 Jul 2023' },
+      { id: 1, name: 'Acciones Apple (AAPL)', quantity: 50, purchasePricePerUnit: 150.00, currentValuePerUnit: 175.50, acquisitionDate: '15 Ene 2023' },
+      { id: 2, name: 'Bonos Corp. (MGLO)', quantity: 100, purchasePricePerUnit: 980.00, currentValuePerUnit: 1020.00, acquisitionDate: '20 Feb 2023' },
+      { id: 3, name: 'Fondo Común "Beta Latam"', quantity: 250, purchasePricePerUnit: 100.00, currentValuePerUnit: 95.00, acquisitionDate: '10 Abr 2023' },
+      { id: 4, name: 'Ethereum (ETH)', quantity: 5, purchasePricePerUnit: 1800.00, currentValuePerUnit: 2100.00, acquisitionDate: '20 May 2023' },
+      { id: 5, name: 'ETF S&P 500 (SPY)', quantity: 30, purchasePricePerUnit: 400.00, currentValuePerUnit: 450.00, acquisitionDate: '05 Jun 2023' },
+      { id: 6, name: 'Plazo Fijo Banco Z', quantity: 1, purchasePricePerUnit: 50000.00, currentValuePerUnit: 52500.00, acquisitionDate: '01 Jul 2023' },
     ]);
 
     const handleAddInvestment = (newInvestment) => {
@@ -205,14 +209,14 @@ export default defineComponent({
       return [...processedInvestments.value].sort((a, b) => b.performance - a.performance)[0];
     });
 
+    // Eliminamos el filtro por type
     const filteredInvestments = computed(() => {
       if (!searchQuery.value) {
         return processedInvestments.value;
       }
       const lowerQuery = searchQuery.value.toLowerCase();
       return processedInvestments.value.filter(investment =>
-        investment.name.toLowerCase().includes(lowerQuery) ||
-        investment.type.toLowerCase().includes(lowerQuery)
+        investment.name.toLowerCase().includes(lowerQuery)
       );
     });
 
@@ -240,10 +244,12 @@ export default defineComponent({
       });
     });
 
+    // Eliminamos el gráfico de distribución por tipo
     const dynamicChartData = computed(() => {
+      // Ahora solo muestra la distribución por nombre de activo
       const distribution = {};
       processedInvestments.value.forEach(inv => {
-        distribution[inv.type] = (distribution[inv.type] || 0) + inv.currentValueTotal;
+        distribution[inv.name] = inv.currentValueTotal;
       });
       const labels = Object.keys(distribution);
       const data = Object.values(distribution);
@@ -268,7 +274,7 @@ export default defineComponent({
         legend: { position: 'bottom' },
         title: {
           display: true,
-          text: 'Distribución del Portafolio por Tipo de Activo',
+          text: 'Distribución del Portafolio por Activo',
           padding: { bottom: 20 },
           color: '#374151',
           font: { size: 18, weight: '600' },
@@ -309,19 +315,3 @@ export default defineComponent({
   },
 });
 </script>
-
-<style scoped>
-.cursor-pointer {
-  cursor: pointer;
-}
-
-/* Toast transition */
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.5s;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>
