@@ -1,6 +1,10 @@
 <template>
   <div class="max-w-md mx-auto mt-20 bg-white p-6 rounded-xl shadow-2xl">
     <BotonRetroceder />
+    <!-- Indicador de pasos -->
+    <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
+      Paso 2 de 4
+    </div>
     <!-- Datos del contacto -->
     <div v-if="contacto" class="flex items-center gap-4 mb-6">
       <img :src="contacto.avatar" alt="Avatar" class="w-12 h-12 rounded-full" />
@@ -217,6 +221,9 @@ export default {
         params: { destinatario: encodeURIComponent(this.contacto?.nombre || 'destinatario') },
         query: {
           monto: this.monto,
+          metodo: this.metodo,
+          fecha: this.fechaActual,
+          orden: this.ordenGenerada,
         },
       });
     },

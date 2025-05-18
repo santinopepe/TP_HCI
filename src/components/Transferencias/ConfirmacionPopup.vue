@@ -1,6 +1,9 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-    <div class="bg-gradient-to-b from-pink-50 to-white p-6 rounded-3xl max-w-sm w-full shadow-xl text-center font-sans">
+    <div class="bg-gradient-to-b from-pink-50 to-white p-6 rounded-3xl max-w-sm w-full shadow-xl text-center font-sans relative">
+      <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
+        Paso 3 de 4
+      </div>
       <!-- Encabezado -->
       <div class="text-left mb-4 relative">
         <h2 class="text-center font-semibold text-gray-800 text-lg">Confirmación</h2>

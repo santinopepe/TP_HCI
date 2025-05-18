@@ -1,6 +1,10 @@
 <template>
   <div class="flex flex-col items-center min-h-screen bg-gradient-to-b from-pink-50 to-white p-32 font-sans">
     <div class="max-w-sm w-full space-y-6">
+      <!-- Indicador de pasos -->
+      <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
+        Paso 4 de 4
+      </div>
       <!-- Bloque 1: Mensaje de éxito -->
       <div class="bg-white rounded-3xl p-6 shadow-md text-center">
         <h2 class="text-2xl font-semibold text-gray-800">
@@ -42,30 +46,24 @@
 </template>
 
 <script>
-import { contactStore } from '../tienda.js';
-
 export default {
   name: 'ComprobanteTransferencia',
   computed: {
-    transferencia() {
-      const transferId = this.$route.params.transferId;
-      return contactStore.getTransferenciaById(transferId);
-    },
     destinatario() {
       return decodeURIComponent(this.$route.params.destinatario || '');
     },
-      monto() {
-        return Number(this.$route.query.monto) || 0;
-      },
-      metodo() {
-        return this.$route.query.metodo || '';
-      },
-      fecha() {
-        return this.$route.query.fecha || '';
-      },
-      orden() {
-        return this.$route.query.orden || '';
-      },
+    monto() {
+      return Number(this.$route.query.monto) || 0;
+    },
+    metodo() {
+      return this.$route.query.metodo || '';
+    },
+    fecha() {
+      return this.$route.query.fecha || '';
+    },
+    orden() {
+      return this.$route.query.orden || '';
+    },
   },
   methods: {
     hacerOtraTransferencia() {
