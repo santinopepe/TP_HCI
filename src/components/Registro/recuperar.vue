@@ -12,8 +12,9 @@
             v-model="emailOrDni"
             placeholder="Ingresa tu Email o DNI"
             class="w-full p-3 border border-gray-300 rounded-md text-base"
-            required
+            :class="{ 'border-red-500': errorEmailOrDni }"
           />
+          <p v-if="errorEmailOrDni" class="text-red-500 text-sm mt-1">{{ errorEmailOrDni }}</p>
         </div>
         <button
           type="submit"
@@ -35,11 +36,17 @@ export default {
   data() {
     return {
       emailOrDni: "",
+      errorEmailOrDni: ""
     };
   },
   methods: {
     handleRecoverPassword() {
-      console.log("Enviando solicitud para:", this.emailOrDni);
+      if (!this.emailOrDni) {
+        this.errorEmailOrDni = "Por favor, ingresa tu Email o DNI.";
+        return;
+      }
+      this.errorEmailOrDni = "";
+      // Aquí continúa el proceso de recuperación...
     },
   },
 };

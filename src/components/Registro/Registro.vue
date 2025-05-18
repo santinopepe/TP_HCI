@@ -1,8 +1,8 @@
 <template>
   <div class="flex justify-center items-center h-screen bg-[#d3e4cd] bg-[url('/images/fondo.png')] bg-cover bg-center bg-no-repeat">
-    <div class="bg-white p-8 rounded-2xl shadow-md w-full max-w-md text-center">
-      <h2 class="text-2xl text-[#2e4b3f] mb-4">Crear tu Cuenta</h2>
-      <p class="text-gray-600 mb-6">Completa los datos para registrarte en SIM SIM.</p>
+    <div class="bg-white p-6 rounded-2xl shadow-md w-full max-w-md text-center">
+      <h2 class="text-2xl text-[#2e4b3f] mb-1">Crear tu Cuenta</h2>
+      <p class="text-gray-600 mb-4">Completa los datos para registrarte en SIM SIM.</p>
       <form @submit.prevent="register">
         <div class="mb-6 text-left">
           <label for="name" class="block mb-2 text-gray-800">Nombre</label>
@@ -12,8 +12,9 @@
             v-model="name"
             placeholder="Ingresa tu nombre"
             class="w-full p-3 border border-gray-300 rounded-md text-base"
-            required
+            :class="{ 'border-red-500': errors.name }"
           />
+          <p v-if="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
         </div>
         <div class="mb-6 text-left">
           <label for="email" class="block mb-2 text-gray-800">Correo Electrónico</label>
@@ -23,8 +24,9 @@
             v-model="email"
             placeholder="Ingresa tu correo"
             class="w-full p-3 border border-gray-300 rounded-md text-base"
-            required
+            :class="{ 'border-red-500': errors.email }"
           />
+          <p v-if="errors.email" class="text-red-500 text-sm mt-1">{{ errors.email }}</p>
         </div>
         <div class="mb-6 text-left">
           <label for="dni" class="block mb-2 text-gray-800">DNI</label>
@@ -34,8 +36,9 @@
             v-model="dni"
             placeholder="Ingresa tu DNI"
             class="w-full p-3 border border-gray-300 rounded-md text-base"
-            required
+            :class="{ 'border-red-500': errors.dni }"
           />
+          <p v-if="errors.dni" class="text-red-500 text-sm mt-1">{{ errors.dni }}</p>
         </div>
         <div class="mb-6 text-left">
           <label for="phone" class="block mb-2 text-gray-800">Teléfono</label>
@@ -45,8 +48,9 @@
             v-model="phone"
             placeholder="Ingresa tu teléfono"
             class="w-full p-3 border border-gray-300 rounded-md text-base"
-            required
+            :class="{ 'border-red-500': errors.phone }"
           />
+          <p v-if="errors.phone" class="text-red-500 text-sm mt-1">{{ errors.phone }}</p>
         </div>
         <button
           type="submit"
@@ -54,7 +58,6 @@
         >
           Registrarse
         </button>
-        <p v-if="error" class="text-red-500 text-sm mt-4">{{ error }}</p>
       </form>
       <p class="mt-4 text-sm">
         <router-link to="/" class="text-[#2e4b3f] no-underline hover:underline">Volver al Inicio de Sesión</router-link>
@@ -72,17 +75,45 @@ export default {
       email: '',
       dni: '',
       phone: '',
-      error: ''
+      errors: {
+        name: '',
+        email: '',
+        dni: '',
+        phone: ''
+      }
     };
   },
   methods: {
     register() {
-      console.log('Registrando:', { name: this.name, email: this.email, dni: this.dni, phone: this.phone });
-      if (!this.name || !this.email || !this.dni || !this.phone) {
-        this.error = 'Por favor, completa todos los campos.';
-        return;
+      let valid = true;
+      // Validación campo por campo
+      if (!this.name) {
+        this.errors.name = 'El nombre es obligatorio.';
+        valid = false;
+      } else {
+        this.errors.name = '';
       }
-      this.error = '';
+      if (!this.email) {
+        this.errors.email = 'El correo es obligatorio.';
+        valid = false;
+      } else {
+        this.errors.email = '';
+      }
+      if (!this.dni) {
+        this.errors.dni = 'El DNI es obligatorio.';
+        valid = false;
+      } else {
+        this.errors.dni = '';
+      }
+      if (!this.phone) {
+        this.errors.phone = 'El teléfono es obligatorio.';
+        valid = false;
+      } else {
+        this.errors.phone = '';
+      }
+      if (!valid) return;
+      // Si todo está bien, puedes continuar con el registro
+      // ...
     }
   }
 };

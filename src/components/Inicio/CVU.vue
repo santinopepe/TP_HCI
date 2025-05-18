@@ -3,7 +3,7 @@
     <BotonRetroceder/>
     <main class="flex-1 flex flex-col justify-center items-center py-8 px-2 overflow-y-auto">
       <div class="w-full max-w-2xl">
-        <p class="mb-6 text-gray-700 text-base">
+        <p class="mb-5 text-xl font-bold text-simsim-green-dark">
           Copia tu cvu o alias para ingresar o transferir dinero desde otra cuenta.
         </p>
 
@@ -20,8 +20,8 @@
         <!-- CVU Card -->
         <div class="bg-white rounded-xl shadow-sm p-6 mb-4 flex items-center justify-between">
           <div>
-            <div class="text-gray-400 text-lg font-semibold">CVU</div>
-            <div class="text-gray-800 text-xl font-medium mt-1 select-all">{{ cvu }}</div>
+            <div class="text-2xl font-semibold text-simsim-green-dark">CVU</div>
+            <div class="text-gray-800 text-lg font-medium mt-1 select-all">{{ cvu }}</div>
           </div>
           <button @click="copiarCVU" class="transition-colors text-[#5D8C39] hover:text-[#4A6F2E]">
             <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -34,8 +34,8 @@
         <!-- Alias Card -->
         <div class="bg-white rounded-xl shadow-sm p-6 mb-0 flex items-center justify-between">
           <div>
-            <div class="text-gray-400 text-lg font-semibold">Alias</div>
-            <div v-if="!editandoAlias" class="text-gray-800 text-xl font-medium mt-1 select-all">{{ alias }}</div>
+            <div class="text-2xl font-semibold text-simsim-green-dark">Alias</div>
+            <div v-if="!editandoAlias" class="text-gray-800 text-lg font-medium mt-1 select-all">{{ alias }}</div>
             <div v-else class="mt-1 flex flex-col">
               <input
                 v-model="nuevoAlias"

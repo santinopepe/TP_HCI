@@ -9,10 +9,11 @@
             v-model="form.name"
             type="text"
             id="name"
-            required
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             placeholder="Ej: Acciones Apple (AAPL)"
+            :class="{ 'border-red-500': errors.name }"
           />
+          <p v-if="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
         </div>
 
         <div>
@@ -20,8 +21,8 @@
           <select
             v-model="form.type"
             id="type"
-            required
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
+            :class="{ 'border-red-500': errors.type }"
           >
             <option value="" disabled>Selecciona un tipo</option>
             <option value="Acciones EEUU">Acciones EEUU</option>
@@ -31,6 +32,7 @@
             <option value="ETFs">ETFs</option>
             <option value="Renta Fija">Renta Fija</option>
           </select>
+          <p v-if="errors.type" class="text-red-500 text-sm mt-1">{{ errors.type }}</p>
         </div>
 
         <div>
@@ -39,11 +41,12 @@
             v-model.number="form.quantity"
             type="number"
             id="quantity"
-            required
             min="1"
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             placeholder="Ej: 50"
+            :class="{ 'border-red-500': errors.quantity }"
           />
+          <p v-if="errors.quantity" class="text-red-500 text-sm mt-1">{{ errors.quantity }}</p>
         </div>
 
         <div>
@@ -52,12 +55,13 @@
             v-model.number="form.purchasePricePerUnit"
             type="number"
             id="purchasePricePerUnit"
-            required
             min="0"
             step="0.01"
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             placeholder="Ej: 150.00"
+            :class="{ 'border-red-500': errors.purchasePricePerUnit }"
           />
+          <p v-if="errors.purchasePricePerUnit" class="text-red-500 text-sm mt-1">{{ errors.purchasePricePerUnit }}</p>
         </div>
 
         <div>
@@ -66,9 +70,10 @@
             v-model="form.acquisitionDate"
             type="date"
             id="acquisitionDate"
-            required
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
+            :class="{ 'border-red-500': errors.acquisitionDate }"
           />
+          <p v-if="errors.acquisitionDate" class="text-red-500 text-sm mt-1">{{ errors.acquisitionDate }}</p>
         </div>
 
         <div class="mt-4 flex justify-between">
@@ -106,21 +111,78 @@ export default defineComponent({
       acquisitionDate: '',
     });
 
+    const errors = ref({
+      name: '',
+      type: '',
+      quantity: '',
+      purchasePricePerUnit: '',
+      acquisitionDate: '',
+    });
+
+    const validateForm = () => {
+      let isValid = true;
+
+      if (!form.value.name.trim()) {
+        errors.value.name = 'El nombre del activo es obligatorio.';
+        isValid = false;
+      } else {
+        errors.value.name = '';
+      }
+
+      if (!form.value.type) {
+        errors.value.type = 'Selecciona un tipo de activo.';
+        isValid = false;
+      } else {
+        errors.value.type = '';
+      }
+
+      if (!form.value.quantity || form.value.quantity <= 0) {
+        errors.value.quantity = 'La cantidad debe ser mayor a 0.';
+        isValid = false;
+      } else {
+        errors.value.quantity = '';
+      }
+
+      if (!form.value.purchasePricePerUnit || form.value.purchasePricePerUnit < 0) {
+        errors.value.purchasePricePerUnit = 'El precio debe ser mayor o igual a 0.';
+        isValid = false;
+      } else {
+        errors.value.purchasePricePerUnit = '';
+      }
+
+      if (!form.value.acquisitionDate) {
+        errors.value.acquisitionDate = 'La fecha de adquisición es obligatoria.';
+        isValid = false;
+      } else {
+        errors.value.acquisitionDate = '';
+      }
+
+      return isValid;
+    };
+
     const handleSubmit = () => {
-      // Emit the form data to the parent component
-      emit('submit', { ...form.value });
-      // Reset form after submission
-      form.value = {
-        name: '',
-        type: '',
-        quantity: null,
-        purchasePricePerUnit: null,
-        acquisitionDate: '',
-      };
+      if (validateForm()) {
+        emit('submit', { ...form.value });
+        form.value = {
+          name: '',
+          type: '',
+          quantity: null,
+          purchasePricePerUnit: null,
+          acquisitionDate: '',
+        };
+        errors.value = {
+          name: '',
+          type: '',
+          quantity: '',
+          purchasePricePerUnit: '',
+          acquisitionDate: '',
+        };
+      }
     };
 
     return {
       form,
+      errors,
       handleSubmit,
     };
   },

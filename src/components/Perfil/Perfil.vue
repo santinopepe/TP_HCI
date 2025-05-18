@@ -1,6 +1,9 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
-    <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
+    <BarraLateral
+      :active-button="activeButton"
+      @update:activeButton="activeButton = $event"
+    />
 
     <!-- Contenedor principal centrado -->
     <main class="flex-1 bg-[#FAFAFA] flex flex-col items-center justify-center">
@@ -35,26 +38,40 @@
                 @change="handleFileChange"
               />
             </div>
-            <h2 class="text-2xl font-bold text-simsim-green-dark mt-4">{{ user.name }}</h2>
+            <h2 class="text-2xl font-bold text-simsim-green-dark mt-4">
+              {{ user.name }}
+            </h2>
           </div>
 
           <!-- Datos del perfil -->
           <div class="space-y-6 text-left">
             <div>
-              <p class="text-sm font-semibold text-simsim-green-dark">N° de Documento</p>
-              <p class="text-lg text-gray-700 font-bold border-b pb-2">{{ user.accountNumber }}</p>
+              <p class="text-sm font-semibold text-simsim-green-dark">
+                N° de Documento
+              </p>
+              <p class="text-lg text-gray-700 font-bold border-b pb-2">
+                {{ user.accountNumber }}
+              </p>
             </div>
             <div>
               <p class="text-sm font-semibold text-simsim-green-dark">Email</p>
-              <p class="text-lg text-gray-700 font-bold border-b pb-2">{{ user.email }}</p>
+              <p class="text-lg text-gray-700 font-bold border-b pb-2">
+                {{ user.email }}
+              </p>
             </div>
             <div>
-              <p class="text-sm font-semibold text-simsim-green-dark">Número telefónico</p>
-              <p class="text-lg text-gray-700 font-bold border-b pb-2">{{ user.phone }}</p>
+              <p class="text-sm font-semibold text-simsim-green-dark">
+                Número telefónico
+              </p>
+              <p class="text-lg text-gray-700 font-bold border-b pb-2">
+                {{ user.phone }}
+              </p>
             </div>
             <div>
               <p class="text-sm font-semibold text-simsim-green-dark">Alias</p>
-              <p class="text-lg text-gray-700 font-bold border-b pb-2">{{ user.alias }}</p>
+              <p class="text-lg text-gray-700 font-bold border-b pb-2">
+                {{ user.alias }}
+              </p>
             </div>
             <div>
               <p class="text-sm font-semibold text-simsim-green-dark">Género</p>
@@ -78,26 +95,26 @@
 </template>
 
 <script>
-import BarraLateral from '../BarraLateral.vue';
+import BarraLateral from "../BarraLateral.vue";
 
 export default {
-  name: 'Perfil',
+  name: "Perfil",
   components: {
     BarraLateral,
   },
   data() {
     return {
-      activeButton: 'perfil',
+      activeButton: "perfil",
       user: {
-        cvu: '0023481928201930457639',
-        name: 'Juliana Márquez',
-        accountNumber: '44.887.744',
-        email: 'jmarquez01@gmail.com',
-        phone: '+54 9 11 5325-6201',
-        alias: 'jmarquez01',
-        gender: 'Mujer',
+        cvu: "0023481928201930457639",
+        name: "Juliana Márquez",
+        accountNumber: "44.887.744",
+        email: "jmarquez01@gmail.com",
+        phone: "+54 9 11 5325-6201",
+        alias: "jmarquez01",
+        gender: "Mujer",
       },
-      profileImage: '/images/mujer.png', // Imagen de perfil inicial
+      profileImage: "/images/mujer.png", // Imagen de perfil inicial
     };
   },
   methods: {
@@ -105,7 +122,7 @@ export default {
       this.activeButton = button;
     },
     goToChangePassword(button) {
-      this.$router.push('/cambiarcontraseña');
+      this.$router.push("/cambiarcontraseña");
       this.activeButton = button;
     },
     triggerFileInput() {
@@ -118,7 +135,7 @@ export default {
         reader.onload = (e) => {
           this.profileImage = e.target.result;
         };
-        reader.readAsDataURL(file);
+        reader.readAsDataURL(fi);
       }
     },
   },
