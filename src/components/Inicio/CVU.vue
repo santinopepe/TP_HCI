@@ -1,5 +1,6 @@
 <template>
   <div class="flex h-screen font-sans bg-gray-100">
+    <BotonRetroceder/>
     <main class="flex-1 flex flex-col justify-center items-center py-8 px-2 overflow-y-auto">
       <div class="w-full max-w-2xl">
         <p class="mb-6 text-gray-700 text-base">
@@ -61,7 +62,7 @@
         </div>
         <!-- Modificar alias -->
         <div
-          class="bg-white rounded-b-xl rounded-t-none shadow-sm border-t flex items-center px-6 py-3 cursor-pointer hover:bg-gray-50 transition"
+          class="bg-white rounded-xl  shadow-sm border-t flex items-center px-6 py-3 cursor-pointer hover:bg-gray-50 transition"
           @click="modificarAlias"
           v-if="!editandoAlias"
         >
@@ -72,24 +73,18 @@
             </svg>
           </span>
         </div>
-
-        <!-- Botón Volver alineado a la derecha -->
-        <div class="flex justify-end mt-6">
-          <button
-            class="bg-[#5D8C39] text-white py-2 px-6 rounded-lg hover:bg-[#4A6F2E] transition duration-200"
-            @click="volver"
-          >
-            Volver
-          </button>
-        </div>
       </div>
     </main>
   </div>
 </template>
 
 <script>
+import BotonRetroceder from "../BotonRetroceder.vue";
 export default {
   name: 'CVU',
+  components: {
+    BotonRetroceder,
+  },
   data() {
     return {
       cvu: '00234819282019304576839',

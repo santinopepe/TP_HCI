@@ -13,7 +13,6 @@ import AdministracionDeTarjetas from '../components/Tarjetas/AdministracionDeTar
 import PagoDeServicios from '../components/PagoServicios/PagoDeServicios.vue';
 import PagoServicio from '../components/PagoServicios/PagoServicio.vue';
 import Inversiones from '../components/Inversiones/Inversiones.vue';
-import Notificaciones from '../components/Notificaciones/Notificaciones.vue';
 import CambiarContraseña from '../components/Perfil/CambiarContraseña.vue';
 import IngresarDinero from '../components/Inicio/IngresarDinero.vue';
 import CobroDeServicios from '../components/CobroDeServicios/cobroDeServicios.vue';
@@ -32,7 +31,6 @@ const routes = [
   { path: '/pagoServicios', name: 'PagoDeServicios', component: PagoDeServicios },
   { path: '/pagoServicio/:serviceName/:serviceImage', name: 'PagoServicio', component: PagoServicio, props: true },
   { path: '/inversiones', name: 'Inversiones', component: Inversiones },
-  { path: '/notificaciones', name: 'Notificaciones', component: Notificaciones },  
   { path: '/cambiarcontraseña', name: 'CambiarContraseña', component: CambiarContraseña, props: true }, 
   { path: '/ingresar-dinero', name: 'IngresarDinero', component: IngresarDinero, props: true },
   { path: '/transferenciaFormulario/:contactoNombre', name: 'TransferenciaFormulario', component: TransferenciaFormulario, props: true },

@@ -10,7 +10,7 @@
           <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center">
             <router-link
               to="/cvu"
-              class="absolute top-4 right-4 bg-white text-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-gray-100 transition-colors text-sm"
+              class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
             >
               Tu CVU
             </router-link>
