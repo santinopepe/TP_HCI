@@ -211,11 +211,13 @@ export default {
         monto: parseFloat(this.monto),
         cargo: this.cargo,
       };
-      const transferId = contactStore.addTransferencia(transferencia);
       this.mostrarPopup = false;
       this.$router.push({
         name: 'ComprobanteTransferencia',
-        params: { transferId },
+        params: { destinatario: encodeURIComponent(this.contacto?.nombre || 'destinatario') },
+        query: {
+          monto: this.monto,
+        },
       });
     },
     volver() {

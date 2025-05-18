@@ -34,7 +34,7 @@ const routes = [
   { path: '/cambiarcontraseña', name: 'CambiarContraseña', component: CambiarContraseña, props: true }, 
   { path: '/ingresar-dinero', name: 'IngresarDinero', component: IngresarDinero, props: true },
   { path: '/transferenciaFormulario/:contactoNombre', name: 'TransferenciaFormulario', component: TransferenciaFormulario, props: true },
-  { path: '/comprobanteTransferencia/:transferId', name: 'ComprobanteTransferencia', component: ComprobanteTransferencia, props: true },
+  { path: '/comprobanteTransferencia/:destinatario', name: 'ComprobanteTransferencia', component: ComprobanteTransferencia, props: true },  
   { path: '/cobrodeservicios', name: 'CobroDeServicios', component: CobroDeServicios},
   { path: '/cvu', name: 'Cvu', component: TuCVU },
 ];
