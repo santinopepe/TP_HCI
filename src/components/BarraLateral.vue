@@ -55,15 +55,6 @@
       <a
         href="#"
         class="flex items-center gap-2 p-2 rounded"
-        :class="{'bg-[#3C4F2E]': activeButton === 'pagoServicios', 'hover:bg-[#3C4F2E]/50': activeButton !== 'pagoServicios'}"
-        @click.prevent="goToPagoServicios"
-      >
-        <img src="/images/pagosDeServicios.png" alt="Pago de Servicios" class="w-6 h-6" />
-        <span>Pago de Servicios</span>
-      </a>
-      <a
-        href="#"
-        class="flex items-center gap-2 p-2 rounded"
         :class="{'bg-[#3C4F2E]': activeButton === 'tarjetas', 'hover:bg-[#3C4F2E]/50': activeButton !== 'tarjetas'}"
         @click.prevent="goToTarjetas"
       >
@@ -123,9 +114,6 @@ export default {
     },
     goToInversiones() {
       if (this.$router) this.$router.push('/inversiones');
-    },
-    goToPagoServicios() {
-        if (this.$router) this.$router.push('/pagoServicios');
     },
     goToTarjetas() {
       if (this.$router) this.$router.push('/tarjetas');

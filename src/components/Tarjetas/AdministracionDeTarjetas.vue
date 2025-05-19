@@ -8,7 +8,7 @@
       </div>
 
       <div class="flex justify-center">
-        <div class="bg-white p-4 rounded-lg shadow-lg w-full max-w-3xl">
+        <div class="bg-white p-4 rounded-lg shadow-lg w-full max-w-7xl">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-700">Tarjetas Vinculadas</h2>
             <button
@@ -26,25 +26,36 @@
             Aún no tienes tarjetas vinculadas.
           </div>
 
-          <div class="flex flex-col items-center pb-10">
+          <div class="flex flex-row gap-4 overflow-x-auto pb-4">
             <div
               v-for="(card, index) in cards"
               :key="card.id"
               @click="viewCardDetails(card)"
               @mouseenter="handleMouseEnter(index)"
               @mouseleave="handleMouseLeave"
-              class="bg-gradient-to-br from-[#243219] to-[#558B2F] text-white p-6 rounded-lg shadow cursor-pointer
+              class="text-white p-6 rounded-lg shadow cursor-pointer
                      transform transition-all duration-300 hover:scale-105 relative
-                     w-64 sm:w-72 md:w-80 lg:w-96
-                     first:mt-0"
-              :class="{ '-mt-12': index > 0 }"
+                     flex-shrink-0 w-[90%] sm:w-[60%] md:w-[40%] lg:w-[30%]"
+              :class="getCardBackground(card.type)"
               :style="{ zIndex: calculatedZIndex(index) }"
             >
-              <div>
-                <p class="text-xl font-semibold truncate">{{ card.type }} **** **** {{ card.last4 }}</p>
-                <p class="text-lg opacity-90 truncate">{{ card.bank }}</p>
-                <p class="text-base opacity-80 mt-2 truncate">Titular: {{ card.name }}</p>
-                <p class="text-base opacity-80 truncate">Expira: {{ card.expiry }}</p>
+              <div class="flex flex-col h-full">
+                <div class="flex items-center mb-2">
+                  <img 
+                    :src="getCardLogo(card.type)" 
+                    alt="Card Logo" 
+                    class="h-8 w-12 mr-2 object-contain"
+                  />
+                  <p class="text-lg font-semibold truncate">
+                    {{ card.type }} **** **** {{ card.last4 }}
+                  </p>
+                </div>
+                <p class="text-base opacity-90 truncate">{{ card.bank }}</p>
+                <p class="text-sm opacity-80 mt-2 truncate">Titular: {{ card.name }}</p>
+                <p class="text-sm opacity-80 truncate">Expira: {{ card.expiry }}</p>
+                <p class="text-sm opacity-80 mt-2">
+                  Tipo: {{ getCardBrand(card.type) }}
+                </p>
               </div>
             </div>
           </div>
@@ -68,11 +79,23 @@
               </svg>
             </button>
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">Detalles de Tarjeta</h2>
-            <div class="bg-gradient-to-br from-[#243219] to-[#558B2F] text-white p-4 rounded-lg shadow mb-6">
-              <p class="text-xl font-semibold mb-2">{{ selectedCard.type }} **** **** {{ selectedCard.last4 }}</p>
+            <div class="text-white p-4 rounded-lg shadow mb-6" :class="getCardBackground(selectedCard.type)">
+              <div class="flex items-center mb-2">
+                <img 
+                  :src="getCardLogo(selectedCard.type)" 
+                  alt="Card Logo" 
+                  class="h-8 w-12 mr-2 object-contain"
+                />
+                <p class="text-xl font-semibold mb-2">
+                  {{ selectedCard.type }} **** **** {{ selectedCard.last4 }}
+                </p>
+              </div>
               <p class="text-base opacity-90">{{ selectedCard.bank }}</p>
               <p class="text-sm opacity-80 mt-2">Titular: {{ selectedCard.name }}</p>
               <p class="text-sm opacity-80">Expira: {{ selectedCard.expiry }}</p>
+              <p class="text-sm opacity-80 mt-2">
+                Tipo: {{ getCardBrand(selectedCard.type) }}
+              </p>
             </div>
             <div class="flex justify-center">
               <button
@@ -123,7 +146,6 @@ const cards = ref([
   { id: 1, type: 'Visa', last4: '1234', name: 'Juan Perez', expiry: '12/25', bank: 'Mi Banco Principal' },
   { id: 2, type: 'Mastercard', last4: '5678', name: 'Juan Perez', expiry: '08/24', bank: 'Otro Banco' },
   { id: 3, type: 'American Express', last4: '9012', name: 'Juan Perez', expiry: '06/26', bank: 'Banco del Sur' },
-  { id: 4, type: 'Discover', last4: '3456', name: 'Juan Perez', expiry: '03/27', bank: 'Banco del Norte' },
 ]);
 
 const showAddCardForm = ref(false);
@@ -146,6 +168,45 @@ const calculatedZIndex = (index) => {
     return cards.value.length + 1;
   }
   return cards.value.length - index;
+};
+
+const getCardBrand = (type) => {
+  switch (type.toLowerCase()) {
+    case 'visa':
+      return 'Visa';
+    case 'mastercard':
+      return 'Mastercard';
+    case 'american express':
+      return 'American Express';
+    default:
+      return 'Otro';
+  }
+};
+
+const getCardLogo = (type) => {
+  switch (type.toLowerCase()) {
+    case 'visa':
+      return 'https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png';
+    case 'mastercard':
+      return 'https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png';
+    case 'american express':
+      return 'https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg';
+    default:
+      return 'https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png';
+  }
+};
+
+const getCardBackground = (type) => {
+  switch (type.toLowerCase()) {
+    case 'visa':
+      return 'bg-gradient-to-br from-blue-600 to-gray-300'; 
+    case 'mastercard':
+      return 'bg-gradient-to-br from-red-500 to-yellow-400'; 
+    case 'american express':
+      return 'bg-gradient-to-br from-blue-500 to-green-400'; 
+    default:
+      return 'bg-gradient-to-br from-orange-500 to-gray-500';
+  }
 };
 
 const handleAddCard = (card) => {

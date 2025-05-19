@@ -1,89 +1,62 @@
 <template>
-    <div class="flex h-screen font-sans overflow-hidden">
-      <BotonRetroceder />
-      <div class="flex-1 p-6 overflow-y-auto bg-gray-50">
-        <!-- Header -->
-        <div class="text-center mb-4">
-          <h1 class="text-2xl font-bold">{{ serviceTitle }}</h1>
-        </div>  
-        <!-- Payment Details -->
-        <div class="bg-white rounded-lg shadow p-6 max-w-md mx-auto">
-          <div class="flex flex-col items-center space-y-4">
-            <div class="w-20 h-20 bg-[#7E9E66] rounded-full flex items-center justify-center">
-              <img :src="`/images/${serviceImage}`" :alt="serviceTitle" class="w-12 h-12" />
-            </div>
-            <p class="text-lg font-medium">Monto a pagar:</p>
-            <p class="text-3xl font-bold text-green-600">$450.00</p>
-            <!-- Input para el número de cliente -->
-            <div class="w-full">
-              <label for="customerNumber" class="block text-sm font-medium text-gray-700 mb-2">Número de Cliente</label>
-              <input
-                id="customerNumber"
-                v-model="customerNumber"
-                type="text"
-                inputmode="numeric"
-                pattern="[0-9]*"
-                placeholder="Ingrese su número de cliente"
-                class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
-                @input="validateCustomerNumber"
-              />
-              <!-- Mensaje de error -->
-              <p v-if="errorMessage" class="text-sm text-red-500 mt-2">{{ errorMessage }}</p>
-            </div>
-            <button
-              class="w-full bg-[#5D8C39] text-white py-2 rounded-lg hover:bg-[#5D8C39]/80 transition-colors"
-              @click="confirmPayment"
-            >
-              Confirmar Pago
-            </button>
-          </div>
+  <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full m-4 relative">
+    <!-- Indicador de pasos -->
+    <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
+      Paso 1 de 4
+    </div>
+    <h2 class="text-2xl font-semibold text-gray-800 mb-6">Ingresar Link de Pago</h2>
+    <form @submit.prevent="submitLink">
+      <div class="grid grid-cols-1 gap-4 mb-6">
+        <!-- Campo para el link de pago -->
+        <div>
+          <label for="paymentLink" class="block text-sm font-medium text-gray-700 mb-1">Link de Pago</label>
+          <input
+            type="text"
+            id="paymentLink"
+            v-model="paymentLink"
+            placeholder="https://ejemplo.com/pago/12345"
+            class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 h-10 text-gray-700 placeholder-gray-400"
+            :class="{ 'border-red-500': errors.paymentLink }"
+          />
+          <p v-if="errors.paymentLink" class="text-red-500 text-sm mt-1">{{ errors.paymentLink }}</p>
         </div>
       </div>
-    </div>
-  </template>
-  
-<script>
-import BotonRetroceder from '../BotonRetroceder.vue';
+      <!-- Botones -->
+      <div class="mt-4 flex justify-between">
+        <button
+          type="button"
+          @click="$emit('cancel')"
+          class="bg-gray-300 text-gray-700 font-semibold py-2 px-4 rounded-lg shadow transition duration-200 flex items-center hover:bg-gray-400"
+        >
+          Cancelar
+        </button>
+        <button
+          type="submit"
+          class="bg-[#5D8C39] text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-200 flex items-center hover:bg-[#5D8C39]/80"
+        >
+          Continuar
+        </button>
+      </div>
+    </form>
+  </div>
+</template>
 
-  export default {
-    name: "PagoServicio",
-    components: {
-      BotonRetroceder
-    },
-    props: {
-      serviceName: {
-        type: String,
-        required: true,
-      },
-      serviceImage: {
-        type: String,
-        required: true,
-      },
-    },
-    data() {
-      return {
-        customerNumber: '', // Campo para almacenar el número de cliente
-        errorMessage: '', // Mensaje de error dinámico
-      };
-    },
-    computed: {
-      serviceTitle() {
-        return `Pago de ${this.serviceName}`;
-      },
-    },
-    methods: {
-      validateCustomerNumber() {
-        // Elimina cualquier carácter no numérico y actualiza el valor
-        this.customerNumber = this.customerNumber.replace(/\D/g, '');
-      },
-      confirmPayment() {
-        if (!this.customerNumber) {
-          this.errorMessage = 'Por favor, ingrese su número de cliente.';
-          return;
-        }
-        this.errorMessage = ''; // Limpia el mensaje de error si el campo es válido
-        this.$router.push('/pagoServicios');
-      },
-    },
-  };
+<script setup>
+import { ref } from 'vue';
+
+const emit = defineEmits(['submit-link', 'cancel']);
+
+const paymentLink = ref('');
+const errors = ref({
+  paymentLink: '',
+});
+
+const submitLink = () => {
+  if (!paymentLink.value.trim()) {
+    errors.value.paymentLink = 'El link de pago no puede estar vacío.';
+    return;
+  }
+  errors.value.paymentLink = '';
+  emit('submit-link', paymentLink.value);
+};
 </script>

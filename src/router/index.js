@@ -10,13 +10,15 @@ import TransferenciasNuevoContacto from '../components/Transferencias/Transferen
 import TransferenciaFormulario from '../components/Transferencias/TransferenciaFormulario.vue';
 import ComprobanteTransferencia from '../components/Transferencias/ComprobanteTransferencia.vue';
 import AdministracionDeTarjetas from '../components/Tarjetas/AdministracionDeTarjetas.vue';
-import PagoDeServicios from '../components/PagoServicios/PagoDeServicios.vue';
-import PagoServicio from '../components/PagoServicios/PagoServicio.vue';
 import Inversiones from '../components/Inversiones/Inversiones.vue';
 import CambiarContraseña from '../components/Perfil/CambiarContraseña.vue';
 import IngresarDinero from '../components/Inicio/IngresarDinero.vue';
 import CobroDeServicios from '../components/CobroDeServicios/cobroDeServicios.vue';
 import TuCVU from '../components/Inicio/CVU.vue';
+import LinkDePago from '../components/PagoServicios/PagoServicio.vue';
+import MetodoDePago from '../components/PagoServicios/MetodoDePago.vue';
+import ConfirmacionDePago from '../components/PagoServicios/ConfirmacionDePago.vue';
+import ComprobanteDePago from '../components/PagoServicios/ComprobantePago.vue';
 
 const routes = [
   { path: '/', name: 'Login', component: LoginPage },
@@ -28,8 +30,6 @@ const routes = [
   { path: '/transferir', name: 'Transferencias', component: Transferecias },
   { path: '/transferirNuevoContacto', name: 'TransferenciasNuevoContacto', component: TransferenciasNuevoContacto },
   { path: '/tarjetas', name: 'AdministracionDeTarjetas', component: AdministracionDeTarjetas },
-  { path: '/pagoServicios', name: 'PagoDeServicios', component: PagoDeServicios },
-  { path: '/pagoServicio/:serviceName/:serviceImage', name: 'PagoServicio', component: PagoServicio, props: true },
   { path: '/inversiones', name: 'Inversiones', component: Inversiones },
   { path: '/cambiarcontraseña', name: 'CambiarContraseña', component: CambiarContraseña, props: true }, 
   { path: '/ingresar-dinero', name: 'IngresarDinero', component: IngresarDinero, props: true },
@@ -37,6 +37,10 @@ const routes = [
   { path: '/comprobanteTransferencia/:destinatario', name: 'ComprobanteTransferencia', component: ComprobanteTransferencia, props: true },  
   { path: '/cobrodeservicios', name: 'CobroDeServicios', component: CobroDeServicios},
   { path: '/cvu', name: 'Cvu', component: TuCVU },
+  { path: '/pago-servicio', name: 'PagarServicio', component: LinkDePago}, 
+  { path: '/metodo-de-pago', name: 'MetodoDePago', component: MetodoDePago},
+  { path: '/confirmacion-de-pago', name: 'ConfirmacionDePago', component: ConfirmacionDePago},
+  { path: '/comprobante-de-pago', name: 'ComprobanteDePago', component: ComprobanteDePago},
 ];
 
 const router = createRouter({

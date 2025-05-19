@@ -1,11 +1,9 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
-    <!-- Barra lateral -->
     <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
-    <!-- Contenido principal -->
+
     <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <!-- Saldo y Botón Recibir Dinero -->
         <div class="w-[calc(100%+8rem)] overflow-hidden">
           <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center">
             <router-link
@@ -21,25 +19,29 @@
                 {{ isSaldoVisible ? '$44,500.00' : '$*****' }}
               </p>
               <button
-                class="absolute bottom-14 left-62 bg-[#3C4F2E]/50 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
+                class="absolute bottom-[35%] left-[68%] bg-[#3C4F2E]/50 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
                 @click="toggleSaldoVisibility"
               >
                 <img :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'" alt="Ver saldo" class="w-6 h-6" />
               </button>
             </div>
           </div>
-          <!-- Botón Recibir Dinero -->
-          <div class="flex justify-center mt-4">
+          <div class="flex justify-center mt-4 gap-4">
             <router-link
               to="/ingresar-dinero"
-              class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(100%+8rem)] justify-center flex items-center"
+              class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(50%-0.5rem)] flex items-center justify-center"
             >
               Ingresar Dinero
             </router-link>
+            <button
+              @click="showPayServiceForm = true"
+              class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(50%-0.5rem)] flex items-center justify-center"
+            >
+              Pagar Servicio
+            </button>
           </div>
         </div>
 
-        <!-- Transferencias Mensuales -->
         <div class="bg-white p-6 rounded-lg shadow-md absolute right-4 w-[calc(100%-58rem)] h-[17rem] flex flex-col justify-end col-span-1 overflow-hidden">
           <h2 class="text-2xl font-bold text-[#4B5563] text-left absolute top-4 left-6">Transferencias Mensuales</h2>
           <p class="absolute top-6 right-6 text-[#A5A2A1] font-semibold text-sm">
@@ -80,9 +82,7 @@
         </div>
       </div>
 
-      <!-- Últimas Transacciones e Inversiones Activas -->
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
-        <!-- Últimas Transacciones -->
         <div class="bg-white p-6 rounded-lg shadow-md w-[calc(100%+8rem)] overflow-hidden">
           <div class="flex justify-between items-center">
             <h2 class="text-lg font-bold text-gray-700">Últimas Transacciones</h2>
@@ -131,15 +131,11 @@
           </ul>
         </div>
 
-
-        <!-- Inversiones Activas -->
         <div class="absolute bottom-[12%] right-4 w-[calc(100%-58rem)] promu">
-          <!-- Barra verde de Inversiones Activas -->
           <div class="bg-[#3C4F2E] text-white p-4 rounded-2xl flex justify-between items-center">
             <h2 class="text-lg font-bold">Inversiones Activas</h2>
           </div>
 
-          <!-- Bloque blanco debajo de la barra verde -->
           <div class="bg-white p-6 rounded-lg shadow-md w-[84%] justify-center mx-auto">
             <ul class="mt-4 flex flex-col gap-2">
               <li class="flex justify-between items-center border-b pb-2">
@@ -167,27 +163,139 @@
         </div>
       </div>
     </main>
+
+    <div
+      v-if="showPayServiceForm"
+      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+      @click.self="closePaymentFlow" 
+    >
+      <IngresarLinkPago
+        v-if="currentStep === 1"
+        @submit-link="handleLinkSubmit"
+        @cancel="closePaymentFlow"
+        @click.stop="" 
+      />
+
+      <SeleccionarMetodoPago
+        v-if="currentStep === 2"
+        @proceed-to-confirmation="handleMethodSelection"
+        @cancel="closePaymentFlow"
+         @click.stop=""
+      />
+
+      <ConfirmacionPago
+        v-if="currentStep === 3"
+        :amount="paymentDetails.amount"
+        @confirm="handlePaymentConfirmation"
+        @cancel="closePaymentFlow"
+         @click.stop=""
+      />
+
+      <ComprobantePago
+        v-if="currentStep === 4"
+        :amount="paymentDetails.amount"
+        @make-another-payment="restartPaymentFlow"
+        @return-to-home="closePaymentFlow"
+        @share-receipt="shareReceipt"
+         @click.stop=""
+      />
+      </div>
   </div>
 </template>
 
 <script>
-import BarraLateral from '../BarraLateral.vue'
+import { ref } from 'vue';
+import BarraLateral from '../BarraLateral.vue';
+import IngresarLinkPago from '../PagoServicios/PagoServicio.vue';
+import SeleccionarMetodoPago from '../PagoServicios/MetodoDePago.vue';
+import ConfirmacionPago from '../PagoServicios/ConfirmacionDePago.vue';
+import ComprobantePago from '../PagoServicios/ComprobantePago.vue';
+import { usePaymentStore } from '../store/LinkDePagoStore.js';
 
 export default {
   name: "PaginaPrincipal",
   components: {
     BarraLateral,
+    IngresarLinkPago,
+    SeleccionarMetodoPago,
+    ConfirmacionPago,
+    ComprobantePago,
   },
-  data() {
-    return {
-      activeButton: 'inicio',
-      isSaldoVisible: true,
+  setup() {
+    const activeButton = ref('inicio');
+    const isSaldoVisible = ref(true);
+    const showPayServiceForm = ref(false);
+    const currentStep = ref(1);
+    const paymentStore = usePaymentStore();
+
+    const toggleSaldoVisibility = () => {
+      isSaldoVisible.value = !isSaldoVisible.value;
     };
-  },
-  methods: {
-    toggleSaldoVisibility() {
-      this.isSaldoVisible = !this.isSaldoVisible;
-    },
+
+    const handleLinkSubmit = (link) => {
+      paymentStore.setPaymentDetails({ link });
+      currentStep.value = 2;
+    };
+
+    const handleMethodSelection = (details) => {
+      paymentStore.setPaymentDetails({
+        ...paymentStore.paymentDetails, 
+        metodo: details.metodo,
+        card: details.card, 
+        amount: details.amount 
+      });
+      currentStep.value = 3;
+    };
+
+    const handlePaymentConfirmation = () => {
+      currentStep.value = 4;
+    };
+
+    const restartPaymentFlow = () => {
+      paymentStore.resetPaymentDetails();
+      currentStep.value = 1;
+    };
+
+    const closePaymentFlow = () => {
+      showPayServiceForm.value = false;
+      currentStep.value = 1;
+      paymentStore.resetPaymentDetails();
+    };
+
+    const shareReceipt = () => {
+      console.log('Sharing receipt...');
+      // Lógica para compartir el comprobante
+    };
+
+     const paymentDetails = paymentStore.paymentDetails;
+
+
+    return {
+      activeButton,
+      isSaldoVisible,
+      showPayServiceForm,
+      currentStep,
+      paymentDetails,
+      toggleSaldoVisibility,
+      handleLinkSubmit,
+      handleMethodSelection,
+      handlePaymentConfirmation,
+      restartPaymentFlow,
+      closePaymentFlow,
+      shareReceipt,
+    };
   },
 };
 </script>
+
+<style scoped>
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>
