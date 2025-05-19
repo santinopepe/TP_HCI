@@ -209,6 +209,10 @@ const getCardBackground = (type) => {
   }
 };
 
+const handleCardType = (type) => {
+  
+};
+
 const handleAddCard = (card) => {
   cards.value.unshift(card);
   showAddCardForm.value = false;
@@ -243,4 +247,6 @@ const cancelRemoveCard = () => {
   showRemoveConfirmModal.value = false;
   selectedCard.value = null;
 };
+
+
 </script>

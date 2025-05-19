@@ -12,6 +12,7 @@
               id="cardNumber"
               v-model="newCard.number"
               autocomplete="cc-number"
+              @input="formatCardNumber"
               placeholder="1234 5678 9012 3456"
               class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 h-10 text-gray-700 placeholder-gray-400"
               :class="{ 'border-red-500': errors.number }"
@@ -107,6 +108,12 @@ const formatExpiry = (event) => {
   newCard.value.expiry = value;
 };
 
+const formatCardNumber = (event) => {
+  let value = event.target.value.replace(/\D/g, ''); // Remove non-numeric characters
+  value = value.replace(/(.{4})/g, '$1 ').trim(); // Add space every 4 digits
+  newCard.value.number = value; // Update the card number
+};
+
 const validateForm = () => {
   let isValid = true;
 
@@ -144,13 +151,25 @@ const validateForm = () => {
 
   return isValid;
 };
+const getCardType = (cardNumber) => {
+  const sanitizedCardNumber = cardNumber.replace(/\s+/g, ''); // Remove spaces
+  if (/^4[0-9]{12}(?:[0-9]{3})?$/.test(sanitizedCardNumber)) {
+    return 'Visa';
+  } else if (/^5[1-5][0-9]{14}$/.test(sanitizedCardNumber) || /^2(2[2-9][0-9]{2}|[3-6][0-9]{3}|7[01][0-9]{2}|720[0-9]{2})[0-9]{12}$/.test(sanitizedCardNumber)) {
+    return 'Mastercard';
+  } else if (/^3[47][0-9]{13}$/.test(sanitizedCardNumber)) {
+    return 'American Express';
+  } else {
+    return 'Unknown';
+  }
+};
 
 const addCard = () => {
   if (validateForm()) {
     const last4 = newCard.value.number.slice(-4);
     const card = {
       id: Date.now(),
-      type: newCard.value.type,
+      type: getCardType(newCard.value.number),
       last4,
       name: newCard.value.name,
       expiry: newCard.value.expiry,
