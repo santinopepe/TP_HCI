@@ -1,5 +1,6 @@
 <template>
-  <div class="max-w-md mx-auto mt-20 bg-white p-6 rounded-xl shadow-2xl">
+  <div class="min-h-screen bg-gray-100 flex items-center justify-center">
+    <div class="max-w-md w-full bg-white p-6 rounded-lg shadow flex-izq items-center">
     <BotonRetroceder />
     <!-- Indicador de pasos -->
     <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
@@ -135,6 +136,7 @@
       @cancelar="mostrarPopup = false"
       @confirmar="confirmarTransferencia"
     />
+    </div>
   </div>
 </template>
 
