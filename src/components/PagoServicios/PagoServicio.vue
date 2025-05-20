@@ -13,12 +13,12 @@
           <input
             type="text"
             id="paymentLink"
-            v-model="paymentLink"
+            v-model="linkDePagoStore.paymentLink"
             placeholder="https://ejemplo.com/pago/12345"
             class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 h-10 text-gray-700 placeholder-gray-400"
-            :class="{ 'border-red-500': errors.paymentLink }"
+            :class="{ 'border-red-500': linkDePagoStore.errors.paymentLink }"
           />
-          <p v-if="errors.paymentLink" class="text-red-500 text-sm mt-1">{{ errors.paymentLink }}</p>
+          <p v-if="linkDePagoStore.errors.paymentLink" class="text-red-500 text-sm mt-1">{{ linkDePagoStore.errors.paymentLink }}</p>
         </div>
       </div>
       <!-- Botones -->
@@ -42,21 +42,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
+import { useLinkDePagoStore } from '../store/LinkDePagoStore.js';
 
+const linkDePagoStore = useLinkDePagoStore();
 const emit = defineEmits(['submit-link', 'cancel']);
 
-const paymentLink = ref('');
-const errors = ref({
-  paymentLink: '',
-});
-
 const submitLink = () => {
-  if (!paymentLink.value.trim()) {
-    errors.value.paymentLink = 'El link de pago no puede estar vacío.';
-    return;
+  linkDePagoStore.setPaymentLink(linkDePagoStore.paymentLink);
+  if (!linkDePagoStore.errors.paymentLink) {
+    emit('submit-link', linkDePagoStore.paymentLink);
   }
-  errors.value.paymentLink = '';
-  emit('submit-link', paymentLink.value);
 };
 </script>

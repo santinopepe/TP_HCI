@@ -11,7 +11,7 @@
 
     <div class="bg-white rounded-3xl p-6 shadow-md text-center">
       <p class="text-lg font-medium text-gray-600 mb-4">Monto pagado</p>
-      <p class="text-2xl font-bold text-gray-900 mb-6">${{ amount.toFixed(2) }}</p>
+      <p class="text-2xl font-bold text-gray-900 mb-6">${{ linkDePagoStore.total.toFixed(2) }}</p>
       <button
         class="bg-[#5D8C39] text-white px-6 py-2 rounded-lg hover:bg-[#5D8C39]/80 transition w-full flex items-center justify-center gap-2"
         @click="$emit('share-receipt')"
@@ -24,13 +24,13 @@
     <!-- Botones -->
     <div class="flex flex-col gap-4">
       <button
-        @click="$emit('make-another-payment')"
+        @click="linkDePagoStore.resetPayment(); $emit('make-another-payment')"
         class="bg-[#5D8C39] text-white px-6 py-2 rounded-lg hover:bg-[#5D8C39]/80 transition w-full"
       >
         Hacer otro pago
       </button>
       <button
-        @click="$emit('return-to-home')"
+        @click="linkDePagoStore.resetPayment(); $emit('return-to-home')"
         class="bg-[#5D8C39] text-white px-6 py-2 rounded-lg hover:bg-[#5D8C39]/80 transition w-full"
       >
         Volver al inicio
@@ -40,9 +40,8 @@
 </template>
 
 <script setup>
-const props = defineProps({
-  amount: { type: Number, required: true },
-});
+import { useLinkDePagoStore } from '../store/LinkDePagoStore.js';
 
+const linkDePagoStore = useLinkDePagoStore();
 const emit = defineEmits(['make-another-payment', 'return-to-home', 'share-receipt']);
 </script>

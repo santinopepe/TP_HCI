@@ -16,13 +16,13 @@
             <div class="flex-1">
               <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
               <p class="text-3xl font-bold mt-4 text-left">
-                {{ isSaldoVisible ? '$44,500.00' : '$*****' }}
+                {{ paginaPrincipalStore.formattedBalance }}
               </p>
               <button
                 class="absolute bottom-[35%] left-[68%] bg-[#3C4F2E]/50 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
-                @click="toggleSaldoVisibility"
+                @click="paginaPrincipalStore.toggleSaldoVisibility"
               >
-                <img :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'" alt="Ver saldo" class="w-6 h-6" />
+                <img :src="paginaPrincipalStore.isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'" alt="Ver saldo" class="w-6 h-6" />
               </button>
             </div>
           </div>
@@ -45,37 +45,13 @@
         <div class="bg-white p-6 rounded-lg shadow-md absolute right-4 w-[calc(100%-58rem)] h-[17rem] flex flex-col justify-end col-span-1 overflow-hidden">
           <h2 class="text-2xl font-bold text-[#4B5563] text-left absolute top-4 left-6">Transferencias Mensuales</h2>
           <p class="absolute top-6 right-6 text-[#A5A2A1] font-semibold text-sm">
-            +$123.44 / Último mes
+            +${{ paginaPrincipalStore.monthlyTransferSummary.toFixed(2) }} / Último mes
           </p>
           <div class="h-48 flex items-end justify-center mt-auto">
             <div class="flex items-end gap-4 w-full justify-between px-4">
-              <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#83A46A] h-28 w-12 rounded"></div>
-                <span class="text-gray-500 text-sm mt-2">Feb</span>
-              </div>
-              <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#3C4F2E] h-40 w-12 rounded"></div>
-                <span class="text-gray-500 text-sm mt-2">Mar</span>
-              </div>
-              <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#B1DC91] h-20 w-12 rounded"></div>
-                <span class="text-gray-500 text-sm mt-2">Abr</span>
-              </div>
-              <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#83A46A] h-28 w-12 rounded"></div>
-                <span class="text-gray-500 text-sm mt-2">May</span>
-              </div>
-              <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#CBFBA6] h-12 w-12 rounded"></div>
-                <span class="text-gray-500 text-sm mt-2">Jun</span>
-              </div>
-              <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#83A46A] h-28 w-12 rounded"></div>
-                <span class="text-gray-500 text-sm mt-2">Jul</span>
-              </div>
-              <div class="flex flex-col items-center flex-1">
-                <div class="bg-[#B1DC91] h-20 w-12 rounded"></div>
-                <span class="text-gray-500 text-sm mt-2">Ago</span>
+              <div v-for="item in paginaPrincipalStore.transferChartData" :key="item.month" class="flex flex-col items-center flex-1">
+                <div :style="{ backgroundColor: item.color, height: `${item.amount}px` }" class="w-12 rounded"></div>
+                <span class="text-gray-500 text-sm mt-2">{{ item.month }}</span>
               </div>
             </div>
           </div>
@@ -88,44 +64,16 @@
             <h2 class="text-lg font-bold text-gray-700">Últimas Transacciones</h2>
           </div>
           <ul class="mt-4 flex flex-col gap-4">
-            <li class="flex justify-between items-center border-b pb-2">
+            <li v-for="transaction in paginaPrincipalStore.transactions" :key="transaction.id" class="flex justify-between items-center border-b pb-2">
               <div class="flex items-center gap-4">
-                <img alt="SUBE" src="/images/sube.png" class="w-12 h-8" />
-                <span class="text-gray-700">Pago de SUBE</span>
+                <img :src="transaction.icon" :alt="transaction.name" class="w-12 h-8" />
+                <span class="text-gray-700">{{ transaction.name }}</span>
               </div>
               <div class="text-right">
-                <span class="text-red-500 block">-230.00</span>
-                <span class="text-gray-400 text-sm">20 Mar 2025</span>
-              </div>
-            </li>
-            <li class="flex justify-between items-center border-b pb-2">
-              <div class="flex items-center gap-4">
-                <img alt="Visa" src="/images/Visa.png" class="w-12 h-4" />
-                <span class="text-gray-700">Ingreso de dinero</span>
-              </div>
-              <div class="text-right">
-                <span class="text-green-500 block">+866.00</span>
-                <span class="text-gray-400 text-sm">18 Mar 2025</span>
-              </div>
-            </li>
-            <li class="flex justify-between items-center border-b pb-2">
-              <div class="flex items-center gap-4">
-                <img alt="Tarjeta" src="/images/pagoTarjeta.png" class="w-12 h-10" />
-                <span class="text-gray-700">Pago de la tarjeta</span>
-              </div>
-              <div class="text-right">
-                <span class="text-red-500 block">-453.00</span>
-                <span class="text-gray-400 text-sm">1 Mar 2025</span>
-              </div>
-            </li>
-            <li class="flex justify-between items-center border-b pb-2">
-              <div class="flex items-center gap-4">
-                <img alt="hombre" src="/images/fotoHombre.png" class="w-12 h-10" />
-                <span class="text-gray-700">Transferencia</span>
-              </div>
-              <div class="text-right">
-                <span class="text-red-500 block">-230.00</span>
-                <span class="text-gray-400 text-sm">27 Feb 2025</span>
+                <span :class="transaction.amount < 0 ? 'text-red-500' : 'text-green-500'" class="block">
+                  {{ transaction.amount < 0 ? '' : '+' }}${{ Math.abs(transaction.amount).toFixed(2) }}
+                </span>
+                <span class="text-gray-400 text-sm">{{ transaction.date }}</span>
               </div>
             </li>
           </ul>
@@ -138,25 +86,9 @@
 
           <div class="bg-white p-6 rounded-lg shadow-md w-[84%] justify-center mx-auto">
             <ul class="mt-4 flex flex-col gap-2">
-              <li class="flex justify-between items-center border-b pb-2">
-                <span class="text-gray-700 font-bold">SBS pesos plus</span>
-                <span class="text-gray-900 font-semibold">$121,042.00</span>
-              </li>
-              <li class="flex justify-between items-center border-b pb-2">
-                <span class="text-gray-700 font-bold">Renta Fija</span>
-                <span class="text-gray-900 font-semibold">$504,070.00</span>
-              </li>
-              <li class="flex justify-between items-center border-b pb-2">
-                <span class="text-gray-700 font-bold">Fondo Fima</span>
-                <span class="text-gray-900 font-semibold">$1,030,091.00</span>
-              </li>
-              <li class="flex justify-between items-center border-b pb-2">
-                <span class="text-gray-700 font-bold">CEDEARs</span>
-                <span class="text-gray-900 font-semibold">$308,700.00</span>
-              </li>
-              <li class="flex justify-between items-center">
-                <span class="text-gray-700 font-bold">MAF Ahorro Pesos</span>
-                <span class="text-gray-900 font-semibold">$947,700.40</span>
+              <li v-for="investment in paginaPrincipalStore.investments" :key="investment.name" class="flex justify-between items-center border-b pb-2">
+                <span class="text-gray-700 font-bold">{{ investment.name }}</span>
+                <span class="text-gray-900 font-semibold">${{ investment.amount.toFixed(2) }}</span>
               </li>
             </ul>
           </div>
@@ -167,53 +99,54 @@
     <div
       v-if="showPayServiceForm"
       class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      @click.self="closePaymentFlow" 
+      @click.self="closePaymentFlow"
     >
       <IngresarLinkPago
         v-if="currentStep === 1"
         @submit-link="handleLinkSubmit"
         @cancel="closePaymentFlow"
-        @click.stop="" 
+        @click.stop=""
       />
 
       <SeleccionarMetodoPago
         v-if="currentStep === 2"
         @proceed-to-confirmation="handleMethodSelection"
         @cancel="closePaymentFlow"
-         @click.stop=""
+        @click.stop=""
       />
 
       <ConfirmacionPago
         v-if="currentStep === 3"
-        :amount="paymentDetails.amount"
+        :amount="linkDePagoStore.amount"
         @confirm="handlePaymentConfirmation"
         @cancel="closePaymentFlow"
-         @click.stop=""
+        @click.stop=""
       />
 
       <ComprobantePago
         v-if="currentStep === 4"
-        :amount="paymentDetails.amount"
+        :amount="linkDePagoStore.amount"
         @make-another-payment="restartPaymentFlow"
         @return-to-home="closePaymentFlow"
         @share-receipt="shareReceipt"
-         @click.stop=""
+        @click.stop=""
       />
-      </div>
+    </div>
   </div>
 </template>
 
 <script>
-import { ref } from 'vue';
+import { defineComponent, ref } from 'vue';
+import { useLinkDePagoStore } from '../store/LinkDePagoStore.js';
+import { usePaginaPrincipalStore } from '../store/PaginaPrincipalStore.js'; // Import the renamed store
 import BarraLateral from '../BarraLateral.vue';
 import IngresarLinkPago from '../PagoServicios/PagoServicio.vue';
 import SeleccionarMetodoPago from '../PagoServicios/MetodoDePago.vue';
 import ConfirmacionPago from '../PagoServicios/ConfirmacionDePago.vue';
 import ComprobantePago from '../PagoServicios/ComprobantePago.vue';
-import { usePaymentStore } from '../store/LinkDePagoStore.js';
 
-export default {
-  name: "PaginaPrincipal",
+export default defineComponent({
+  name: 'PaginaPrincipal',
   components: {
     BarraLateral,
     IngresarLinkPago,
@@ -222,61 +155,64 @@ export default {
     ComprobantePago,
   },
   setup() {
+    const linkDePagoStore = useLinkDePagoStore();
+    const paginaPrincipalStore = usePaginaPrincipalStore(); // Initialize the renamed store
     const activeButton = ref('inicio');
-    const isSaldoVisible = ref(true);
     const showPayServiceForm = ref(false);
     const currentStep = ref(1);
-    const paymentStore = usePaymentStore();
-
-    const toggleSaldoVisibility = () => {
-      isSaldoVisible.value = !isSaldoVisible.value;
-    };
 
     const handleLinkSubmit = (link) => {
-      paymentStore.setPaymentDetails({ link });
-      currentStep.value = 2;
+      linkDePagoStore.setPaymentLink(link);
+      if (!linkDePagoStore.errors.paymentLink) {
+        currentStep.value = 2;
+      }
     };
 
     const handleMethodSelection = (details) => {
-      paymentStore.setPaymentDetails({
-        ...paymentStore.paymentDetails, 
-        metodo: details.metodo,
-        card: details.card, 
-        amount: details.amount 
-      });
+      linkDePagoStore.setPaymentMethod(details.metodo);
+      if (details.card) {
+        linkDePagoStore.tarjetas[linkDePagoStore.tarjetaSeleccionada] = details.card;
+      }
       currentStep.value = 3;
     };
 
     const handlePaymentConfirmation = () => {
+      linkDePagoStore.confirmPayment();
+      // Update paginaPrincipalStore's balance and add transaction after payment confirmation
+      paginaPrincipalStore.updateAccountBalance(linkDePagoStore.accountBalance);
+      paginaPrincipalStore.addTransaction({
+        id: Math.max(...paginaPrincipalStore.transactions.map(t => t.id), 0) + 1,
+        name: 'Pago de Servicio',
+        type: 'Pago',
+        icon: '/images/sube.png', // Or a more generic icon for payments
+        date: new Date().toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' }),
+        amount: -linkDePagoStore.total,
+      });
       currentStep.value = 4;
     };
 
     const restartPaymentFlow = () => {
-      paymentStore.resetPaymentDetails();
+      linkDePagoStore.resetPayment();
       currentStep.value = 1;
     };
 
     const closePaymentFlow = () => {
       showPayServiceForm.value = false;
       currentStep.value = 1;
-      paymentStore.resetPaymentDetails();
+      linkDePagoStore.resetPayment();
     };
 
     const shareReceipt = () => {
       console.log('Sharing receipt...');
-      // Lógica para compartir el comprobante
+      // Add logic for sharing receipt
     };
-
-     const paymentDetails = paymentStore.paymentDetails;
-
 
     return {
       activeButton,
-      isSaldoVisible,
       showPayServiceForm,
       currentStep,
-      paymentDetails,
-      toggleSaldoVisibility,
+      linkDePagoStore,
+      paginaPrincipalStore, // Expose the new store to the template
       handleLinkSubmit,
       handleMethodSelection,
       handlePaymentConfirmation,
@@ -285,11 +221,10 @@ export default {
       shareReceipt,
     };
   },
-};
+});
 </script>
 
 <style scoped>
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

@@ -45,7 +45,6 @@
             <thead>
               <tr class="border-b border-gray-200">
                 <th class="p-3 font-semibold text-gray-600 cursor-pointer hover:bg-gray-50 transition-colors" @click="sortBy('name')">Activo ↓↑</th>
-                <!-- Columna Tipo eliminada -->
                 <th class="p-3 font-semibold text-gray-600 text-right">Cantidad</th>
                 <th class="p-3 font-semibold text-gray-600 text-right">Precio Compra</th>
                 <th class="p-3 font-semibold text-gray-600 text-right cursor-pointer hover:bg-gray-50 transition-colors" @click="sortBy('currentValueTotal')">Valor Actual ↓↑</th>
@@ -59,7 +58,6 @@
               </tr>
               <tr v-for="investment in sortedInvestments" :key="investment.id" class="border-b border-gray-100 hover:bg-gray-50 transition-colors">
                 <td class="p-3">{{ investment.name }}</td>
-                <!-- Celda Tipo eliminada -->
                 <td class="p-3 text-right">{{ investment.quantity.toLocaleString() }}</td>
                 <td class="p-3 text-right">{{ formatCurrency(investment.purchasePricePerUnit) }}</td>
                 <td class="p-3 font-medium text-right">{{ formatCurrency(investment.currentValueTotal) }}</td>
@@ -118,10 +116,11 @@
   </div>
 </template>
 
-<script>
+<script setup>
+import { ref, computed } from 'vue';
+import { useInvestmentsStore } from '../store/InversionesStore.js'; // Asegúrate de que la ruta sea correcta
 import BarraLateral from '../BarraLateral.vue';
 import AddInvestmentForm from './FormularioAgregarInversion.vue';
-import { defineComponent, ref, computed } from 'vue';
 import { Pie } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
 
@@ -139,179 +138,145 @@ const formatPercentage = (value) => {
   return `${value >= 0 ? '+' : ''}${value.toFixed(2)}%`;
 };
 
-export default defineComponent({
-  name: 'InversionesDashboard',
-  components: { BarraLateral, Pie, AddInvestmentForm },
-  setup() {
-    const activeButton = ref('inversiones');
-    const searchQuery = ref('');
-    const showAddInvestmentModal = ref(false);
-    const showToast = ref(false);
-    const sortKey = ref('');
-    const sortOrder = ref('asc');
+const investmentsStore = useInvestmentsStore();
+const { investments, addInvestment } = investmentsStore;
 
-    // Eliminamos la propiedad 'type' de cada inversión
-    const investments = ref([
-      { id: 1, name: 'Acciones Apple (AAPL)', quantity: 50, purchasePricePerUnit: 150.00, currentValuePerUnit: 175.50, acquisitionDate: '15 Ene 2023' },
-      { id: 2, name: 'Bonos Corp. (MGLO)', quantity: 100, purchasePricePerUnit: 980.00, currentValuePerUnit: 1020.00, acquisitionDate: '20 Feb 2023' },
-      { id: 3, name: 'Fondo Común "Beta Latam"', quantity: 250, purchasePricePerUnit: 100.00, currentValuePerUnit: 95.00, acquisitionDate: '10 Abr 2023' },
-      { id: 4, name: 'Ethereum (ETH)', quantity: 5, purchasePricePerUnit: 1800.00, currentValuePerUnit: 2100.00, acquisitionDate: '20 May 2023' },
-      { id: 5, name: 'ETF S&P 500 (SPY)', quantity: 30, purchasePricePerUnit: 400.00, currentValuePerUnit: 450.00, acquisitionDate: '05 Jun 2023' },
-      { id: 6, name: 'Plazo Fijo Banco Z', quantity: 1, purchasePricePerUnit: 50000.00, currentValuePerUnit: 52500.00, acquisitionDate: '01 Jul 2023' },
-    ]);
+const activeButton = ref('inversiones');
+const searchQuery = ref('');
+const showAddInvestmentModal = ref(false);
+const showToast = ref(false);
+const sortKey = ref('');
+const sortOrder = ref('asc');
 
-    const handleAddInvestment = (newInvestment) => {
-      const newId = Math.max(...investments.value.map(inv => inv.id), 0) + 1;
-      const date = new Date(newInvestment.acquisitionDate);
-      const formattedDate = date.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
-      investments.value.push({
-        id: newId,
-        ...newInvestment,
-        currentValuePerUnit: newInvestment.purchasePricePerUnit,
-        acquisitionDate: formattedDate,
-      });
-      showAddInvestmentModal.value = false;
-      showToast.value = true;
-      setTimeout(() => {
-        showToast.value = false;
-      }, 3000);
-    };
+const handleAddInvestment = (newInvestment) => {
+  const date = new Date(newInvestment.acquisitionDate);
+  const formattedDate = date.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
+  investmentsStore.addInvestment({
+    ...newInvestment,
+    currentValuePerUnit: newInvestment.purchasePricePerUnit, // Asume que el valor actual es el de compra al agregar
+    acquisitionDate: formattedDate,
+  });
+  showAddInvestmentModal.value = false;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 3000);
+};
 
-    const processedInvestments = computed(() => {
-      return investments.value.map(inv => {
-        const costTotal = inv.quantity * inv.purchasePricePerUnit;
-        const currentValueTotal = inv.quantity * inv.currentValuePerUnit;
-        const performance = inv.purchasePricePerUnit === 0 ? 0 : ((inv.currentValuePerUnit - inv.purchasePricePerUnit) / inv.purchasePricePerUnit) * 100;
-        const unrealizedGainLoss = currentValueTotal - costTotal;
-        return {
-          ...inv,
-          costTotal,
-          currentValueTotal,
-          performance,
-          unrealizedGainLoss,
-        };
-      });
-    });
-
-    const totalPortfolioValue = computed(() => {
-      return processedInvestments.value.reduce((sum, inv) => sum + inv.currentValueTotal, 0);
-    });
-
-    const overallPerformance = computed(() => {
-      const totalCost = processedInvestments.value.reduce((sum, inv) => sum + inv.costTotal, 0);
-      if (totalCost === 0) return 0;
-      const currentTotalValue = totalPortfolioValue.value;
-      return ((currentTotalValue - totalCost) / totalCost) * 100;
-    });
-
-    const topPerformingAsset = computed(() => {
-      if (processedInvestments.value.length === 0) return null;
-      return [...processedInvestments.value].sort((a, b) => b.performance - a.performance)[0];
-    });
-
-    // Eliminamos el filtro por type
-    const filteredInvestments = computed(() => {
-      if (!searchQuery.value) {
-        return processedInvestments.value;
-      }
-      const lowerQuery = searchQuery.value.toLowerCase();
-      return processedInvestments.value.filter(investment =>
-        investment.name.toLowerCase().includes(lowerQuery)
-      );
-    });
-
-    const sortBy = (key) => {
-      if (sortKey.value === key) {
-        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortKey.value = key;
-        sortOrder.value = 'asc';
-      }
-    };
-
-    const sortedInvestments = computed(() => {
-      if (!sortKey.value) return filteredInvestments.value;
-      return [...filteredInvestments.value].sort((a, b) => {
-        let valA = a[sortKey.value];
-        let valB = b[sortKey.value];
-        if (typeof valA === 'string') {
-          valA = valA.toLowerCase();
-          valB = valB.toLowerCase();
-        }
-        if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1;
-        if (valA > valB) return sortOrder.value === 'asc' ? 1 : -1;
-        return 0;
-      });
-    });
-
-    // Eliminamos el gráfico de distribución por tipo
-    const dynamicChartData = computed(() => {
-      // Ahora solo muestra la distribución por nombre de activo
-      const distribution = {};
-      processedInvestments.value.forEach(inv => {
-        distribution[inv.name] = inv.currentValueTotal;
-      });
-      const labels = Object.keys(distribution);
-      const data = Object.values(distribution);
-      const backgroundColors = [
-        '#354a2f', '#558B2F', '#8FBC8F', '#B3DDA1', '#6B8E23',
-        '#A1C9A0', '#2E8B57', '#3CB371', '#90EE90', '#C1E1C1'
-      ];
-      return {
-        labels,
-        datasets: [{
-          data,
-          backgroundColor: labels.map((_, i) => backgroundColors[i % backgroundColors.length]),
-          hoverOffset: 4,
-        }],
-      };
-    });
-
-    const chartOptions = ref({
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom' },
-        title: {
-          display: true,
-          text: 'Distribución del Portafolio por Activo',
-          padding: { bottom: 20 },
-          color: '#374151',
-          font: { size: 18, weight: '600' },
-        },
-        tooltip: {
-          callbacks: {
-            label: function(context) {
-              let label = context.label || '';
-              if (label) {
-                label += ': ';
-              }
-              if (context.parsed !== null) {
-                label += formatCurrency(context.parsed) + ` (${((context.parsed / totalPortfolioValue.value) * 100).toFixed(2)}%)`;
-              }
-              return label;
-            }
-          }
-        }
-      },
-    });
-
+const processedInvestments = computed(() => {
+  return investments.map(inv => { // Usamos directamente investments del store
+    const costTotal = inv.quantity * inv.purchasePricePerUnit;
+    const currentValueTotal = inv.quantity * inv.currentValuePerUnit;
+    const performance = inv.purchasePricePerUnit === 0 ? 0 : ((inv.currentValuePerUnit - inv.purchasePricePerUnit) / inv.purchasePricePerUnit) * 100;
+    const unrealizedGainLoss = currentValueTotal - costTotal;
     return {
-      activeButton,
-      searchQuery,
-      sortedInvestments,
-      dynamicChartData,
-      chartOptions,
-      totalPortfolioValue,
-      overallPerformance,
-      topPerformingAsset,
-      sortBy,
-      formatCurrency,
-      formatPercentage,
-      showAddInvestmentModal,
-      showToast,
-      handleAddInvestment,
+      ...inv,
+      costTotal,
+      currentValueTotal,
+      performance,
+      unrealizedGainLoss,
     };
+  });
+});
+
+const totalPortfolioValue = computed(() => {
+  return processedInvestments.value.reduce((sum, inv) => sum + inv.currentValueTotal, 0);
+});
+
+const overallPerformance = computed(() => {
+  const totalCost = processedInvestments.value.reduce((sum, inv) => sum + inv.costTotal, 0);
+  if (totalCost === 0) return 0;
+  const currentTotalValue = totalPortfolioValue.value;
+  return ((currentTotalValue - totalCost) / totalCost) * 100;
+});
+
+const topPerformingAsset = computed(() => {
+  if (processedInvestments.value.length === 0) return null;
+  return [...processedInvestments.value].sort((a, b) => b.performance - a.performance)[0];
+});
+
+const filteredInvestments = computed(() => {
+  if (!searchQuery.value) {
+    return processedInvestments.value;
+  }
+  const lowerQuery = searchQuery.value.toLowerCase();
+  return processedInvestments.value.filter(investment =>
+    investment.name.toLowerCase().includes(lowerQuery)
+  );
+});
+
+const sortBy = (key) => {
+  if (sortKey.value === key) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey.value = key;
+    sortOrder.value = 'asc';
+  }
+};
+
+const sortedInvestments = computed(() => {
+  if (!sortKey.value) return filteredInvestments.value;
+  return [...filteredInvestments.value].sort((a, b) => {
+    let valA = a[sortKey.value];
+    let valB = b[sortKey.value];
+    if (typeof valA === 'string') {
+      valA = valA.toLowerCase();
+      valB = valB.toLowerCase();
+    }
+    if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1;
+    if (valA > valB) return sortOrder.value === 'asc' ? 1 : -1;
+    return 0;
+  });
+});
+
+const dynamicChartData = computed(() => {
+  const distribution = {};
+  processedInvestments.value.forEach(inv => {
+    distribution[inv.name] = inv.currentValueTotal;
+  });
+  const labels = Object.keys(distribution);
+  const data = Object.values(distribution);
+  const backgroundColors = [
+    '#354a2f', '#558B2F', '#8FBC8F', '#B3DDA1', '#6B8E23',
+    '#A1C9A0', '#2E8B57', '#3CB371', '#90EE90', '#C1E1C1'
+  ];
+  return {
+    labels,
+    datasets: [{
+      data,
+      backgroundColor: labels.map((_, i) => backgroundColors[i % backgroundColors.length]),
+      hoverOffset: 4,
+    }],
+  };
+});
+
+const chartOptions = ref({
+  responsive: true,
+  maintainAspectRatio: false,
+  plugins: {
+    legend: { position: 'bottom' },
+    title: {
+      display: true,
+      text: 'Distribución del Portafolio por Activo',
+      padding: { bottom: 20 },
+      color: '#374151',
+      font: { size: 18, weight: '600' },
+    },
+    tooltip: {
+      callbacks: {
+        label: function(context) {
+          let label = context.label || '';
+          if (label) {
+            label += ': ';
+          }
+          if (context.parsed !== null) {
+            label += formatCurrency(context.parsed) + ` (${((context.parsed / totalPortfolioValue.value) * 100).toFixed(2)}%)`;
+          }
+          return label;
+        }
+      }
+    }
   },
 });
 </script>
+

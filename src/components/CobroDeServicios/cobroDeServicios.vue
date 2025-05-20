@@ -1,3 +1,4 @@
+```vue
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
     <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
@@ -108,14 +109,10 @@
 </template>
 
 <script>
+import { defineComponent, ref, computed } from 'vue';
+import { useCobrosStore } from '../store/CobrosStore.js';
 import BarraLateral from '../BarraLateral.vue';
 import AddPaymentLinkForm from './formularioDeCobro.vue';
-import { defineComponent, ref, computed } from 'vue';
-
-const formatCurrency = (value) => {
-  if (typeof value !== 'number') return '$0.00';
-  return value.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
-};
 
 export default defineComponent({
   name: 'CobrosDashboard',
@@ -124,121 +121,31 @@ export default defineComponent({
     AddPaymentLinkForm 
   },
   setup() {
+    const cobrosStore = useCobrosStore();
     const activeButton = ref('CobroDeServicios');
-    const searchQuery = ref('');
     const showAddLinkModal = ref(false);
-    const sortKey = ref('');
-    const sortOrder = ref('asc');
 
-    const paymentLinks = ref([
-      {
-        id: 1,
-        title: 'Consultoría de Negocios',
-        description: 'Sesión de 2 horas sobre estrategia empresarial',
-        price: 50000,
-        creationDate: '15 Ene 2025',
-        status: 'Pagado',
-      },
-      {
-        id: 2,
-        title: 'Mantenimiento Web',
-        description: 'Actualización mensual del sitio web',
-        price: 25000,
-        creationDate: '20 Feb 2025',
-        status: 'Pendiente',
-      },
-      {
-        id: 3,
-        title: 'Desarrollo de App',
-        description: 'Desarrollo de aplicación móvil personalizada',
-        price: 100000,
-        creationDate: '10 Mar 2025',
-        status: 'Expirado',
-      },
-      {
-        id: 4,
-        title: 'Capacitación Personal',
-        description: '',
-        price: 35000,
-        creationDate: '05 Abr 2025',
-        status: 'Pagado',
-      },
-    ]);
-
-    const handleAddLink = (newLink) => {
-      const newId = Math.max(...paymentLinks.value.map(l => l.id), 0) + 1;
-      const date = new Date();
-      const formattedDate = date.toLocaleDateString('es-AR', { day: '2-digit', month: 'short', year: 'numeric' });
-      paymentLinks.value.push({
-        id: newId,
-        ...newLink,
-        creationDate: formattedDate,
-        status: 'Pendiente',
-      });
-      showAddLinkModal.value = false;
+    const formatCurrency = (value) => {
+      if (typeof value !== 'number') return '$0.00';
+      return value.toLocaleString('es-AR', { style: 'currency', currency: 'ARS' });
     };
-
-    const totalCollected = computed(() => {
-      return paymentLinks.value
-        .filter(l => l.status === 'Pagado')
-        .reduce((sum, l) => sum + l.price, 0);
-    });
-
-    const activeLinks = computed(() => {
-      return paymentLinks.value.filter(l => l.status === 'Pendiente').length;
-    });
-
-    const totalLinks = computed(() => {
-      return paymentLinks.value.length;
-    });
-
-    const filteredLinks = computed(() => {
-      if (!searchQuery.value) {
-        return paymentLinks.value;
-      }
-      const lowerQuery = searchQuery.value.toLowerCase();
-      return paymentLinks.value.filter(link =>
-        link.title.toLowerCase().includes(lowerQuery) ||
-        (link.description && link.description.toLowerCase().includes(lowerQuery))
-      );
-    });
-
-    const sortBy = (key) => {
-      if (sortKey.value === key) {
-        sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
-      } else {
-        sortKey.value = key;
-        sortOrder.value = 'asc';
-      }
-    };
-
-    const sortedLinks = computed(() => {
-      if (!sortKey.value) return filteredLinks.value;
-      return [...filteredLinks.value].sort((a, b) => {
-        let valA = a[sortKey.value];
-        let valB = b[sortKey.value];
-        if (typeof valA === 'string') {
-          valA = valA.toLowerCase();
-          valB = valB.toLowerCase();
-        }
-        if (valA < valB) return sortOrder.value === 'asc' ? -1 : 1;
-        if (valA > valB) return sortOrder.value === 'asc' ? 1 : -1;
-        return 0;
-      });
-    });
 
     return {
       activeButton,
-      searchQuery,
-      sortedLinks,
-      totalCollected,
-      activeLinks,
-      totalLinks,
-      sortBy,
+      searchQuery: computed({
+        get: () => cobrosStore.searchQuery,
+        set: (value) => cobrosStore.setSearchQuery(value),
+      }),
+      sortedLinks: cobrosStore.sortedLinks,
+      totalCollected: cobrosStore.totalCollected,
+      activeLinks: cobrosStore.activeLinks,
+      totalLinks: cobrosStore.totalLinks,
+      sortBy: cobrosStore.sortBy,
       formatCurrency,
       showAddLinkModal,
-      handleAddLink,
+      handleAddLink: cobrosStore.handleAddLink,
     };
   },
 });
 </script>
+```

@@ -10,22 +10,22 @@
 
     <!-- Total -->
     <p class="text-gray-600 text-sm mb-1">Total</p>
-    <p class="text-3xl font-bold text-gray-900 mb-4">${{ total.toFixed(2) }}</p>
+    <p class="text-3xl font-bold text-gray-900 mb-4">${{ linkDePagoStore.total.toFixed(2) }}</p>
 
     <!-- Detalles -->
     <div class="bg-white rounded-xl text-sm text-gray-700 space-y-2 p-4 border-t border-b border-dashed border-gray-300 mb-4">
       <div class="text-left font-semibold text-base">Detalles del pago</div>
       <div class="flex justify-between">
         <span>Total del servicio</span>
-        <span>${{ amount.toFixed(2) }}</span>
+        <span>${{ linkDePagoStore.amount.toFixed(2) }}</span>
       </div>
       <div class="flex justify-between">
         <span>Cargo</span>
-        <span>${{ cargo.toFixed(2) }}</span>
+        <span>${{ linkDePagoStore.cargo.toFixed(2) }}</span>
       </div>
       <div class="flex justify-between font-bold text-green-600 border-t border-dashed pt-2">
         <span>Pago final</span>
-        <span>${{ total.toFixed(2) }}</span>
+        <span>${{ linkDePagoStore.total.toFixed(2) }}</span>
       </div>
     </div>
 
@@ -43,7 +43,7 @@
         Cancelar
       </button>
       <button
-        @click="$emit('confirm')"
+        @click="linkDePagoStore.confirmPayment(); $emit('confirm')"
         class="bg-[#5D8C39] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#5D8C39]/80 transition"
       >
         Confirmar
@@ -53,14 +53,8 @@
 </template>
 
 <script setup>
-import { computed } from 'vue';
+import { useLinkDePagoStore } from '../store/LinkDePagoStore.js';
 
-const props = defineProps({
-  amount: { type: Number, required: true },
-});
-
+const linkDePagoStore = useLinkDePagoStore();
 const emit = defineEmits(['confirm', 'cancel']);
-
-const cargo = 1.00; // Hardcoded cargo
-const total = computed(() => props.amount + cargo);
 </script>

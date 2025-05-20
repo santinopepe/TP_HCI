@@ -137,16 +137,14 @@
 
 <script setup>
 import { ref } from 'vue';
+import { useCardsStore } from '../store/TarjetasStore.js'; 
 import BarraLateral from '../BarraLateral.vue';
 import AddCardForm from './AgregarTarjeta.vue';
 
-const activeButton = ref('tarjetas');
+const cardsStore = useCardsStore();
+const { cards, addCard, removeCard } = cardsStore;
 
-const cards = ref([
-  { id: 1, type: 'Visa', last4: '1234', name: 'Juan Perez', expiry: '12/25', bank: 'Mi Banco Principal' },
-  { id: 2, type: 'Mastercard', last4: '5678', name: 'Juan Perez', expiry: '08/24', bank: 'Otro Banco' },
-  { id: 3, type: 'American Express', last4: '9012', name: 'Juan Perez', expiry: '06/26', bank: 'Banco del Sur' },
-]);
+const activeButton = ref('tarjetas');
 
 const showAddCardForm = ref(false);
 const selectedCard = ref(null);
@@ -165,9 +163,9 @@ const handleMouseLeave = () => {
 
 const calculatedZIndex = (index) => {
   if (hoveredIndex.value === index) {
-    return cards.value.length + 1;
+    return cards.length + 1;
   }
-  return cards.value.length - index;
+  return cards.length - index;
 };
 
 const getCardBrand = (type) => {
@@ -209,12 +207,8 @@ const getCardBackground = (type) => {
   }
 };
 
-const handleCardType = (type) => {
-  
-};
-
 const handleAddCard = (card) => {
-  cards.value.unshift(card);
+  cardsStore.addCard(card); // Usa la acción del store
   showAddCardForm.value = false;
 };
 
@@ -225,6 +219,7 @@ const viewCardDetails = (card) => {
 
 const closeCardDetailModal = () => {
   showCardDetailModal.value = false;
+  selectedCard.value = null; // Limpiar la tarjeta seleccionada al cerrar el modal
 };
 
 const requestRemoveCard = (cardId) => {
@@ -235,7 +230,7 @@ const requestRemoveCard = (cardId) => {
 
 const confirmRemoveCard = () => {
   if (cardIdToRemove.value !== null) {
-    cards.value = cards.value.filter(card => card.id !== cardIdToRemove.value);
+    cardsStore.removeCard(cardIdToRemove.value); // Usa la acción del store
   }
   cardIdToRemove.value = null;
   showRemoveConfirmModal.value = false;
@@ -247,6 +242,16 @@ const cancelRemoveCard = () => {
   showRemoveConfirmModal.value = false;
   selectedCard.value = null;
 };
-
-
 </script>
+
+<style scoped>
+/* Puedes añadir tus estilos aquí si es necesario */
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+</style>

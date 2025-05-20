@@ -1,12 +1,10 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden relative">
-    <!-- Indicador de pasos -->
     <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
       Paso 1 de 4
     </div>
     <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
     <div class="p-8 bg-gray-50 min-h-screen flex-1 overflow-y-auto">
-      <!-- Encabezado -->
       <div class="max-w-2xl mx-auto text-center mb-10">
         <h1 class="text-3xl font-bold text-gray-800 mb-2">Elegí un contacto</h1>
         <p class="text-gray-500 text-lg">
@@ -14,23 +12,21 @@
         </p>
       </div>
 
-      <!-- Barra de búsqueda -->
       <div class="max-w-md mx-auto mb-6">
         <input
-          v-model="busqueda"
+          v-model="transferenciaStore.searchQuery"
           type="text"
           placeholder="Buscar contacto..."
           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-300"
         />
       </div>
 
-      <!-- Lista de contactos -->
       <div class="max-w-md mx-auto">
         <ul class="space-y-4">
           <li
-            v-for="contacto in contactosFiltrados"
+            v-for="contacto in transferenciaStore.filteredContacts"
             :key="contacto.id"
-            @click="seleccionarContacto(contacto)"
+            @click="handleSelectContact(contacto)"
             class="bg-white p-4 rounded-lg shadow hover:bg-gray-100 cursor-pointer flex items-center gap-4"
           >
             <img :src="contacto.avatar" class="w-10 h-10 rounded-full" />
@@ -42,7 +38,6 @@
         </ul>
       </div>
 
-      <!-- Botón para transferir a un nuevo contacto -->
       <div class="max-w-md mx-auto mt-6 text-center">
         <router-link
           to="/transferirNuevoContacto"
@@ -56,40 +51,33 @@
 </template>
 
 <script>
+import { defineComponent, ref } from 'vue';
+import { useRouter } from 'vue-router';
+import { useTransferenciaStore } from '../store/TransferenciasStore.js';
 import BarraLateral from './../BarraLateral.vue';
-import { contactStore } from '../tienda.js';
 
-export default {
+export default defineComponent({
   components: {
     BarraLateral,
   },
-  data() {
-    return {
-      activeButton: 'transferir',
-      busqueda: '',
-    };
-  },
-  computed: {
-    contactosFiltrados() {
-      return contactStore.contactos.filter((contacto) =>
-        contacto.nombre.toLowerCase().includes(this.busqueda.toLowerCase())
-      );
-    },
-  },
-  methods: {
-    seleccionarContacto(contacto) {
-      this.$router.push({
+  setup() {
+    const router = useRouter();
+    const transferenciaStore = useTransferenciaStore();
+    const activeButton = ref('transferir');
+
+    const handleSelectContact = (contacto) => {
+      transferenciaStore.selectContact(contacto); // Store the selected contact
+      router.push({
         name: 'TransferenciaFormulario',
         params: { contactoNombre: encodeURIComponent(contacto.nombre) },
       });
-    },
-    mostrarFormularioNuevoContacto() {
-      this.$router.push('/transferirNuevoContacto');
-    },
-    agregarNuevoContacto(nuevoContacto) {
-      contactStore.addContacto(nuevoContacto);
-      this.$router.push('/transferir');
-    },
+    };
+
+    return {
+      activeButton,
+      transferenciaStore, // Expose the store to the template
+      handleSelectContact,
+    };
   },
-};
+});
 </script>

@@ -4,16 +4,13 @@
       <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
         Paso 3 de 4
       </div>
-      <!-- Encabezado -->
       <div class="text-left mb-4 relative">
         <h2 class="text-center font-semibold text-gray-800 text-lg">Confirmación</h2>
       </div>
 
-      <!-- Total -->
       <p class="text-gray-600 text-sm mb-1">Total</p>
       <p class="text-3xl font-bold text-gray-900 mb-4">${{ total.toFixed(2) }}</p>
 
-      <!-- Detalles -->
       <div class="bg-white rounded-xl text-sm text-gray-700 space-y-2 p-4 border-t border-b border-dashed border-gray-300 mb-4">
         <div class="text-left font-semibold text-base">Detalles de transferencia</div>
         <div class="flex justify-between">
@@ -30,12 +27,10 @@
         </div>
       </div>
 
-      <!-- Aviso -->
       <div class="bg-green-50 text-green-800 text-sm p-3 rounded-lg flex items-center gap-2 mb-5">
         Se realizará el pago una vez confirmes la transacción.
       </div>
 
-      <!-- Botones -->
       <div class="flex justify-between">
         <button
           @click="cancelarTransferencia"
@@ -55,26 +50,33 @@
 </template>
 
 <script>
-export default {
+import { defineComponent, computed } from 'vue';
+import { useTransferenciaStore } from '../store/TransferenciasStore.js'; // Corrected path/name
+
+export default defineComponent({
   props: {
     monto: { type: String, required: true },
     contacto: { type: Object, required: true },
   },
-  computed: {
-    cargo() {
-      return 1.00;
-    },
-    total() {
-      return parseFloat(this.monto) + this.cargo;
-    },
+  setup(props, { emit }) { // Destructure 'emit' from the setup context
+    const transferenciaStore = useTransferenciaStore();
+
+    const cargo = computed(() => transferenciaStore.transactionCargo);
+    const total = computed(() => parseFloat(props.monto) + cargo.value);
+
+    const confirmarTransferencia = () => {
+      emit('confirmar'); // Use the 'emit' function
+    };
+    const cancelarTransferencia = () => {
+      emit('cancelar'); // Use the 'emit' function
+    };
+
+    return {
+      cargo,
+      total,
+      confirmarTransferencia,
+      cancelarTransferencia,
+    };
   },
-  methods: {
-    confirmarTransferencia() {
-      this.$emit('confirmar');
-    },
-    cancelarTransferencia() {
-      this.$emit('cancelar');
-    },
-  },
-};
+});
 </script>
