@@ -69,7 +69,7 @@
 
 <script>
 import { defineComponent, ref, computed } from 'vue';
-import { useActividadStore } from '../store/ActividadStore.js'; // Changed from useFinanceStore
+import { useActividadStore } from '../store/ActividadStore.js'; 
 import BarraLateral from '../BarraLateral.vue';
 import { Pie } from 'vue-chartjs';
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
@@ -83,7 +83,7 @@ export default defineComponent({
     Pie,
   },
   setup() {
-    const actividadStore = useActividadStore(); // Changed from financeStore
+    const actividadStore = useActividadStore(); 
     const activeButton = ref('actividad');
 
     const chartOptions = {
@@ -118,15 +118,15 @@ export default defineComponent({
     return {
       activeButton,
       searchQuery: computed({
-        get: () => actividadStore.searchQuery, // Changed from financeStore
-        set: (value) => actividadStore.setSearchQuery(value), // Changed from financeStore
+        get: () => actividadStore.searchQuery, 
+        set: (value) => actividadStore.setSearchQuery(value), 
       }),
-      filteredTransactions: actividadStore.filteredTransactions, // Changed from financeStore
-      chartData: actividadStore.getChartData, // Changed from financeStore
+      filteredTransactions: actividadStore.filteredTransactions, 
+      chartData: actividadStore.getChartData, 
       chartOptions,
-      mainAccountBalance: actividadStore.getMainAccountBalance, // Changed from financeStore
-      activeInvestments: actividadStore.getActiveInvestments, // Changed from financeStore
-      expenses: actividadStore.getExpenses, // Changed from financeStore
+      mainAccountBalance: actividadStore.getMainAccountBalance, 
+      activeInvestments: actividadStore.getActiveInvestments, 
+      expenses: actividadStore.getExpenses, 
       formatCurrency,
     };
   },

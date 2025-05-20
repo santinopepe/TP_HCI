@@ -54,7 +54,7 @@
         </div>
         <button
           type="submit"
-          class="w-full p-3 bg-[#2e4b3f] text-white border-none rounded-md text-base cursor-pointer hover:bg-[#3a5c4b]"
+          class="w-full p-3 text-white border-none rounded-md text-base cursor-pointer bg-[#5D8C39] hover:bg-[#5D8C39]/80"
         >
           Registrarse
         </button>

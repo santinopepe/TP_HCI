@@ -269,7 +269,6 @@ export default defineComponent({
     const showRescueModal = ref(false);
     const selectedInvestment = ref(null);
 
-    // Eliminamos la propiedad 'type' de cada inversión
     const investments = ref([
       {
         id: 1,

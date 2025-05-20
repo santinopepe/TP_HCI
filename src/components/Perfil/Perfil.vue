@@ -89,31 +89,22 @@
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { usePerfilStore } from '../store/PerfilStore.js'; // Import the new store
+import { usePerfilStore } from '../store/PerfilStore.js'; 
 import BarraLateral from "../BarraLateral.vue";
-
+import router from "../../router/index.js"; 
 export default defineComponent({
   name: "Perfil",
   components: {
     BarraLateral,
   },
   setup() {
-    const perfilStore = usePerfilStore(); // Initialize the store
-    const activeButton = ref('perfil'); // Moved to ref for setup composition API
-    const fileInput = ref(null); // Ref for the file input element
+    const perfilStore = usePerfilStore(); 
+    const activeButton = ref('perfil');
+    const fileInput = ref(null); 
 
     const goToChangePassword = () => {
-      // Assuming you have access to router via useRoute/useRouter from vue-router
-      // or if using options API style setup, this.$router would still be available.
-      // For composition API, you'd usually import:
-      // import { useRouter } from 'vue-router';
-      // const router = useRouter();
-      // router.push("/cambiarcontraseña");
+      router.push("/cambiarcontraseña");
 
-      // For this example, if running directly in a setup without router setup:
-      console.log("Navigating to /cambiarcontraseña");
-      // You'll need to set up vue-router properly in your main.js/app.js
-      // if you're not seeing navigation, or mock it for testing.
     };
 
     const triggerFileInput = () => {
@@ -125,7 +116,7 @@ export default defineComponent({
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          perfilStore.setProfileImage(e.target.result); // Update image via store action
+          perfilStore.setProfileImage(e.target.result); 
         };
         reader.readAsDataURL(file);
       }
@@ -133,8 +124,8 @@ export default defineComponent({
 
     return {
       activeButton,
-      perfilStore, // Make the store accessible in the template
-      fileInput,    // Expose the ref for the template
+      perfilStore, 
+      fileInput,   
       goToChangePassword,
       triggerFileInput,
       handleFileChange,
