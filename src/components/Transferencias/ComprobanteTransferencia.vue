@@ -1,5 +1,5 @@
 <template>
-  <div class="flex flex-col items-center min-h-screen bg-gradient-to-b from-pink-50 to-white p-32 font-sans">
+  <div class="flex flex-col items-center min-h-screen bg-gray-100 p-32 font-sans">
     <div class="max-w-sm w-full space-y-6">
       <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
         Paso 4 de 4
