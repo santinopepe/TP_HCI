@@ -164,42 +164,49 @@
       </div>
     </main>
 
-    <div
-      v-if="showPayServiceForm"
-      class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
-      @click.self="closePaymentFlow" 
+    <transition
+      enter-active-class="transition-opacity duration-300 ease"
+      leave-active-class="transition-opacity duration-300 ease"
+      enter-from-class="opacity-0"
+      leave-to-class="opacity-0"
     >
-      <IngresarLinkPago
-        v-if="currentStep === 1"
-        @submit-link="handleLinkSubmit"
-        @cancel="closePaymentFlow"
-        @click.stop="" 
-      />
+      <div
+        v-if="showPayServiceForm"
+        class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50"
+        @click.self="closePaymentFlow" 
+      >
+        <IngresarLinkPago
+          v-if="currentStep === 1"
+          @submit-link="handleLinkSubmit"
+          @cancel="closePaymentFlow"
+          @click.stop="" 
+        />
 
-      <SeleccionarMetodoPago
-        v-if="currentStep === 2"
-        @proceed-to-confirmation="handleMethodSelection"
-        @cancel="closePaymentFlow"
-         @click.stop=""
-      />
+        <SeleccionarMetodoPago
+          v-if="currentStep === 2"
+          @proceed-to-confirmation="handleMethodSelection"
+          @cancel="closePaymentFlow"
+          @click.stop=""
+        />
 
-      <ConfirmacionPago
-        v-if="currentStep === 3"
-        :amount="paymentDetails.amount"
-        @confirm="handlePaymentConfirmation"
-        @cancel="closePaymentFlow"
-         @click.stop=""
-      />
+        <ConfirmacionPago
+          v-if="currentStep === 3"
+          :amount="paymentDetails.amount"
+          @confirm="handlePaymentConfirmation"
+          @cancel="closePaymentFlow"
+          @click.stop=""
+        />
 
-      <ComprobantePago
-        v-if="currentStep === 4"
-        :amount="paymentDetails.amount"
-        @make-another-payment="restartPaymentFlow"
-        @return-to-home="closePaymentFlow"
-        @share-receipt="shareReceipt"
-         @click.stop=""
-      />
+        <ComprobantePago
+          v-if="currentStep === 4"
+          :amount="paymentDetails.amount"
+          @make-another-payment="restartPaymentFlow"
+          @return-to-home="closePaymentFlow"
+          @share-receipt="shareReceipt"
+          @click.stop=""
+        />
       </div>
+    </transition>
   </div>
 </template>
 
@@ -267,8 +274,7 @@ export default {
       // Lógica para compartir el comprobante
     };
 
-     const paymentDetails = paymentStore.paymentDetails;
-
+    const paymentDetails = paymentStore.paymentDetails;
 
     return {
       activeButton,
@@ -287,15 +293,3 @@ export default {
   },
 };
 </script>
-
-<style scoped>
-
-.fade-enter-active,
-.fade-leave-active {
-  transition: opacity 0.3s ease;
-}
-.fade-enter-from,
-.fade-leave-to {
-  opacity: 0;
-}
-</style>

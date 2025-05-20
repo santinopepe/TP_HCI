@@ -8,7 +8,12 @@
         </p>
 
         <!-- Mensaje de copiado -->
-        <transition name="fade">
+        <transition
+          enter-active-class="transition-opacity duration-300"
+          leave-active-class="transition-opacity duration-300"
+          enter-from-class="opacity-0"
+          leave-to-class="opacity-0"
+        >
           <div
             v-if="copiado"
             class="fixed top-8 left-1/2 transform -translate-x-1/2 bg-[#5D8C39] text-white px-6 py-2 rounded-lg shadow-lg z-50 text-base"
@@ -62,7 +67,7 @@
         </div>
         <!-- Modificar alias -->
         <div
-          class="bg-white rounded-xl  shadow-sm border-t flex items-center px-6 py-3 cursor-pointer hover:bg-gray-50 transition"
+          class="bg-white rounded-xl shadow-sm border-t flex items-center px-6 py-3 cursor-pointer hover:bg-gray-50 transition"
           @click="modificarAlias"
           v-if="!editandoAlias"
         >
@@ -139,12 +144,3 @@ export default {
   },
 };
 </script>
-
-<style>
-.fade-enter-active, .fade-leave-active {
-  transition: opacity 0.3s;
-}
-.fade-enter, .fade-leave-to {
-  opacity: 0;
-}
-</style>
