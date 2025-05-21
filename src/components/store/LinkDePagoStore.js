@@ -10,8 +10,8 @@ export const useLinkDePagoStore = defineStore('linkDePago', {
       { nombre: 'Amex **** 9012', numero: '**** **** **** 9012' },
     ],
     tarjetaSeleccionada: 0,
-    accountBalance: 1500.00, // Example account balance
-    amount: 100.00, // Example service amount
+    accountBalance: 1500.00,
+    amount: 100.00,
     cargo: 5.00, // Example service fee
     total: 105.00, // amount + cargo
     serviceName: 'Servicio de Electricidad', // New field for service name
@@ -24,16 +24,18 @@ export const useLinkDePagoStore = defineStore('linkDePago', {
   getters: {
     selectedCard: (state) => state.tarjetas[state.tarjetaSeleccionada],
   },
-
   actions: {
     setPaymentLink(link) {
       this.paymentLink = link;
-      // Basic validation for payment link
       if (!link || !link.startsWith('https://')) {
         this.errors.paymentLink = 'Por favor, ingrese un link de pago válido';
       } else {
         this.errors.paymentLink = null;
       }
+    },
+
+    setPaymentMethod(method) {
+      this.metodo = method;
     },
 
     rotateCard(direction) {
@@ -45,7 +47,6 @@ export const useLinkDePagoStore = defineStore('linkDePago', {
     },
 
     confirmPayment() {
-      // Logic for confirming payment
       this.total = this.amount + this.cargo;
     },
 
@@ -57,12 +58,11 @@ export const useLinkDePagoStore = defineStore('linkDePago', {
       this.amount = 0;
       this.cargo = 0;
       this.total = 0;
-      this.serviceName = ''; // Reset service name
-      this.serviceId = ''; // Reset service ID
+      this.serviceName = '';
+      this.serviceId = '';
     },
 
     setServiceDetails({ serviceName, serviceId, amount, cargo }) {
-      // New action to set service details dynamically
       this.serviceName = serviceName;
       this.serviceId = serviceId;
       this.amount = amount;
