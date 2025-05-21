@@ -1,6 +1,9 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
-   <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" /> 
+    <BarraLateral
+      :active-button="activeButton"
+      @update:activeButton="activeButton = $event"
+    />
 
     <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
       <div class="mb-6">
@@ -13,15 +16,25 @@
         />
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-        <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white">
+        <div
+          class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
+        >
           <h2 class="text-lg font-semibold">Saldo en Cuenta Principal</h2>
-          <p class="text-3xl font-bold mt-2">{{ formatCurrency(mainAccountBalance) }}</p>
+          <p class="text-3xl font-bold mt-2">
+            {{ formatCurrency(mainAccountBalance) }}
+          </p>
         </div>
-        <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white">
+        <div
+          class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
+        >
           <h2 class="text-lg font-semibold">Inversiones Activas</h2>
-          <p class="text-3xl font-bold mt-2">{{ formatCurrency(activeInvestments) }}</p>
+          <p class="text-3xl font-bold mt-2">
+            {{ formatCurrency(activeInvestments) }}
+          </p>
         </div>
-        <div class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white">
+        <div
+          class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
+        >
           <h2 class="text-lg font-semibold">Gastos</h2>
           <p class="text-3xl font-bold mt-2">{{ formatCurrency(expenses) }}</p>
         </div>
@@ -29,27 +42,45 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <!-- Últimas Transacciones -->
-        <div class="lg:col-span-2 bg-white p-4 rounded-lg shadow-lg overflow-x-auto h-full">
-          <h2 class="text-lg font-semibold mb-4 text-gray-700">Últimas Transacciones</h2>
+        <div
+          class="lg:col-span-2 bg-white p-4 rounded-lg shadow-lg overflow-x-auto h-full"
+        >
+          <h2 class="text-lg font-semibold mb-4 text-gray-700">
+            Últimas Transacciones
+          </h2>
           <table class="w-full text-left min-w-[600px]">
             <thead>
               <tr class="border-b border-gray-200">
                 <th class="p-3 font-semibold text-gray-600">Nombre</th>
                 <th class="p-3 font-semibold text-gray-600">Tipo</th>
                 <th class="p-3 font-semibold text-gray-600">Fecha</th>
-                <th class="p-3 font-semibold text-gray-600 text-right">Monto</th>
+                <th class="p-3 font-semibold text-gray-600 text-right">
+                  Monto
+                </th>
               </tr>
             </thead>
             <tbody>
               <tr v-if="filteredTransactions.length === 0">
-                <td colspan="4" class="p-3 text-center text-gray-500">No se encontraron transacciones.</td>
+                <td colspan="4" class="p-3 text-center text-gray-500">
+                  No se encontraron transacciones.
+                </td>
               </tr>
-              <tr v-for="transaction in filteredTransactions" :key="transaction.id" class="border-b border-gray-100 hover:bg-gray-50">
+              <tr
+                v-for="transaction in filteredTransactions"
+                :key="transaction.id"
+                class="border-b border-gray-100 hover:bg-gray-50"
+              >
                 <td class="p-3">{{ transaction.name }}</td>
                 <td class="p-3">{{ transaction.type }}</td>
-                <td class="p-3 text-sm text-gray-500">{{ transaction.date }}</td>
+                <td class="p-3 text-sm text-gray-500">
+                  {{ transaction.date }}
+                </td>
                 <td class="p-3 text-red-500 font-medium text-right">
-                  {{ formatCurrency(parseFloat(transaction.amount.replace(/[^0-9.-]+/g, ''))) }}
+                  {{
+                    formatCurrency(
+                      parseFloat(transaction.amount.replace(/[^0-9.-]+/g, ""))
+                    )
+                  }}
                 </td>
               </tr>
             </tbody>
@@ -68,65 +99,65 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from 'vue';
-import { useActividadStore } from '../store/ActividadStore.js'; 
-import BarraLateral from '../BarraLateral.vue';
-import { Pie } from 'vue-chartjs';
-import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from 'chart.js';
+import { defineComponent, ref, computed } from "vue";
+import { useActividadStore } from "../store/ActividadStore.js";
+import BarraLateral from "../BarraLateral.vue";
+import { Pie } from "vue-chartjs";
+import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
 export default defineComponent({
-  name: 'ActividadDashboard',
+  name: "ActividadDashboard",
   components: {
     BarraLateral,
     Pie,
   },
   setup() {
-    const actividadStore = useActividadStore(); 
-    const activeButton = ref('actividad');
+    const actividadStore = useActividadStore();
+    const activeButton = ref("actividad");
 
     const chartOptions = {
       responsive: true,
       maintainAspectRatio: false,
       plugins: {
         legend: {
-          position: 'bottom',
+          position: "bottom",
         },
         title: {
           display: true,
-          text: 'Distribución de Gastos',
+          text: "Distribución de Gastos",
           padding: {
             bottom: 20,
           },
-          color: '#374151',
+          color: "#374151",
           font: {
             size: 18,
-            weight: '600',
+            weight: "600",
           },
         },
       },
     };
 
     const formatCurrency = (value) => {
-      return new Intl.NumberFormat('es-AR', {
-        style: 'currency',
-        currency: 'ARS',
+      return new Intl.NumberFormat("es-AR", {
+        style: "currency",
+        currency: "ARS",
       }).format(value);
     };
 
     return {
       activeButton,
       searchQuery: computed({
-        get: () => actividadStore.searchQuery, 
-        set: (value) => actividadStore.setSearchQuery(value), 
+        get: () => actividadStore.searchQuery,
+        set: (value) => actividadStore.setSearchQuery(value),
       }),
-      filteredTransactions: actividadStore.filteredTransactions, 
-      chartData: actividadStore.getChartData, 
+      filteredTransactions: computed(() => actividadStore.filteredTransactions),
+      chartData: actividadStore.getChartData,
       chartOptions,
-      mainAccountBalance: actividadStore.getMainAccountBalance, 
-      activeInvestments: actividadStore.getActiveInvestments, 
-      expenses: actividadStore.getExpenses, 
+      mainAccountBalance: actividadStore.getMainAccountBalance,
+      activeInvestments: actividadStore.getActiveInvestments,
+      expenses: actividadStore.getExpenses,
       formatCurrency,
     };
   },
