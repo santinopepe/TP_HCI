@@ -55,8 +55,8 @@ export default {
   data() {
     return {
       activeButton: 'ingresar-dinero',
-      alias: 'martin.gallardo.b',
-      cvu: '0023481928201930457639',
+      alias: 'jmarquez01',
+      cvu: '00234819282019304576839',
     };
   },
   methods: {
