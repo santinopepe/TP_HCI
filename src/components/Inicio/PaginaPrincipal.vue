@@ -17,18 +17,13 @@
             >
               Tu CVU
             </router-link>
-            <img
-              src="/images/logo.png"
-              alt="Logo SIM SIM"
-              class="w-16 h-16 mr-4"
-            />
             <div class="flex-1">
               <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
               <p class="text-3xl font-bold mt-4 text-left">
                 {{ paginaPrincipalStore.formattedBalance }}
               </p>
               <button
-                class="absolute bottom-[35%] left-[68%] bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
+                class="absolute bottom-[33%] left-[45%] bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
                 @click="paginaPrincipalStore.toggleSaldoVisibility"
               >
                 <img
