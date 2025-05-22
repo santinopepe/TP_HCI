@@ -2,7 +2,7 @@
   <aside
     class="bg-[url('/images/fondo.png')] text-white w-1/5 p-4 flex flex-col h-full bg-cover bg-center"
   >
-    <div class="flex items-center mb-8">
+    <div class="flex items-center mb-8 hoover:cursor-pointer">
       <img
         src="/images/logo.png"
         alt="Logo SIM SIM"

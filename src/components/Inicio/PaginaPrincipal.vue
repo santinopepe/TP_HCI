@@ -11,12 +11,12 @@
           <div
             class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center"
           >
-            <router-link
-              to="/cvu"
+            <button
               class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
-            >
+              @click="showCvuPopup = true"
+              >
               Tu CVU
-            </router-link>
+            </button>
             <div class="flex-1">
               <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
               <p class="text-3xl font-bold mt-4 text-left">
@@ -196,6 +196,9 @@
         @click.stop=""
       />
     </div>
+    <CvuPopup v-if="showCvuPopup" 
+      @close="showCvuPopup = false" 
+      />
   </div>
 </template>
 
@@ -208,6 +211,7 @@ import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
 import SeleccionarMetodoPago from "../PagoServicios/MetodoDePago.vue";
 import ConfirmacionPago from "../PagoServicios/ConfirmacionDePago.vue";
 import ComprobantePago from "../PagoServicios/ComprobantePago.vue";
+import CvuPopup from "../Inicio/CVU.vue"; 
 
 export default defineComponent({
   name: "PaginaPrincipal",
@@ -217,6 +221,7 @@ export default defineComponent({
     SeleccionarMetodoPago,
     ConfirmacionPago,
     ComprobantePago,
+    CvuPopup,
   },
   setup() {
     const linkDePagoStore = useLinkDePagoStore();
@@ -224,6 +229,7 @@ export default defineComponent({
     const activeButton = ref("inicio");
     const showPayServiceForm = ref(false);
     const currentStep = ref(1);
+    const showCvuPopup = ref(false);
 
     const handleLinkSubmit = (link) => {
       linkDePagoStore.setPaymentLink(link);
@@ -290,6 +296,7 @@ export default defineComponent({
       restartPaymentFlow,
       closePaymentFlow,
       shareReceipt,
+      showCvuPopup,
     };
   },
 });
