@@ -70,7 +70,9 @@
             </div>
             <div>
               <p class="text-sm font-semibold text-simsim-green-dark">Género</p>
-              <p class="text-lg text-gray-700 font-bold">{{ perfilStore.user.gender }}</p>
+              <p class="text-lg text-gray-700 font-bold">
+                {{ perfilStore.user.gender }}
+              </p>
             </div>
           </div>
 
@@ -104,28 +106,25 @@
         @update:newPassword="newPassword = $event"
         @update:confirmPassword="confirmPassword = $event"
         @update-password="updatePassword"
-        @cancel="cancel"
+        @back-to-step-1="isCodeVerified = false"
       />
 
       <!-- Success Modal -->
-      <SuccessModal
-        v-if="showSuccessModal"
-        @close="closeSuccessModal"
-      />
+      <SuccessModal v-if="showSuccessModal" @close="closeSuccessModal" />
     </main>
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
-import { usePerfilStore } from '../store/PerfilStore.js';
-import BarraLateral from '../BarraLateral.vue';
-import CodeVerificationModal from './ModalDeVerificacion.vue';
-import PasswordUpdateModal from './ModalActulizacionContrasenia.vue';
-import SuccessModal from './ModalDeCambioExitoso.vue';
+import { defineComponent, ref } from "vue";
+import { usePerfilStore } from "../store/PerfilStore.js";
+import BarraLateral from "../BarraLateral.vue";
+import CodeVerificationModal from "./ModalDeVerificacion.vue";
+import PasswordUpdateModal from "./ModalActulizacionContrasenia.vue";
+import SuccessModal from "./ModalDeCambioExitoso.vue";
 
 export default defineComponent({
-  name: 'Perfil',
+  name: "Perfil",
   components: {
     BarraLateral,
     CodeVerificationModal,
@@ -134,31 +133,31 @@ export default defineComponent({
   },
   setup() {
     const perfilStore = usePerfilStore();
-    const activeButton = ref('perfil');
+    const activeButton = ref("perfil");
     const fileInput = ref(null);
-    const code = ref('');
+    const code = ref("");
     const isCodeVerified = ref(false);
-    const newPassword = ref('');
-    const confirmPassword = ref('');
-    const errorMessage = ref('');
+    const newPassword = ref("");
+    const confirmPassword = ref("");
+    const errorMessage = ref("");
     const showFormModal = ref(false);
     const showSuccessModal = ref(false);
 
     const showChangePasswordModal = () => {
       showFormModal.value = true;
       isCodeVerified.value = false;
-      code.value = '';
-      newPassword.value = '';
-      confirmPassword.value = '';
-      errorMessage.value = '';
+      code.value = "";
+      newPassword.value = "";
+      confirmPassword.value = "";
+      errorMessage.value = "";
     };
 
     const verifyCode = () => {
-      if (code.value === '123456') {
+      if (code.value === "123456") {
         isCodeVerified.value = true;
-        errorMessage.value = '';
+        errorMessage.value = "";
       } else {
-        errorMessage.value = 'El código ingresado es incorrecto.';
+        errorMessage.value = "El código ingresado es incorrecto.";
       }
     };
 
@@ -166,20 +165,20 @@ export default defineComponent({
       const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/;
       if (!passwordRegex.test(newPassword.value)) {
         errorMessage.value =
-          'La contraseña debe tener al menos 8 caracteres, un carácter especial (!@#$%^&*) y un número.';
+          "La contraseña debe tener al menos 8 caracteres, un carácter especial (!@#$%^&*) y un número.";
         return;
       }
 
       if (newPassword.value !== confirmPassword.value) {
-        errorMessage.value = 'Las contraseñas no coinciden.';
+        errorMessage.value = "Las contraseñas no coinciden.";
         return;
       }
 
-      errorMessage.value = '';
+      errorMessage.value = "";
       showFormModal.value = false;
       showSuccessModal.value = true;
-      newPassword.value = '';
-      confirmPassword.value = '';
+      newPassword.value = "";
+      confirmPassword.value = "";
     };
 
     const closeSuccessModal = () => {
@@ -188,10 +187,10 @@ export default defineComponent({
 
     const cancel = () => {
       showFormModal.value = false;
-      errorMessage.value = '';
-      code.value = '';
-      newPassword.value = '';
-      confirmPassword.value = '';
+      errorMessage.value = "";
+      code.value = "";
+      newPassword.value = "";
+      confirmPassword.value = "";
       isCodeVerified.value = false;
     };
 
