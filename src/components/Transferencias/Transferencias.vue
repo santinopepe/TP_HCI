@@ -1,9 +1,14 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden relative">
-    <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
+    <div
+      class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
+    >
       Paso 1 de 4
     </div>
-    <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
+    <BarraLateral
+      :active-button="activeButton"
+      @update:activeButton="activeButton = $event"
+    />
     <div class="p-8 bg-gray-50 min-h-screen flex-1 overflow-y-auto">
       <div class="max-w-2xl mx-auto text-center mb-10">
         <h1 class="text-3xl font-bold text-gray-800 mb-2">Elegí un contacto</h1>
@@ -47,36 +52,48 @@
         </router-link>
       </div>
     </div>
+
+    <TransferenciaModal
+      :is-open="showTransferModal"
+      @close="showTransferModal = false"
+      @transfer-complete="handleTransferComplete"
+    />
   </div>
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
-import { useRouter } from 'vue-router';
-import { useTransferenciaStore } from '../store/TransferenciasStore.js';
-import BarraLateral from './../BarraLateral.vue';
+import { defineComponent, ref } from "vue";
+import { useRouter } from "vue-router";
+import { useTransferenciaStore } from "../store/TransferenciasStore.js";
+import BarraLateral from "./../BarraLateral.vue";
+import TransferenciaModal from "./TransferenciaModal.vue";
 
 export default defineComponent({
   components: {
     BarraLateral,
+    TransferenciaModal,
   },
   setup() {
     const router = useRouter();
     const transferenciaStore = useTransferenciaStore();
-    const activeButton = ref('transferir');
+    const activeButton = ref("transferir");
+    const showTransferModal = ref(false);
 
     const handleSelectContact = (contacto) => {
-      transferenciaStore.selectContact(contacto); // Store the selected contact
-      router.push({
-        name: 'TransferenciaFormulario',
-        params: { contactoNombre: encodeURIComponent(contacto.nombre) },
-      });
+      transferenciaStore.selectContact(contacto);
+      showTransferModal.value = true;
+    };
+
+    const handleTransferComplete = (transferDetails) => {
+      showTransferModal.value = false;
     };
 
     return {
       activeButton,
-      transferenciaStore, // Expose the store to the template
+      transferenciaStore,
+      showTransferModal,
       handleSelectContact,
+      handleTransferComplete,
     };
   },
 });

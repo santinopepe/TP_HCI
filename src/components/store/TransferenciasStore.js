@@ -1,42 +1,50 @@
-import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
+import { defineStore } from "pinia";
+import { ref, computed } from "vue";
 
-export const useTransferenciaStore = defineStore('transferencia', () => {
+export const useTransferenciaStore = defineStore("transferencia", () => {
   const contacts = ref([
-    { id: 2, nombre: 'María García', cbu: '0009876543210987654321', avatar: '/images/mujer.png' },
-    { id: 3, nombre: 'Carlos Ruiz', cbu: '0001122334455667788990', avatar: '/images/fotoHombre.png' },
+    {
+      id: 2,
+      nombre: "María García",
+      cbu: "0009876543210987654321",
+      avatar: "/images/mujer.png",
+    },
+    {
+      id: 3,
+      nombre: "Carlos Ruiz",
+      cbu: "0001122334455667788990",
+      avatar: "/images/fotoHombre.png",
+    },
   ]);
-  const searchQuery = ref('');
+  const searchQuery = ref("");
   const selectedContact = ref(null);
 
-
-  const paymentMethod = ref('tarjeta');
-  const amount = ref('');
+  const paymentMethod = ref("tarjeta");
+  const amount = ref("");
   const amountError = ref(false);
   const cards = ref([
-    { nombre: 'Tarjeta de Juliana Márquez', numero: '•••• •••• •••• 9987' },
-    { nombre: 'Tarjeta de Juliana Márquez', numero: '•••• •••• •••• 1234' },
-    { nombre: 'Tarjeta de Juliana Márquez', numero: '•••• •••• •••• 5678' },
+    { nombre: "Tarjeta de Juliana Márquez", numero: "•••• •••• •••• 9987" },
+    { nombre: "Tarjeta de Juliana Márquez", numero: "•••• •••• •••• 1234" },
+    { nombre: "Tarjeta de Juliana Márquez", numero: "•••• •••• •••• 5678" },
   ]);
   const selectedCardIndex = ref(0);
-  const transactionCargo = ref(1.00); 
-  const showConfirmationPopup = ref(false);
+  const transactionCargo = ref(1.0);
+  const accountBalance = ref(100000.0);
 
   const receiptDetails = ref({
-    destinatario: '',
+    destinatario: "",
     monto: 0,
-    metodo: '',
-    fecha: '',
-    orden: '',
+    metodo: "",
+    fecha: "",
+    orden: "",
   });
-
 
   const filteredContacts = computed(() => {
     if (!searchQuery.value) {
       return contacts.value;
     }
     const lowerQuery = searchQuery.value.toLowerCase();
-    return contacts.value.filter(contact =>
+    return contacts.value.filter((contact) =>
       contact.nombre.toLowerCase().includes(lowerQuery)
     );
   });
@@ -50,17 +58,16 @@ export const useTransferenciaStore = defineStore('transferencia', () => {
 
   const formattedCurrentDate = computed(() => {
     const fecha = new Date();
-    return fecha.toLocaleDateString('es-ES', {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
+    return fecha.toLocaleDateString("es-ES", {
+      day: "numeric",
+      month: "long",
+      year: "numeric",
     });
   });
 
   const generatedOrderId = computed(() => {
     return Math.floor(Math.random() * 1000000000).toString();
   });
-
 
   function setSearchQuery(query) {
     searchQuery.value = query;
@@ -71,7 +78,7 @@ export const useTransferenciaStore = defineStore('transferencia', () => {
   }
 
   function addContact(newContact) {
-    const newId = Math.max(...contacts.value.map(c => c.id), 0) + 1;
+    const newId = Math.max(...contacts.value.map((c) => c.id), 0) + 1;
     contacts.value.push({ ...newContact, id: newId });
   }
 
@@ -88,21 +95,18 @@ export const useTransferenciaStore = defineStore('transferencia', () => {
   }
 
   function rotateCard(direction) {
-    if (direction === 'anterior') {
+    if (direction === "anterior") {
       selectedCardIndex.value =
         (selectedCardIndex.value - 1 + cards.value.length) % cards.value.length;
-    } else if (direction === 'siguiente') {
-      selectedCardIndex.value = (selectedCardIndex.value + 1) % cards.value.length;
+    } else if (direction === "siguiente") {
+      selectedCardIndex.value =
+        (selectedCardIndex.value + 1) % cards.value.length;
     }
-  }
-
-  function toggleConfirmationPopup(show) {
-    showConfirmationPopup.value = show;
   }
 
   function confirmTransfer() {
     receiptDetails.value = {
-      destinatario: selectedContact.value?.nombre || 'Desconocido',
+      destinatario: selectedContact.value?.nombre || "Desconocido",
       monto: parseFloat(amount.value),
       metodo: paymentMethod.value,
       fecha: formattedCurrentDate.value,
@@ -112,33 +116,22 @@ export const useTransferenciaStore = defineStore('transferencia', () => {
   }
 
   function resetTransferForm() {
-    amount.value = '';
+    amount.value = "";
     amountError.value = false;
-    showConfirmationPopup.value = false;
-  
-  }
-
-  function setReceiptDetailsFromRoute(params, query) {
-    receiptDetails.value.destinatario = decodeURIComponent(params.destinatario || '');
-    receiptDetails.value.monto = Number(query.monto) || 0;
-    receiptDetails.value.metodo = query.metodo || '';
-    receiptDetails.value.fecha = query.fecha || '';
-    receiptDetails.value.orden = query.orden || '';
   }
 
   function resetTransferenciaFlow() {
-    searchQuery.value = '';
+    searchQuery.value = "";
     selectedContact.value = null;
     resetTransferForm();
     receiptDetails.value = {
-      destinatario: '',
+      destinatario: "",
       monto: 0,
-      metodo: '',
-      fecha: '',
-      orden: '',
+      metodo: "",
+      fecha: "",
+      orden: "",
     };
   }
-
 
   return {
     contacts,
@@ -150,7 +143,7 @@ export const useTransferenciaStore = defineStore('transferencia', () => {
     cards,
     selectedCardIndex,
     transactionCargo,
-    showConfirmationPopup,
+    accountBalance,
     receiptDetails,
 
     filteredContacts,
@@ -159,7 +152,6 @@ export const useTransferenciaStore = defineStore('transferencia', () => {
     formattedCurrentDate,
     generatedOrderId,
 
-    
     setSearchQuery,
     selectContact,
     addContact,
@@ -167,10 +159,8 @@ export const useTransferenciaStore = defineStore('transferencia', () => {
     setAmount,
     setAmountError,
     rotateCard,
-    toggleConfirmationPopup,
     confirmTransfer,
     resetTransferForm,
-    setReceiptDetailsFromRoute,
     resetTransferenciaFlow,
   };
 });
