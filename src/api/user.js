@@ -4,7 +4,8 @@ export { UserApi, Credentials, User }
 
 class UserApi {
     static getUrl(slug) {
-        return `${Api.baseUrl}/user${ slug ? `/${slug}` : ""}`;
+        // Si hay slug, lo agrega, si no, solo /user
+        return `${Api.baseUrl}/user${slug ? `/${slug}` : ""}`;
     }
 
     static async login(credentials, controller) {
@@ -20,8 +21,27 @@ class UserApi {
     }
 
     static async register(user, controller) {
-        return await Api.post(UserApi.getUrl("register"), false, user, controller);
+        const response = await fetch(UserApi.getUrl(), {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(user),
+            signal: controller?.signal
+        });
+        const data = await response.json();
+        if (!response.ok) {
+            // Lanza el error con el mismo formato que espera tu catch
+            const error = new Error(data.message || "Error");
+            error.response = { data };
+            throw error;
+        }
+        return data;
     }
+
+    static async verify(data, controller) {
+        // data puede ser { email: ... } o { id: ... } según tu backend
+        return await Api.post(UserApi.getUrl("verify"), false, data, controller);
+    }
+
 }
 
 class Credentials {
@@ -32,10 +52,12 @@ class Credentials {
 }
 
 class User {
-    constructor(name, email, dni, phone) {
-        this.name = name;
+    constructor(firstName, lastName, birthDate, email, password, metadata = {}) {
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.birthDate = birthDate;
         this.email = email;
-        this.dni = dni;
-        this.phone = phone;
+        this.password = password;
+        this.metadata = metadata;
     }
 }

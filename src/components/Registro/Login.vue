@@ -93,6 +93,8 @@
 </template>
 
 <script>
+import { UserApi, Credentials } from "../../api/user.js";
+
 export default {
   name: 'LoginPage',
   data() {
@@ -100,22 +102,26 @@ export default {
       email: '',
       password: '',
       showPassword: false,
+      loginError: ''
     };
   },
   methods: {
     togglePasswordVisibility() {
       this.showPassword = !this.showPassword;
     },
-    handleSubmit() {
-      console.log('Email:', this.email);
-      console.log('Password:', this.password);
+    async handleSubmit() {
+      this.loginError = '';
+      try {
+        const credentials = new Credentials(this.email, this.password);
+        await UserApi.login(credentials);
+        this.$router.push('/paginaprincipal');
+      } catch (e) {
+        this.loginError = 'Usuario o contraseña incorrectos';
+      }
     },
     goToRecuperar() {
       this.$router.push('/recover-password');
-    },
-    goToPaginaPrincipal() {
-      this.$router.push('/paginaprincipal');
-    },
-  },
+    }
+  }
 };
 </script>
