@@ -23,9 +23,30 @@ export const useTransferenciaStore = defineStore("transferencia", () => {
   const amount = ref("");
   const amountError = ref(false);
   const cards = ref([
-    { nombre: "Tarjeta de Juliana Márquez", numero: "•••• •••• •••• 9987" },
-    { nombre: "Tarjeta de Juliana Márquez", numero: "•••• •••• •••• 1234" },
-    { nombre: "Tarjeta de Juliana Márquez", numero: "•••• •••• •••• 5678" },
+    {
+      id: 1,
+      type: "Visa",
+      last4: "1234",
+      name: "Juan Perez",
+      expiry: "12/25",
+      bank: "Mi Banco Principal",
+    },
+    {
+      id: 2,
+      type: "Mastercard",
+      last4: "5678",
+      name: "Juan Perez",
+      expiry: "08/24",
+      bank: "Otro Banco",
+    },
+    {
+      id: 3,
+      type: "American Express",
+      last4: "9012",
+      name: "Juan Perez",
+      expiry: "06/26",
+      bank: "Banco del Sur",
+    },
   ]);
   const selectedCardIndex = ref(0);
   const transactionCargo = ref(1.0);

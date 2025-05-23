@@ -1,15 +1,23 @@
 <template>
   <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 relative">
     <!-- Indicador de pasos -->
-    <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
+    <div
+      class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
+    >
       Paso 2 de 4
     </div>
     <!-- Datos del servicio -->
     <div class="flex items-center gap-4 mb-6">
       <div>
-        <p class="text-lg font-semibold">{{ linkDePagoStore.serviceName }}</p>
-        <p class="text-sm text-gray-500">ID: {{ linkDePagoStore.serviceId }}</p>
-        <p class="text-sm text-gray-500">Monto a pagar: ${{ linkDePagoStore.total.toFixed(2) }}</p>
+        <p class="text-lg font-semibold">
+          {{ linkDePagoStore.serviceName || "Servicio" }}
+        </p>
+        <p class="text-sm text-gray-500">
+          ID: {{ linkDePagoStore.serviceId || "N/A" }}
+        </p>
+        <p class="text-sm text-gray-500">
+          Monto a pagar: ${{ (linkDePagoStore.total || 0).toFixed(2) }}
+        </p>
       </div>
     </div>
 
@@ -26,7 +34,11 @@
             class="hidden"
           />
           <div
-            :class="linkDePagoStore.metodo === 'tarjeta' ? 'bg-[#3C4F2E]' : 'bg-gray-300'"
+            :class="
+              linkDePagoStore.metodo === 'tarjeta'
+                ? 'bg-[#3C4F2E]'
+                : 'bg-gray-300'
+            "
             class="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center"
           >
             <div
@@ -47,7 +59,11 @@
             class="hidden"
           />
           <div
-            :class="linkDePagoStore.metodo === 'cuenta' ? 'bg-[#3C4F2E]' : 'bg-gray-300'"
+            :class="
+              linkDePagoStore.metodo === 'cuenta'
+                ? 'bg-[#3C4F2E]'
+                : 'bg-gray-300'
+            "
             class="w-4 h-4 rounded-full border-2 border-gray-400 flex items-center justify-center"
           >
             <div
@@ -63,7 +79,7 @@
     <!-- Tarjetas -->
     <div v-if="linkDePagoStore.metodo === 'tarjeta'" class="mb-6">
       <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
-      <div class="flex items-center gap-4">
+      <div class="flex items-center gap-4 relative overflow-hidden">
         <!-- Botón anterior -->
         <button
           @click="linkDePagoStore.rotateCard('anterior')"
@@ -72,12 +88,45 @@
           <img src="/images/backComplete.png" alt="Anterior" class="w-6 h-6" />
         </button>
 
-        <!-- Tarjeta seleccionada -->
-        <div
-          class="p-4 rounded-xl shadow-lg bg-gradient-to-br from-[#243219] to-[#558B2F] text-white flex-1 text-center z-10"
-        >
-          <p class="text-sm">{{ linkDePagoStore.tarjetas[linkDePagoStore.tarjetaSeleccionada].nombre }}</p>
-          <p class="text-xl font-bold tracking-widest mt-2">{{ linkDePagoStore.tarjetas[linkDePagoStore.tarjetaSeleccionada].numero }}</p>
+        <!-- Contenedor de tarjetas con animación -->
+        <div class="relative w-full h-[180px] overflow-hidden">
+          <div
+            v-for="(card, index) in linkDePagoStore.tarjetas"
+            :key="card.id || index"
+            class="absolute w-full transition-all duration-500 ease-in-out"
+            :style="{
+              transform: `translateX(${
+                (index - linkDePagoStore.tarjetaSeleccionada) * 100
+              }%)`,
+              opacity: index === linkDePagoStore.tarjetaSeleccionada ? 1 : 0,
+              zIndex: index === linkDePagoStore.tarjetaSeleccionada ? 10 : 0,
+            }"
+          >
+            <div
+              class="p-4 rounded-xl shadow-lg text-white text-center h-[140px] flex flex-col justify-between relative"
+              :class="getCardBackground(card?.type)"
+            >
+              <div>
+                <p class="text-xl font-semibold">
+                  **** **** **** {{ card?.last4 || "****" }}
+                </p>
+                <p class="text-base opacity-90">{{ card?.bank || "Banco" }}</p>
+                <p class="text-sm opacity-80 mt-2">
+                  Titular: {{ card?.name || "Usuario" }}
+                </p>
+                <p class="text-sm opacity-80">
+                  Expira: {{ card?.expiry || "MM/YY" }}
+                </p>
+              </div>
+              <div class="absolute bottom-4 right-4">
+                <img
+                  :src="getCardLogo(card?.type)"
+                  alt="Card Logo"
+                  class="h-8 w-12 object-contain"
+                />
+              </div>
+            </div>
+          </div>
         </div>
 
         <!-- Botón siguiente -->
@@ -92,9 +141,13 @@
 
     <!-- Dinero en cuenta -->
     <div v-if="linkDePagoStore.metodo === 'cuenta'" class="mb-6">
-      <div class="bg-gradient-to-br from-[#243219] to-[#558B2F] p-4 rounded-xl text-white shadow">
+      <div
+        class="bg-gradient-to-br from-[#243219] to-[#558B2F] p-4 rounded-xl text-white shadow"
+      >
         <p class="text-sm">Dinero disponible en cuenta</p>
-        <p class="text-xl font-bold tracking-widest mt-2">${{ linkDePagoStore.accountBalance.toFixed(2) }}</p>
+        <p class="text-xl font-bold tracking-widest mt-2">
+          ${{ (linkDePagoStore.accountBalance || 0).toFixed(2) }}
+        </p>
       </div>
     </div>
 
@@ -117,16 +170,66 @@
 </template>
 
 <script setup>
-import { useLinkDePagoStore } from '../store/LinkDePagoStore.js';
+import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
+import { onMounted } from "vue";
 
 const linkDePagoStore = useLinkDePagoStore();
-const emit = defineEmits(['proceed-to-confirmation', 'cancel']);
+const emit = defineEmits(["proceed-to-confirmation", "cancel"]);
+
+const getCardLogo = (type) => {
+  if (!type)
+    return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
+
+  switch (type.toLowerCase()) {
+    case "visa":
+      return "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png";
+    case "mastercard":
+      return "https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png";
+    case "american express":
+      return "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg";
+    default:
+      return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
+  }
+};
+
+const getCardBackground = (type) => {
+  if (!type) return "bg-gradient-to-br from-orange-500 to-gray-500";
+
+  switch (type.toLowerCase()) {
+    case "visa":
+      return "bg-gradient-to-br from-blue-600 to-gray-300";
+    case "mastercard":
+      return "bg-gradient-to-br from-red-500 to-yellow-400";
+    case "american express":
+      return "bg-gradient-to-br from-blue-500 to-green-400";
+    default:
+      return "bg-gradient-to-br from-orange-500 to-gray-500";
+  }
+};
 
 const proceedToConfirmation = () => {
+  console.log(
+    "Proceeding to confirmation with method:",
+    linkDePagoStore.metodo
+  );
   const paymentDetails = {
     metodo: linkDePagoStore.metodo,
-    card: linkDePagoStore.metodo === 'tarjeta' ? linkDePagoStore.selectedCard : null,
+    card:
+      linkDePagoStore.metodo === "tarjeta"
+        ? linkDePagoStore.selectedCard
+        : null,
   };
-  emit('proceed-to-confirmation', paymentDetails);
+  console.log("Emitting proceed-to-confirmation with details:", paymentDetails);
+  emit("proceed-to-confirmation", paymentDetails);
 };
+
+onMounted(() => {
+  console.log("MetodoDePago component mounted");
+  console.log("Current service details:", {
+    name: linkDePagoStore.serviceName,
+    id: linkDePagoStore.serviceId,
+    amount: linkDePagoStore.amount,
+    cargo: linkDePagoStore.cargo,
+  });
+});
 </script>

@@ -128,10 +128,10 @@
                 />
               </button>
 
-              <div class="relative w-full h-[100px] overflow-hidden">
+              <div class="relative w-full h-[180px] overflow-hidden">
                 <div
                   v-for="(card, index) in transferenciaStore.cards"
-                  :key="index"
+                  :key="card.id || index"
                   class="absolute w-full transition-all duration-500 ease-in-out"
                   :style="{
                     transform: `translateX(${
@@ -144,12 +144,30 @@
                   }"
                 >
                   <div
-                    class="p-4 rounded-xl shadow-lg bg-gradient-to-br from-[#243219] to-[#558B2F] text-white text-center"
+                    class="p-4 rounded-xl shadow-lg text-white text-center h-[140px] flex flex-col justify-between relative"
+                    :class="getCardBackground(card?.type)"
                   >
-                    <p class="text-sm">{{ card.nombre }}</p>
-                    <p class="text-xl font-bold tracking-widest mt-2">
-                      {{ card.numero }}
-                    </p>
+                    <div>
+                      <p class="text-xl font-semibold">
+                        **** **** **** {{ card?.last4 || "****" }}
+                      </p>
+                      <p class="text-base opacity-90">
+                        {{ card?.bank || "Banco" }}
+                      </p>
+                      <p class="text-sm opacity-80 mt-2">
+                        Titular: {{ card?.name || "Usuario" }}
+                      </p>
+                      <p class="text-sm opacity-80">
+                        Expira: {{ card?.expiry || "MM/YY" }}
+                      </p>
+                    </div>
+                    <div class="absolute bottom-4 right-4">
+                      <img
+                        :src="getCardLogo(card?.type)"
+                        alt="Card Logo"
+                        class="h-8 w-12 object-contain"
+                      />
+                    </div>
                   </div>
                 </div>
               </div>
@@ -192,7 +210,7 @@
               placeholder="100,000"
               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
               :class="{ 'border-red-500': transferenciaStore.amountError }"
-              @input= "validateAmount"
+              @input="validateAmount"
             />
             <p
               v-if="transferenciaStore.amountError"
@@ -380,13 +398,27 @@ const closeModal = () => {
   resetSteps();
 };
 
-const validateAmount = () => {
-  const amount = transferenciaStore.amount.replace(/\./g, "").replace(/,/g, ".");
-  if (isNaN(amount) || amount <= 0) {
-    transferenciaStore.setAmountError(true);
-  } else {
-    transferenciaStore.setAmountError(false);
+const validateAmount = (event) => {
+  // Eliminar cualquier carácter que no sea número, punto o coma
+  let value = event.target.value.replace(/[^\d.,]/g, "");
+
+  // Asegurar que solo haya un punto decimal o una coma
+  const hasDecimal = value.includes(".");
+  const hasComma = value.includes(",");
+
+  if (hasDecimal && hasComma) {
+    // Si hay ambos, mantener solo el primero que aparezca
+    const decimalIndex = value.indexOf(".");
+    const commaIndex = value.indexOf(",");
+    if (decimalIndex < commaIndex) {
+      value = value.replace(",", "");
+    } else {
+      value = value.replace(".", "");
+    }
   }
+
+  // Actualizar el valor en el store
+  transferenciaStore.amount = value;
 };
 
 const resetSteps = () => {
@@ -395,17 +427,10 @@ const resetSteps = () => {
 };
 
 const nextStep = () => {
-  if (currentStep.value === 1) {
-    validateAmount();
-    if (transferenciaStore.amountError) {
-      return; 
-    }
-  }
   if (currentStep.value < 3) {
     currentStep.value++;
   }
 };
-
 
 const previousStep = () => {
   if (currentStep.value > 1) {
@@ -414,10 +439,19 @@ const previousStep = () => {
 };
 
 const validateAndShowConfirmation = () => {
-  if (!transferenciaStore.amount.trim()) {
+  if (!transferenciaStore.amount || transferenciaStore.amount.trim() === "") {
     transferenciaStore.setAmountError(true);
     return;
   }
+
+  // Convertir el monto a un número válido
+  const amount = parseFloat(transferenciaStore.amount.replace(",", "."));
+
+  if (isNaN(amount) || amount <= 0) {
+    transferenciaStore.setAmountError(true);
+    return;
+  }
+
   transferenciaStore.setAmountError(false);
   nextStep();
 };
@@ -425,6 +459,32 @@ const validateAndShowConfirmation = () => {
 const confirmTransfer = () => {
   transferenciaStore.confirmTransfer();
   nextStep();
+};
+
+const getCardLogo = (type) => {
+  switch (type.toLowerCase()) {
+    case "visa":
+      return "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png";
+    case "mastercard":
+      return "https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png";
+    case "american express":
+      return "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg";
+    default:
+      return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
+  }
+};
+
+const getCardBackground = (type) => {
+  switch (type.toLowerCase()) {
+    case "visa":
+      return "bg-gradient-to-br from-blue-600 to-gray-300";
+    case "mastercard":
+      return "bg-gradient-to-br from-red-500 to-yellow-400";
+    case "american express":
+      return "bg-gradient-to-br from-blue-500 to-green-400";
+    default:
+      return "bg-gradient-to-br from-orange-500 to-gray-500";
+  }
 };
 
 watch(

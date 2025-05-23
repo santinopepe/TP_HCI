@@ -1,21 +1,42 @@
-import { defineStore } from 'pinia';
+import { defineStore } from "pinia";
 
-export const useLinkDePagoStore = defineStore('linkDePago', {
+export const useLinkDePagoStore = defineStore("linkDePago", {
   state: () => ({
-    paymentLink: '',
-    metodo: 'tarjeta', // Default payment method
+    paymentLink: "",
+    metodo: "tarjeta", // Default payment method
     tarjetas: [
-      { nombre: 'Visa **** 1234', numero: '**** **** **** 1234' },
-      { nombre: 'Mastercard **** 5678', numero: '**** **** **** 5678' },
-      { nombre: 'Amex **** 9012', numero: '**** **** **** 9012' },
+      {
+        id: 1,
+        type: "Visa",
+        last4: "1234",
+        name: "Juan Perez",
+        expiry: "12/25",
+        bank: "Mi Banco Principal",
+      },
+      {
+        id: 2,
+        type: "Mastercard",
+        last4: "5678",
+        name: "Juan Perez",
+        expiry: "08/24",
+        bank: "Otro Banco",
+      },
+      {
+        id: 3,
+        type: "American Express",
+        last4: "9012",
+        name: "Juan Perez",
+        expiry: "06/26",
+        bank: "Banco del Sur",
+      },
     ],
     tarjetaSeleccionada: 0,
-    accountBalance: 1500.00,
-    amount: 100.00,
-    cargo: 5.00, // Example service fee
-    total: 105.00, // amount + cargo
-    serviceName: 'Servicio de Electricidad', // New field for service name
-    serviceId: '12345', // New field for service ID
+    accountBalance: 1500.0,
+    amount: 100.0,
+    cargo: 5.0,
+    total: 105.0,
+    serviceName: "",
+    serviceId: "",
     errors: {
       paymentLink: null,
     },
@@ -26,23 +47,28 @@ export const useLinkDePagoStore = defineStore('linkDePago', {
   },
   actions: {
     setPaymentLink(link) {
+      console.log("Setting payment link:", link);
       this.paymentLink = link;
-      if (!link || !link.startsWith('https://')) {
-        this.errors.paymentLink = 'Por favor, ingrese un link de pago válido';
+      if (!link || !link.startsWith("https://")) {
+        this.errors.paymentLink = "Por favor, ingrese un link de pago válido";
       } else {
         this.errors.paymentLink = null;
       }
     },
 
     setPaymentMethod(method) {
+      console.log("Setting payment method:", method);
       this.metodo = method;
     },
 
     rotateCard(direction) {
-      if (direction === 'siguiente') {
-        this.tarjetaSeleccionada = (this.tarjetaSeleccionada + 1) % this.tarjetas.length;
-      } else if (direction === 'anterior') {
-        this.tarjetaSeleccionada = (this.tarjetaSeleccionada - 1 + this.tarjetas.length) % this.tarjetas.length;
+      if (direction === "siguiente") {
+        this.tarjetaSeleccionada =
+          (this.tarjetaSeleccionada + 1) % this.tarjetas.length;
+      } else if (direction === "anterior") {
+        this.tarjetaSeleccionada =
+          (this.tarjetaSeleccionada - 1 + this.tarjetas.length) %
+          this.tarjetas.length;
       }
     },
 
@@ -51,23 +77,24 @@ export const useLinkDePagoStore = defineStore('linkDePago', {
     },
 
     resetPayment() {
-      this.paymentLink = '';
-      this.metodo = 'tarjeta';
+      this.paymentLink = "";
+      this.metodo = "tarjeta";
       this.tarjetaSeleccionada = 0;
       this.errors.paymentLink = null;
       this.amount = 0;
       this.cargo = 0;
       this.total = 0;
-      this.serviceName = '';
-      this.serviceId = '';
+      this.serviceName = "";
+      this.serviceId = "";
     },
 
-    setServiceDetails({ serviceName, serviceId, amount, cargo }) {
-      this.serviceName = serviceName;
-      this.serviceId = serviceId;
-      this.amount = amount;
-      this.cargo = cargo;
-      this.total = amount + cargo;
+    setServiceDetails(details) {
+      console.log("Setting service details:", details);
+      this.serviceName = details.serviceName;
+      this.serviceId = details.serviceId;
+      this.amount = details.amount;
+      this.cargo = details.cargo;
+      this.total = details.amount + details.cargo;
     },
   },
 });

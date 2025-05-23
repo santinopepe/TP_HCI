@@ -14,7 +14,7 @@
             <button
               class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
               @click="showCvuPopup = true"
-              >
+            >
               Tu CVU
             </button>
             <div class="flex-1">
@@ -196,9 +196,7 @@
         @click.stop=""
       />
     </div>
-    <CvuPopup v-if="showCvuPopup" 
-      @close="showCvuPopup = false" 
-      />
+    <CvuPopup v-if="showCvuPopup" @close="showCvuPopup = false" />
   </div>
 </template>
 
@@ -211,7 +209,7 @@ import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
 import SeleccionarMetodoPago from "../PagoServicios/MetodoDePago.vue";
 import ConfirmacionPago from "../PagoServicios/ConfirmacionDePago.vue";
 import ComprobantePago from "../PagoServicios/ComprobantePago.vue";
-import CvuPopup from "../Inicio/CVU.vue"; 
+import CvuPopup from "../Inicio/CVU.vue";
 
 export default defineComponent({
   name: "PaginaPrincipal",
@@ -232,10 +230,17 @@ export default defineComponent({
     const showCvuPopup = ref(false);
 
     const handleLinkSubmit = (link) => {
+      console.log("Handling link submit with:", link);
       linkDePagoStore.setPaymentLink(link);
-      if (!linkDePagoStore.errors.paymentLink) {
-        currentStep.value = 2;
-      }
+      // Simular obtención de detalles del servicio
+      linkDePagoStore.setServiceDetails({
+        serviceName: "Servicio de Electricidad",
+        serviceId: "12345",
+        amount: 100.0,
+        cargo: 5.0,
+      });
+      console.log("Advancing to step 2");
+      currentStep.value = 2;
     };
 
     const handleMethodSelection = (details) => {
