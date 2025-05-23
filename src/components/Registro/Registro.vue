@@ -3,9 +3,27 @@
     <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-3xl flex flex-col items-center">
       <h2 class="text-3xl text-[#2e4b3f] mb-2 font-bold">Crear tu Cuenta</h2>
       <p class="text-gray-600 mb-6">Completa los datos para registrarte en SIM SIM.</p>
+      <!-- Modal de éxito -->
+      <div v-if="showSuccessModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
+        <div class="bg-white rounded-xl shadow-xl p-8 w-full max-w-sm flex flex-col items-center">
+          <svg class="mb-4" width="64" height="64" viewBox="0 0 64 64" fill="none">
+            <circle cx="32" cy="32" r="30" stroke="#B6E2A1" stroke-width="4" fill="#F6FBF4"/>
+            <path d="M20 34L29 43L44 26" stroke="#5D8C39" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          <h3 class="text-2xl font-bold text-[#2e4b3f] mb-2 text-center">Usuario creado con éxito</h3>
+          <p class="text-gray-700 mb-6 text-center">Tu usuario fue registrado correctamente.<br>Por favor, verifica tu correo electrónico.</p>
+          <button
+            @click="goBack"
+            class="w-full p-3 text-white rounded-lg text-base cursor-pointer"
+            :style="{ backgroundColor: '#5D8C39' }"
+          >
+            OK
+          </button>
+        </div>
+      </div>
       <!-- Mensaje de la API -->
-      <p v-if="apiMessage" class="w-full mb-4 text-center text-base font-semibold text-red-600">{{ apiMessage }}</p>
-      <form @submit.prevent="register" class="w-full">
+      <p v-if="apiMessage && !showSuccessModal" class="w-full mb-4 text-center text-base font-semibold text-red-600">{{ apiMessage }}</p>
+      <form v-if="!showSuccessModal" @submit.prevent="register" class="w-full">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label for="firstName" class="block mb-1 text-gray-800 font-medium">Nombre</label>
@@ -116,7 +134,6 @@
             <p v-if="errors.confirmPassword" class="text-red-500 text-sm mt-1">{{ errors.confirmPassword }}</p>
           </div>
         </div>
-        <!-- Fin contraseña -->
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label for="dni" class="block mb-1 text-gray-800 font-medium">DNI</label>
@@ -175,6 +192,7 @@ export default {
       showPassword: false,
       showConfirmPassword: false,
       apiMessage: '',
+      showSuccessModal: false,
       errors: {
         firstName: '',
         lastName: '',
@@ -263,8 +281,7 @@ export default {
           { dni: this.dni, phone: this.phone }
         );
         await UserApi.register(user);
-        // Redirige a la pantalla de verificación y pasa el email como query param
-        //this.$router.push({ name: 'verificacion', query: { email: this.email } });
+        this.showSuccessModal = true;
       } catch (e) {
         let msg = '';
         if (e?.response?.data?.message) {
@@ -290,6 +307,10 @@ export default {
           this.apiMessage = msg;
         }
       }
+    },
+    goBack() {
+      this.showSuccessModal = false;
+      this.$router.go(-1);
     }
   }
 };
