@@ -142,7 +142,7 @@
     <!-- Dinero en cuenta -->
     <div v-if="linkDePagoStore.metodo === 'cuenta'" class="mb-6">
       <div
-        class="bg-gradient-to-br from-[#243219] to-[#558B2F] p-4 rounded-xl text-white shadow"
+        class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-4 rounded-xl text-white shadow"
       >
         <p class="text-sm">Dinero disponible en cuenta</p>
         <p class="text-xl font-bold tracking-widest mt-2">

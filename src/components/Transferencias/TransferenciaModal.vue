@@ -190,7 +190,7 @@
             class="mb-6"
           >
             <div
-              class="bg-gradient-to-br from-[#243219] to-[#558B2F] p-4 rounded-xl text-white shadow"
+              class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-4 rounded-xl text-white shadow"
             >
               <p class="text-sm">Dinero disponible en cuenta</p>
               <p class="text-xl font-bold tracking-widest mt-2">
@@ -296,7 +296,7 @@
 
         <!-- Step 3: Receipt -->
         <div v-if="currentStep === 3" class="flex flex-col">
-          <div class="bg-gray-50 p-6 rounded-lg mb-6">
+          <div class="bg p-6 rounded-lg mb-6">
             <div class="text-center mb-6">
               <div
                 class="w-16 h-16 bg-[#5D8C39] rounded-full flex items-center justify-center mx-auto mb-4"
@@ -320,39 +320,6 @@
                 ¡Transferencia exitosa!
               </h3>
             </div>
-
-            <!-- <div class="space-y-4">
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Destinatario:</span>
-                <span class="font-medium">{{
-                  transferenciaStore.receiptDetails.destinatario
-                }}</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Monto:</span>
-                <span class="font-medium"
-                  >${{ transferenciaStore.receiptDetails.monto }}</span
-                >
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Método:</span>
-                <span class="font-medium">{{
-                  transferenciaStore.receiptDetails.metodo
-                }}</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Fecha:</span>
-                <span class="font-medium">{{
-                  transferenciaStore.receiptDetails.fecha
-                }}</span>
-              </div>
-              <div class="flex justify-between items-center">
-                <span class="text-gray-600">Número de orden:</span>
-                <span class="font-medium">{{
-                  transferenciaStore.receiptDetails.orden
-                }}</span>
-              </div>
-            </div> -->
           </div>
 
           <div class="flex flex-col gap-4 items-center mt-auto">

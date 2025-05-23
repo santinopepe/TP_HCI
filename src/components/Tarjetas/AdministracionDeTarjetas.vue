@@ -59,7 +59,7 @@
               <div class="flex flex-col h-full">
                 <div class="flex-1">
                   <p class="text-lg font-semibold truncate">
-                    {{ card.type }} **** **** {{ card.last4 }}
+                    {{ card.type }} **** **** **** {{ card.last4 }}
                   </p>
                   <p class="text-base opacity-90 truncate">{{ card.bank }}</p>
                   <p class="text-sm opacity-80 mt-2 truncate">

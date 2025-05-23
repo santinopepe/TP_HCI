@@ -39,12 +39,12 @@
             </div>
           </div>
           <div class="flex justify-center mt-4 gap-4">
-            <router-link
-              to="/ingresar-dinero"
+            <button
+              @click="showIngresarDineroModal = true"
               class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(50%-0.5rem)] flex items-center justify-center"
             >
               Ingresar Dinero
-            </router-link>
+            </button>
             <button
               @click="showPayServiceForm = true"
               class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(50%-0.5rem)] flex items-center justify-center"
@@ -196,6 +196,12 @@
         @click.stop=""
       />
     </div>
+
+    <IngresarDinero
+      v-if="showIngresarDineroModal"
+      :is-open="showIngresarDineroModal"
+      @close="showIngresarDineroModal = false"
+    />
     <CvuPopup v-if="showCvuPopup" @close="showCvuPopup = false" />
   </div>
 </template>
@@ -203,13 +209,14 @@
 <script>
 import { defineComponent, ref } from "vue";
 import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
-import { usePaginaPrincipalStore } from "../store/PaginaPrincipalStore.js"; // Import the renamed store
+import { usePaginaPrincipalStore } from "../store/PaginaPrincipalStore.js";
 import BarraLateral from "../BarraLateral.vue";
 import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
 import SeleccionarMetodoPago from "../PagoServicios/MetodoDePago.vue";
 import ConfirmacionPago from "../PagoServicios/ConfirmacionDePago.vue";
 import ComprobantePago from "../PagoServicios/ComprobantePago.vue";
 import CvuPopup from "../Inicio/CVU.vue";
+import IngresarDinero from "../Inicio/IngresarDinero.vue";
 
 export default defineComponent({
   name: "PaginaPrincipal",
@@ -220,14 +227,16 @@ export default defineComponent({
     ConfirmacionPago,
     ComprobantePago,
     CvuPopup,
+    IngresarDinero,
   },
   setup() {
     const linkDePagoStore = useLinkDePagoStore();
-    const paginaPrincipalStore = usePaginaPrincipalStore(); // Initialize the renamed store
+    const paginaPrincipalStore = usePaginaPrincipalStore();
     const activeButton = ref("inicio");
     const showPayServiceForm = ref(false);
     const currentStep = ref(1);
     const showCvuPopup = ref(false);
+    const showIngresarDineroModal = ref(false);
 
     const handleLinkSubmit = (link) => {
       console.log("Handling link submit with:", link);
@@ -294,7 +303,7 @@ export default defineComponent({
       showPayServiceForm,
       currentStep,
       linkDePagoStore,
-      paginaPrincipalStore, // Expose the new store to the template
+      paginaPrincipalStore,
       handleLinkSubmit,
       handleMethodSelection,
       handlePaymentConfirmation,
@@ -302,6 +311,7 @@ export default defineComponent({
       closePaymentFlow,
       shareReceipt,
       showCvuPopup,
+      showIngresarDineroModal,
     };
   },
 });

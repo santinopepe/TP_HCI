@@ -1,33 +1,49 @@
 <template>
-  <div class="flex h-screen font-sans overflow-hidden items-center justify-center bg-gray-100">
-    <BotonRetroceder />
-    <!-- Contenido principal -->
-    <main class="p-6">
+  <div
+    v-if="isOpen"
+    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+  >
+    <div class="bg-white rounded-2xl shadow-lg w-full max-w-2xl relative">
+      <!-- Botón cerrar -->
+      <button
+        class="absolute top-2 right-4 text-gray-400 hover:text-gray-700 text-2xl z-10"
+        @click="$emit('close')"
+        aria-label="Cerrar"
+      >
+        ×
+      </button>
+
+      <!-- Contenido principal -->
       <div class="grid grid-cols-1 gap-6">
-        <!-- Header con gradiente -->
-        <div class="bg-gradient-to-r bg-[#3C4F2E] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center justify-center w-[32rem]">
-          <div class="text-center">
-            <h2 class="text-2xl font-bold">Ingresar Dinero</h2>
-            <p class="text-lg mt-4">Compartí tu alias o CVU para recibir dinero de cuentas bancarias o digitales</p>
-          </div>
+        <div class="text-center mt-12">
+          <h2 class="text-2xl font-bold text-gray-800">Ingresar Dinero</h2>
+          <p class="text-lg mt-4 font-semibold text-gray-800">
+            Compartí tu alias o CVU para recibir dinero de cuentas bancarias o
+            digitales
+          </p>
         </div>
 
         <!-- Bloque con Alias y CVU -->
-        <div class="bg-white p-6 rounded-lg shadow-md w-[32rem]">
+        <div class="bg-white p-6 rounded-b-2xl">
           <div class="flex flex-col gap-4">
             <!-- Alias -->
             <div class="flex justify-between items-center border-b pb-2">
               <div class="flex flex-col">
                 <span class="text-gray-500 text-sm">Tu alias</span>
-                <span class="text-gray-700 font-semibold text-lg">{{ alias }}</span>
+                <span class="text-gray-700 font-semibold text-lg">{{
+                  alias
+                }}</span>
               </div>
             </div>
             <!-- CVU -->
             <div class="flex justify-between items-center border-b pb-2">
               <div class="flex flex-col">
                 <span class="text-gray-500 text-sm">Tu CVU</span>
-                <span class="text-gray-700 font-semibold text-lg">{{ cvu }}</span>
+                <span class="text-gray-700 font-semibold text-lg">{{
+                  cvu
+                }}</span>
               </div>
+
             </div>
             <!-- Botón Compartir -->
             <button
@@ -40,40 +56,24 @@
           </div>
         </div>
       </div>
-    </main>
+    </div>
   </div>
 </template>
 
 <script>
-import BotonRetroceder from "../BotonRetroceder.vue";
-
 export default {
   name: "IngresarDinero",
-  components: {
-    BotonRetroceder,
+  props: {
+    isOpen: {
+      type: Boolean,
+      required: true,
+    },
   },
   data() {
     return {
-      activeButton: 'ingresar-dinero',
-      alias: 'jmarquez01',
-      cvu: '00234819282019304576839',
+      alias: "jmarquez01",
+      cvu: "00234819282019304576839",
     };
-  },
-  methods: {
-    editAlias() {
-      // Lógica para editar el alias (puede ser un modal o redirección)
-      alert('Funcionalidad de edición de alias no implementada.');
-    },
-    copyAlias() {
-      navigator.clipboard.writeText(this.alias).then(() => {
-        alert('Alias copiado al portapapeles!');
-      });
-    },
-    copyCvu() {
-      navigator.clipboard.writeText(this.cvu).then(() => {
-        alert('CVU copiado al portapapeles!');
-      });
-    },
   },
 };
 </script>
