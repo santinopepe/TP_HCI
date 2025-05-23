@@ -1,6 +1,9 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
-    <BarraLateral :active-button="activeButton" @update:activeButton="activeButton = $event" />
+    <BarraLateral
+      :active-button="activeButton"
+      @update:activeButton="activeButton = $event"
+    />
 
     <main class="flex-1 p-5 bg-gray-100 overflow-y-auto">
       <div class="mb-4">
@@ -10,19 +13,35 @@
       <div class="flex justify-center">
         <div class="bg-white p-4 rounded-lg shadow-lg w-full max-w-7xl">
           <div class="flex justify-between items-center mb-6">
-            <h2 class="text-xl font-semibold text-gray-700">Tarjetas Vinculadas</h2>
+            <h2 class="text-xl font-semibold text-gray-700">
+              Tarjetas Vinculadas
+            </h2>
             <button
               @click="showAddCardForm = true"
               class="bg-[#5D8C39] text-white hover:bg-[#5D8C39]/80 font-semibold py-2 px-4 rounded-lg shadow transition duration-200 flex items-center"
             >
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-5 w-5 mr-2"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M12 4v16m8-8H4"
+                />
               </svg>
               Añadir Tarjeta
             </button>
           </div>
 
-          <div v-if="cards.length === 0" class="text-center text-gray-500 py-8 mb-4">
+          <div
+            v-if="cards.length === 0"
+            class="text-center text-gray-500 py-8 mb-4"
+          >
             Aún no tienes tarjetas vinculadas.
           </div>
 
@@ -33,29 +52,33 @@
               @click="viewCardDetails(card)"
               @mouseenter="handleMouseEnter(index)"
               @mouseleave="handleMouseLeave"
-              class="text-white p-6 rounded-lg shadow cursor-pointer
-                     transform transition-all duration-300 hover:scale-105 relative
-                     flex-shrink-0 w-[90%] sm:w-[60%] md:w-[40%] lg:w-[30%]"
+              class="text-white p-6 rounded-lg shadow cursor-pointer transform transition-all duration-300 hover:scale-105 relative flex-shrink-0 w-[90%] sm:w-[60%] md:w-[40%] lg:w-[30%]"
               :class="getCardBackground(card.type)"
               :style="{ zIndex: calculatedZIndex(index) }"
             >
               <div class="flex flex-col h-full">
-                <div class="flex items-center mb-2">
-                  <img 
-                    :src="getCardLogo(card.type)" 
-                    alt="Card Logo" 
-                    class="h-8 w-12 mr-2 object-contain"
-                  />
+                <div class="flex-1">
                   <p class="text-lg font-semibold truncate">
                     {{ card.type }} **** **** {{ card.last4 }}
                   </p>
+                  <p class="text-base opacity-90 truncate">{{ card.bank }}</p>
+                  <p class="text-sm opacity-80 mt-2 truncate">
+                    Titular: {{ card.name }}
+                  </p>
+                  <p class="text-sm opacity-80 truncate">
+                    Expira: {{ card.expiry }}
+                  </p>
+                  <p class="text-sm opacity-80 mt-2">
+                    Tipo: {{ getCardBrand(card.type) }}
+                  </p>
                 </div>
-                <p class="text-base opacity-90 truncate">{{ card.bank }}</p>
-                <p class="text-sm opacity-80 mt-2 truncate">Titular: {{ card.name }}</p>
-                <p class="text-sm opacity-80 truncate">Expira: {{ card.expiry }}</p>
-                <p class="text-sm opacity-80 mt-2">
-                  Tipo: {{ getCardBrand(card.type) }}
-                </p>
+                <div class="mt-auto flex justify-end">
+                  <img
+                    :src="getCardLogo(card.type)"
+                    alt="Card Logo"
+                    class="h-8 w-12 object-contain"
+                  />
+                </div>
               </div>
             </div>
           </div>
@@ -71,19 +94,43 @@
       </transition>
 
       <transition name="fade">
-        <div v-if="showCardDetailModal && selectedCard" class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
-          <div class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full m-4 relative">
-            <button @click="closeCardDetailModal" class="absolute top-3 right-3 text-gray-500 hover:text-gray-700">
-              <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        <div
+          v-if="showCardDetailModal && selectedCard"
+          class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+        >
+          <div
+            class="bg-white p-6 rounded-lg shadow-xl max-w-md w-full m-4 relative"
+          >
+            <button
+              @click="closeCardDetailModal"
+              class="absolute top-3 right-3 text-gray-500 hover:text-gray-700"
+            >
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                class="h-6 w-6"
+                fill="none"
+                viewBox="0 0 24 24"
+                stroke="currentColor"
+                stroke-width="2"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  d="M6 18L18 6M6 6l12 12"
+                />
               </svg>
             </button>
-            <h2 class="text-2xl font-semibold text-gray-800 mb-6">Detalles de Tarjeta</h2>
-            <div class="text-white p-4 rounded-lg shadow mb-6" :class="getCardBackground(selectedCard.type)">
+            <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+              Detalles de Tarjeta
+            </h2>
+            <div
+              class="text-white p-4 rounded-lg shadow mb-6"
+              :class="getCardBackground(selectedCard.type)"
+            >
               <div class="flex items-center mb-2">
-                <img 
-                  :src="getCardLogo(selectedCard.type)" 
-                  alt="Card Logo" 
+                <img
+                  :src="getCardLogo(selectedCard.type)"
+                  alt="Card Logo"
                   class="h-8 w-12 mr-2 object-contain"
                 />
                 <p class="text-xl font-semibold mb-2">
@@ -91,8 +138,12 @@
                 </p>
               </div>
               <p class="text-base opacity-90">{{ selectedCard.bank }}</p>
-              <p class="text-sm opacity-80 mt-2">Titular: {{ selectedCard.name }}</p>
-              <p class="text-sm opacity-80">Expira: {{ selectedCard.expiry }}</p>
+              <p class="text-sm opacity-80 mt-2">
+                Titular: {{ selectedCard.name }}
+              </p>
+              <p class="text-sm opacity-80">
+                Expira: {{ selectedCard.expiry }}
+              </p>
               <p class="text-sm opacity-80 mt-2">
                 Tipo: {{ getCardBrand(selectedCard.type) }}
               </p>
@@ -110,10 +161,17 @@
       </transition>
 
       <transition name="fade">
-        <div v-if="showRemoveConfirmModal" class="fixed inset-0 bg-black bg-opacity-60 z-[60] flex items-center justify-center p-4">
+        <div
+          v-if="showRemoveConfirmModal"
+          class="fixed inset-0 bg-black bg-opacity-60 z-[60] flex items-center justify-center p-4"
+        >
           <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full m-4">
-            <h3 class="text-xl font-semibold text-gray-800 mb-4">Confirmar Desvinculación</h3>
-            <p class="text-gray-600 mb-6">¿Estás seguro de que quieres desvincular esta tarjeta?</p>
+            <h3 class="text-xl font-semibold text-gray-800 mb-4">
+              Confirmar Desvinculación
+            </h3>
+            <p class="text-gray-600 mb-6">
+              ¿Estás seguro de que quieres desvincular esta tarjeta?
+            </p>
             <div class="flex justify-end space-x-3">
               <button
                 @click="cancelRemoveCard"
@@ -136,15 +194,15 @@
 </template>
 
 <script setup>
-import { ref } from 'vue';
-import { useCardsStore } from '../store/TarjetasStore.js'; 
-import BarraLateral from '../BarraLateral.vue';
-import AddCardForm from './AgregarTarjeta.vue';
+import { ref } from "vue";
+import { useCardsStore } from "../store/TarjetasStore.js";
+import BarraLateral from "../BarraLateral.vue";
+import AddCardForm from "./AgregarTarjeta.vue";
 
 const cardsStore = useCardsStore();
 const { cards, addCard, removeCard } = cardsStore;
 
-const activeButton = ref('tarjetas');
+const activeButton = ref("tarjetas");
 
 const showAddCardForm = ref(false);
 const selectedCard = ref(null);
@@ -170,40 +228,40 @@ const calculatedZIndex = (index) => {
 
 const getCardBrand = (type) => {
   switch (type.toLowerCase()) {
-    case 'visa':
-      return 'Visa';
-    case 'mastercard':
-      return 'Mastercard';
-    case 'american express':
-      return 'American Express';
+    case "visa":
+      return "Visa";
+    case "mastercard":
+      return "Mastercard";
+    case "american express":
+      return "American Express";
     default:
-      return 'Otro';
+      return "Otro";
   }
 };
 
 const getCardLogo = (type) => {
   switch (type.toLowerCase()) {
-    case 'visa':
-      return 'https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png';
-    case 'mastercard':
-      return 'https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png';
-    case 'american express':
-      return 'https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg';
+    case "visa":
+      return "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png";
+    case "mastercard":
+      return "https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png";
+    case "american express":
+      return "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg";
     default:
-      return 'https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png';
+      return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
   }
 };
 
 const getCardBackground = (type) => {
   switch (type.toLowerCase()) {
-    case 'visa':
-      return 'bg-gradient-to-br from-blue-600 to-gray-300'; 
-    case 'mastercard':
-      return 'bg-gradient-to-br from-red-500 to-yellow-400'; 
-    case 'american express':
-      return 'bg-gradient-to-br from-blue-500 to-green-400'; 
+    case "visa":
+      return "bg-gradient-to-br from-blue-600 to-gray-300";
+    case "mastercard":
+      return "bg-gradient-to-br from-red-500 to-yellow-400";
+    case "american express":
+      return "bg-gradient-to-br from-blue-500 to-green-400";
     default:
-      return 'bg-gradient-to-br from-orange-500 to-gray-500';
+      return "bg-gradient-to-br from-orange-500 to-gray-500";
   }
 };
 
