@@ -1,50 +1,64 @@
 <template>
-  <div class="bg-gradient-to-b from-pink-50 to-white p-6 rounded-3xl max-w-sm w-full shadow-xl text-center font-sans relative">
-    <div class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm">
+  <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 relative">
+    <!-- Indicador de pasos -->
+    <div
+      class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
+    >
       Paso 3 de 4
     </div>
-    <!-- Encabezado -->
-    <div class="text-left mb-4 relative">
-      <h2 class="text-center font-semibold text-gray-800 text-lg">Confirmación</h2>
-    </div>
 
-    <!-- Total -->
-    <p class="text-gray-600 text-sm mb-1">Total</p>
-    <p class="text-3xl font-bold text-gray-900 mb-4">${{ linkDePagoStore.total.toFixed(2) }}</p>
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Confirmar pago</h2>
 
-    <!-- Detalles -->
-    <div class="bg-white rounded-xl text-sm text-gray-700 space-y-2 p-4 border-t border-b border-dashed border-gray-300 mb-4">
-      <div class="text-left font-semibold text-base">Detalles del pago</div>
-      <div class="flex justify-between">
-        <span>Total del servicio</span>
-        <span>${{ linkDePagoStore.amount.toFixed(2) }}</span>
+    <!-- Detalles del servicio -->
+    <div class="bg-gray-50 p-4 rounded-lg mb-6">
+      <div class="space-y-2">
+        <p class="text-sm">
+          <span class="font-medium">Servicio:</span>
+          {{ linkDePagoStore.serviceName }}
+        </p>
+        <p class="text-sm">
+          <span class="font-medium">ID:</span> {{ linkDePagoStore.serviceId }}
+        </p>
+        <p class="text-sm">
+          <span class="font-medium">Monto del servicio:</span> ${{
+            linkDePagoStore.amount.toFixed(2)
+          }}
+        </p>
+        <p class="text-sm">
+          <span class="font-medium">Cargo:</span> ${{
+            linkDePagoStore.cargo.toFixed(2)
+          }}
+        </p>
+        <p class="text-sm font-bold text-green-600 border-t border-dashed pt-2">
+          <span class="font-medium">Total a pagar:</span> ${{
+            linkDePagoStore.total.toFixed(2)
+          }}
+        </p>
+        <p class="text-sm">
+          <span class="font-medium">Método:</span>
+          {{ linkDePagoStore.metodo === "tarjeta" ? "Tarjeta" : "Cuenta" }}
+        </p>
+        <p class="text-sm">
+          <span class="font-medium">Fecha:</span>
+          {{ new Date().toLocaleDateString() }}
+        </p>
       </div>
-      <div class="flex justify-between">
-        <span>Cargo</span>
-        <span>${{ linkDePagoStore.cargo.toFixed(2) }}</span>
-      </div>
-      <div class="flex justify-between font-bold text-green-600 border-t border-dashed pt-2">
-        <span>Pago final</span>
-        <span>${{ linkDePagoStore.total.toFixed(2) }}</span>
-      </div>
-    </div>
-
-    <!-- Aviso -->
-    <div class="bg-green-50 text-green-800 text-sm p-3 rounded-lg flex items-center gap-2 mb-5">
-      Se realizará el pago una vez confirmes la transacción.
     </div>
 
     <!-- Botones -->
-    <div class="flex justify-between">
+    <div class="flex justify-between mt-auto">
       <button
         @click="$emit('cancel')"
-        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-xl text-sm font-medium hover:bg-gray-400 transition"
+        class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400"
       >
-        Cancelar
+        Volver
       </button>
       <button
-        @click="linkDePagoStore.confirmPayment(); $emit('confirm')"
-        class="bg-[#5D8C39] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#5D8C39]/80 transition"
+        @click="
+          linkDePagoStore.confirmPayment();
+          $emit('confirm');
+        "
+        class="bg-[#5D8C39] text-white px-4 py-2 rounded-lg hover:bg-[#5D8C39]/80"
       >
         Confirmar
       </button>
@@ -53,8 +67,8 @@
 </template>
 
 <script setup>
-import { useLinkDePagoStore } from '../store/LinkDePagoStore.js';
+import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 
 const linkDePagoStore = useLinkDePagoStore();
-const emit = defineEmits(['confirm', 'cancel']);
+const emit = defineEmits(["confirm", "cancel"]);
 </script>
