@@ -1,3 +1,4 @@
+<!-- src/components/Perfil.vue -->
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
     <BarraLateral
@@ -75,7 +76,7 @@
 
           <div class="flex justify-center mt-8">
             <button
-              @click="goToChangePassword('perfil')"
+              @click="showChangePasswordModal"
               class="bg-[#5D8C39] text-white py-2 px-6 rounded-lg hover:bg-[#4A6F2E] transition duration-200"
             >
               Cambiar Contraseña
@@ -83,28 +84,115 @@
           </div>
         </div>
       </div>
+
+      <!-- Code Verification Modal -->
+      <CodeVerificationModal
+        v-if="showFormModal && !isCodeVerified"
+        :code="code"
+        :errorMessage="errorMessage"
+        @update:code="code = $event"
+        @verify-code="verifyCode"
+        @cancel="cancel"
+      />
+
+      <!-- Password Update Modal -->
+      <PasswordUpdateModal
+        v-if="showFormModal && isCodeVerified"
+        :newPassword="newPassword"
+        :confirmPassword="confirmPassword"
+        :errorMessage="errorMessage"
+        @update:newPassword="newPassword = $event"
+        @update:confirmPassword="confirmPassword = $event"
+        @update-password="updatePassword"
+        @cancel="cancel"
+      />
+
+      <!-- Success Modal -->
+      <SuccessModal
+        v-if="showSuccessModal"
+        @close="closeSuccessModal"
+      />
     </main>
   </div>
 </template>
 
 <script>
 import { defineComponent, ref } from 'vue';
-import { usePerfilStore } from '../store/PerfilStore.js'; 
-import BarraLateral from "../BarraLateral.vue";
-import router from "../../router/index.js"; 
+import { usePerfilStore } from '../store/PerfilStore.js';
+import BarraLateral from '../BarraLateral.vue';
+import CodeVerificationModal from './ModalDeVerificacion.vue';
+import PasswordUpdateModal from './ModalActulizacionContrasenia.vue';
+import SuccessModal from './ModalDeCambioExitoso.vue';
+
 export default defineComponent({
-  name: "Perfil",
+  name: 'Perfil',
   components: {
     BarraLateral,
+    CodeVerificationModal,
+    PasswordUpdateModal,
+    SuccessModal,
   },
   setup() {
-    const perfilStore = usePerfilStore(); 
+    const perfilStore = usePerfilStore();
     const activeButton = ref('perfil');
-    const fileInput = ref(null); 
+    const fileInput = ref(null);
+    const code = ref('');
+    const isCodeVerified = ref(false);
+    const newPassword = ref('');
+    const confirmPassword = ref('');
+    const errorMessage = ref('');
+    const showFormModal = ref(false);
+    const showSuccessModal = ref(false);
 
-    const goToChangePassword = () => {
-      router.push("/cambiarcontraseña");
+    const showChangePasswordModal = () => {
+      showFormModal.value = true;
+      isCodeVerified.value = false;
+      code.value = '';
+      newPassword.value = '';
+      confirmPassword.value = '';
+      errorMessage.value = '';
+    };
 
+    const verifyCode = () => {
+      if (code.value === '123456') {
+        isCodeVerified.value = true;
+        errorMessage.value = '';
+      } else {
+        errorMessage.value = 'El código ingresado es incorrecto.';
+      }
+    };
+
+    const updatePassword = () => {
+      const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/;
+      if (!passwordRegex.test(newPassword.value)) {
+        errorMessage.value =
+          'La contraseña debe tener al menos 8 caracteres, un carácter especial (!@#$%^&*) y un número.';
+        return;
+      }
+
+      if (newPassword.value !== confirmPassword.value) {
+        errorMessage.value = 'Las contraseñas no coinciden.';
+        return;
+      }
+
+      errorMessage.value = '';
+      showFormModal.value = false;
+      showSuccessModal.value = true;
+      newPassword.value = '';
+      confirmPassword.value = '';
+    };
+
+    const closeSuccessModal = () => {
+      showSuccessModal.value = false;
+    };
+
+    const cancel = () => {
+      showFormModal.value = false;
+      errorMessage.value = '';
+      code.value = '';
+      newPassword.value = '';
+      confirmPassword.value = '';
+      isCodeVerified.value = false;
     };
 
     const triggerFileInput = () => {
@@ -116,7 +204,7 @@ export default defineComponent({
       if (file) {
         const reader = new FileReader();
         reader.onload = (e) => {
-          perfilStore.setProfileImage(e.target.result); 
+          perfilStore.setProfileImage(e.target.result);
         };
         reader.readAsDataURL(file);
       }
@@ -124,9 +212,20 @@ export default defineComponent({
 
     return {
       activeButton,
-      perfilStore, 
-      fileInput,   
-      goToChangePassword,
+      perfilStore,
+      fileInput,
+      code,
+      isCodeVerified,
+      newPassword,
+      confirmPassword,
+      errorMessage,
+      showFormModal,
+      showSuccessModal,
+      showChangePasswordModal,
+      verifyCode,
+      updatePassword,
+      closeSuccessModal,
+      cancel,
       triggerFileInput,
       handleFileChange,
     };
