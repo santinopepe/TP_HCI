@@ -73,19 +73,6 @@
           </svg>
         </button>
       </div>
-      <!-- Modificar alias -->
-      <div
-        class="bg-white rounded-xl shadow-sm border-t flex items-center px-6 py-3 cursor-pointer hover:bg-gray-50 transition"
-        @click="modificarAlias"
-        v-if="!editandoAlias"
-      >
-        <span class="font-semibold text-black">Modificar mi alias</span>
-        <span class="ml-auto text-gray-400">
-          <svg xmlns="http://www.w3.org/2000/svg" class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M9 5l7 7-7 7"/>
-          </svg>
-        </span>
-      </div>
     </div>
   </div>
 </template>

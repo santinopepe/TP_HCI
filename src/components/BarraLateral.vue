@@ -6,7 +6,7 @@
       <img
         src="/images/logo.png"
         alt="Logo SIM SIM"
-        class="w-16 h-16 mx-auto cursor-pointer"
+        class="w-16 h-16 mx-auto cursor-pointer transition-transform duration-300 hover:scale-110"
         @click="goToInicio"
       />
     </div>
