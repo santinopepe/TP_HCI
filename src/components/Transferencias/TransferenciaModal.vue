@@ -192,6 +192,7 @@
               placeholder="100,000"
               class="w-full border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-green-400"
               :class="{ 'border-red-500': transferenciaStore.amountError }"
+              @input= "validateAmount"
             />
             <p
               v-if="transferenciaStore.amountError"
@@ -379,16 +380,32 @@ const closeModal = () => {
   resetSteps();
 };
 
+const validateAmount = () => {
+  const amount = transferenciaStore.amount.replace(/\./g, "").replace(/,/g, ".");
+  if (isNaN(amount) || amount <= 0) {
+    transferenciaStore.setAmountError(true);
+  } else {
+    transferenciaStore.setAmountError(false);
+  }
+};
+
 const resetSteps = () => {
   currentStep.value = 1;
   transferenciaStore.resetTransferForm();
 };
 
 const nextStep = () => {
+  if (currentStep.value === 1) {
+    validateAmount();
+    if (transferenciaStore.amountError) {
+      return; 
+    }
+  }
   if (currentStep.value < 3) {
     currentStep.value++;
   }
 };
+
 
 const previousStep = () => {
   if (currentStep.value > 1) {
@@ -410,7 +427,6 @@ const confirmTransfer = () => {
   nextStep();
 };
 
-// Watch for modal open state
 watch(
   () => props.isOpen,
   (newValue) => {

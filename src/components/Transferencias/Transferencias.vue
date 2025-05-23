@@ -1,10 +1,5 @@
 <template>
   <div class="flex h-screen font-sans overflow-hidden relative">
-    <div
-      class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
-    >
-      Paso 1 de 4
-    </div>
     <BarraLateral
       :active-button="activeButton"
       @update:activeButton="activeButton = $event"
