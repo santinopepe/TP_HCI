@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from "vue-router";
 import LoginPage from "../components/Registro/Login.vue";
 import RegisterPage from "../components/Registro/Registro.vue";
+import VerificacionPage from "../components/Registro/Verificacion.vue";
 import RecoverPassword from "../components/Registro/recuperar.vue";
 import PrincipalPage from "../components/Inicio/PaginaPrincipal.vue";
 import PerfilPage from "../components/Perfil/Perfil.vue";
@@ -75,6 +76,11 @@ const routes = [
     name: "ComprobanteDePago",
     component: ComprobanteDePago,
   },
+  {
+    path: "/verificacion",
+    name: "Verificacion",
+    component: VerificacionPage,
+  }
 ];
 
 const router = createRouter({

@@ -85,6 +85,10 @@
               ¿Aún no tienes cuenta?
               <router-link to="/registro" class="text-[#2e4b3f] no-underline hover:underline">Regístrate</router-link>
             </p>
+            <p class="mt-2 text-sm text-gray-600 text-center">
+              ¿No estás verificado?
+              <router-link to="/verificacion" class="text-[#2e4b3f] no-underline hover:underline">Verificate</router-link>
+            </p>
           </div>
         </div>
       </div>

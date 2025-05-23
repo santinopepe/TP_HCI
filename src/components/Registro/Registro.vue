@@ -5,7 +5,7 @@
       <p class="text-gray-600 mb-6">Completa los datos para registrarte en SIM SIM.</p>
       <!-- Mensaje de la API -->
       <p v-if="apiMessage" class="w-full mb-4 text-center text-base font-semibold text-red-600">{{ apiMessage }}</p>
-      <form v-if="!showVerificationModal" @submit.prevent="register" class="w-full">
+      <form @submit.prevent="register" class="w-full">
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label for="firstName" class="block mb-1 text-gray-800 font-medium">Nombre</label>
@@ -150,31 +150,6 @@
           Registrarse
         </button>
       </form>
-      <!-- Modal de verificación de código -->
-      <div v-if="showVerificationModal" class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50">
-        <div class="bg-white rounded-xl shadow-xl p-8 w-full max-w-sm flex flex-col items-center">
-          <h3 class="text-xl font-bold mb-4 text-[#2e4b3f]">Verifica tu cuenta</h3>
-          <p class="mb-4 text-gray-700 text-center">Ingresa el código que recibiste en tu correo para activar tu cuenta.</p>
-          <input
-            v-model="verificationCode"
-            class="w-full mb-4 p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#5D8C39] outline-none transition"
-            placeholder="Código de verificación"
-          />
-          <p v-if="verificationError" class="text-red-500 text-sm mb-2">{{ verificationError }}</p>
-          <button
-            @click="verifyCode"
-            class="w-full p-3 text-white border-none rounded-lg text-base cursor-pointer bg-[#5D8C39] hover:bg-[#4e7531] transition"
-          >
-            Verificar
-          </button>
-          <button
-            @click="cancelVerification"
-            class="w-full mt-2 p-2 text-[#2e4b3f] border border-[#2e4b3f] rounded-lg text-base cursor-pointer bg-white hover:bg-gray-100 transition"
-          >
-            Cancelar
-          </button>
-        </div>
-      </div>
       <p class="mt-6 text-sm">
         <router-link to="/" class="text-[#2e4b3f] no-underline hover:underline">Volver al Inicio de Sesión</router-link>
       </p>
@@ -200,9 +175,6 @@ export default {
       showPassword: false,
       showConfirmPassword: false,
       apiMessage: '',
-      showVerificationModal: false,
-      verificationCode: '',
-      verificationError: '',
       errors: {
         firstName: '',
         lastName: '',
@@ -280,7 +252,6 @@ export default {
       }
       if (!valid) return;
 
-      // Llamada a la API para registrar el usuario y luego mostrar modal de verificación
       try {
         this.apiMessage = '';
         const user = new User(
@@ -292,8 +263,8 @@ export default {
           { dni: this.dni, phone: this.phone }
         );
         await UserApi.register(user);
-        this.showVerificationModal = true;
-        this.apiMessage = '';
+        // Redirige a la pantalla de verificación y pasa el email como query param
+        //this.$router.push({ name: 'verificacion', query: { email: this.email } });
       } catch (e) {
         let msg = '';
         if (e?.response?.data?.message) {
@@ -303,8 +274,6 @@ export default {
         } else {
           msg = 'Error al registrar usuario.';
         }
-
-        // Traducción de mensajes comunes
         if (msg === "Email already in use.") {
           this.apiMessage = "El correo electrónico ya está en uso.";
         } else if (msg === "User already exists.") {
@@ -321,32 +290,6 @@ export default {
           this.apiMessage = msg;
         }
       }
-    },
-    async verifyCode() {
-      this.verificationError = '';
-      if (!this.verificationCode) {
-        this.verificationError = 'Debes ingresar el código.';
-        return;
-      }
-      try {
-        await UserApi.verify({ email: this.email, code: this.verificationCode });
-        this.showVerificationModal = false;
-        this.apiMessage = '¡Cuenta verificada correctamente! Ahora puedes iniciar sesión.';
-      } catch (e) {
-        let msg = '';
-        if (e?.response?.data?.message) {
-          msg = e.response.data.message;
-        } else if (e?.message) {
-          msg = e.message;
-        } else {
-          msg = 'Error al verificar el código.';
-        }
-        this.verificationError = msg;
-      }
-    },
-    cancelVerification() {
-      this.showVerificationModal = false;
-      this.apiMessage = 'Verificación cancelada. Revisa tu correo para el código.';
     }
   }
 };
