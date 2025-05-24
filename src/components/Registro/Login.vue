@@ -39,8 +39,6 @@
             <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">
               Inicio de Sesión
             </h2>
-            <!-- Mensaje de error -->
-            <p v-if="loginError" class="text-red-500 text-center mb-4">{{ loginError }}</p>
             <form @submit.prevent="handleSubmit">
               <!-- Campo Email -->
               <div class="mb-6 text-left">
@@ -95,6 +93,11 @@
                   Recuperar contraseña
                 </button>
               </div>
+
+              <!-- Mensaje de error arriba del botón de inicio -->
+              <p v-if="loginError" class="text-red-500 text-center mb-4">
+                {{ loginError }}
+              </p>
 
               <!-- Botón de Inicio -->
               <button
@@ -179,20 +182,7 @@ export default {
         await security.getCurrentUser();
         this.$router.push("/paginaprincipal");
       } catch (e) {
-        let msg = '';
-        if (e?.response?.data?.message) {
-          msg = e.response.data.message;
-        } else if (e?.message) {
-          msg = e.message;
-        } else {
-          msg = 'Error al iniciar sesión.';
-        }
-        if (msg === "User not found") {
-          this.loginError = "Usuario o contraseña incorrectos.";
-        }
-        else{
-          this.loginError = "Usuario no verificado.";
-        }
+        this.loginError = "La contraseña o el email son incorrectos.";
       }
     },
     goToRecuperar() {
