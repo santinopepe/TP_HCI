@@ -82,7 +82,7 @@
       <div class="flex items-center gap-4 relative overflow-hidden">
         <!-- Botón anterior -->
         <button
-          @click="linkDePagoStore.rotateCard('anterior')"
+          @click="rotateCard('anterior')"
           class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-30"
         >
           <img src="/images/backComplete.png" alt="Anterior" class="w-6 h-6" />
@@ -91,7 +91,7 @@
         <!-- Contenedor de tarjetas con animación -->
         <div class="relative w-full h-[180px] overflow-hidden">
           <div
-            v-for="(card, index) in linkDePagoStore.tarjetas"
+            v-for="(card, index) in cardStore.cards"
             :key="card.id || index"
             class="absolute w-full transition-all duration-500 ease-in-out"
             :style="{
@@ -108,19 +108,18 @@
             >
               <div>
                 <p class="text-xl font-semibold">
-                  **** **** **** {{ card?.last4 || "****" }}
+                  {{ card.type }} **** **** **** {{ card.number.slice(-4) }}                      
                 </p>
-                <p class="text-base opacity-90">{{ card?.bank || "Banco" }}</p>
                 <p class="text-sm opacity-80 mt-2">
-                  Titular: {{ card?.name || "Usuario" }}
+                  Titular: {{ card.fullName }}
                 </p>
                 <p class="text-sm opacity-80">
-                  Expira: {{ card?.expiry || "MM/YY" }}
+                  Expira: {{ card.expirationDate }}
                 </p>
               </div>
               <div class="absolute bottom-4 right-4">
                 <img
-                  :src="getCardLogo(card?.type)"
+                  :src="getCardLogo(card.number)"
                   alt="Card Logo"
                   class="h-8 w-12 object-contain"
                 />
@@ -131,7 +130,7 @@
 
         <!-- Botón siguiente -->
         <button
-          @click="linkDePagoStore.rotateCard('siguiente')"
+          @click="rotateCard('siguiente')"
           class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-20"
         >
           <img src="/images/forward.png" alt="Siguiente" class="w-6 h-6" />
@@ -172,9 +171,14 @@
 <script setup>
 import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 import { onMounted } from "vue";
+import { useCardStore } from "../store/TarjetasStore.js";
+
+const cardStore = useCardStore();
 
 const linkDePagoStore = useLinkDePagoStore();
+
 const emit = defineEmits(["proceed-to-confirmation", "cancel"]);
+
 
 const getCardLogo = (type) => {
   if (!type)
@@ -223,13 +227,19 @@ const proceedToConfirmation = () => {
   emit("proceed-to-confirmation", paymentDetails);
 };
 
-onMounted(() => {
-  console.log("MetodoDePago component mounted");
-  console.log("Current service details:", {
-    name: linkDePagoStore.serviceName,
-    id: linkDePagoStore.serviceId,
-    amount: linkDePagoStore.amount,
-    cargo: linkDePagoStore.cargo,
-  });
+onMounted(async () => {
+  await cardStore.getAll();
 });
+
+const rotateCard = (direction) => {
+  const cardsLength = cardStore.cards.length;
+  if (!cardsLength) return;
+  if (direction === "anterior") {
+    linkDePagoStore.tarjetaSeleccionada =
+      (linkDePagoStore.tarjetaSeleccionada - 1 + cardsLength) % cardsLength;
+  } else if (direction === "siguiente") {
+    linkDePagoStore.tarjetaSeleccionada =
+      (linkDePagoStore.tarjetaSeleccionada + 1) % cardsLength;
+  }
+};
 </script>

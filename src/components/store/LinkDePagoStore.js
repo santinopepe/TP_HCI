@@ -4,32 +4,6 @@ export const useLinkDePagoStore = defineStore("linkDePago", {
   state: () => ({
     paymentLink: "",
     metodo: "tarjeta", // Default payment method
-    tarjetas: [
-      {
-        id: 1,
-        type: "Visa",
-        last4: "1234",
-        name: "Juan Perez",
-        expiry: "12/25",
-        bank: "Mi Banco Principal",
-      },
-      {
-        id: 2,
-        type: "Mastercard",
-        last4: "5678",
-        name: "Juan Perez",
-        expiry: "08/24",
-        bank: "Otro Banco",
-      },
-      {
-        id: 3,
-        type: "American Express",
-        last4: "9012",
-        name: "Juan Perez",
-        expiry: "06/26",
-        bank: "Banco del Sur",
-      },
-    ],
     tarjetaSeleccionada: 0,
     accountBalance: 1500.0,
     amount: 100.0,
@@ -41,10 +15,6 @@ export const useLinkDePagoStore = defineStore("linkDePago", {
       paymentLink: null,
     },
   }),
-
-  getters: {
-    selectedCard: (state) => state.tarjetas[state.tarjetaSeleccionada],
-  },
   actions: {
     setPaymentLink(link) {
       console.log("Setting payment link:", link);
@@ -59,17 +29,6 @@ export const useLinkDePagoStore = defineStore("linkDePago", {
     setPaymentMethod(method) {
       console.log("Setting payment method:", method);
       this.metodo = method;
-    },
-
-    rotateCard(direction) {
-      if (direction === "siguiente") {
-        this.tarjetaSeleccionada =
-          (this.tarjetaSeleccionada + 1) % this.tarjetas.length;
-      } else if (direction === "anterior") {
-        this.tarjetaSeleccionada =
-          (this.tarjetaSeleccionada - 1 + this.tarjetas.length) %
-          this.tarjetas.length;
-      }
     },
 
     confirmPayment() {
