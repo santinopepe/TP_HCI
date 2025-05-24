@@ -176,6 +176,7 @@
         v-if="currentStep === 2"
         @proceed-to-confirmation="handleMethodSelection"
         @cancel="closePaymentFlow"
+        @go-to-step-1="currentStep = 1"
         @click.stop=""
       />
 
@@ -183,7 +184,7 @@
         v-if="currentStep === 3"
         :amount="linkDePagoStore.amount"
         @confirm="handlePaymentConfirmation"
-        @cancel="closePaymentFlow"
+        @cancel="currentStep = 2"
         @click.stop=""
       />
 

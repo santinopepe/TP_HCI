@@ -36,9 +36,9 @@
 
           <!-- Sección derecha con el formulario -->
           <div class="flex-1 p-8 flex flex-col justify-center">
-            <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">Inicio de Sesión</h2>
-            <!-- Mensaje de error -->
-            <p v-if="loginError" class="text-red-500 text-center mb-4">{{ loginError }}</p>
+            <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">
+              Inicio de Sesión
+            </h2>
             <form @submit.prevent="handleSubmit">
               <!-- Campo Email -->
               <div class="mb-6 text-left">
@@ -93,6 +93,11 @@
                   Recuperar contraseña
                 </button>
               </div>
+
+              <!-- Mensaje de error arriba del botón de inicio -->
+              <p v-if="loginError" class="text-red-500 text-center mb-4">
+                {{ loginError }}
+              </p>
 
               <!-- Botón de Inicio -->
               <button
@@ -173,11 +178,11 @@ export default {
       try {
         const credentials = new Credentials(this.email, this.password);
         const security = useSecurityStore();
-        await security.login(credentials, true); // true si quieres recordar sesión
-        await security.getCurrentUser(); // opcional: cargar datos del usuario
-        this.$router.push('/paginaprincipal');
+        await security.login(credentials, true);
+        await security.getCurrentUser();
+        this.$router.push("/paginaprincipal");
       } catch (e) {
-        this.loginError = 'Usuario o contraseña incorrectos';
+        this.loginError = "La contraseña o el email son incorrectos.";
       }
     },
     goToRecuperar() {

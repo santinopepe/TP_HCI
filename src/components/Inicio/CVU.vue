@@ -78,12 +78,14 @@
 </template>
 
 <script>
+import { AccountApi } from "../../api/account.js";
+
 export default {
   name: 'CVU',
   data() {
     return {
-      cvu: '00234819282019304576839',
-      alias: 'jmarquez01',
+      cvu: '',
+      alias: '',
       editandoAlias: false,
       nuevoAlias: '',
       copiado: false,
@@ -91,7 +93,21 @@ export default {
       errorAlias: false,
     };
   },
+  created() {
+    this.cargarCuenta();
+  },
   methods: {
+    async cargarCuenta() {
+      try {
+        const account = await AccountApi.get();
+        this.alias = account.alias || '';
+        this.cvu = account.cvu || '';
+      } catch (e) {
+        console.error("Error al obtener la cuenta:", e);
+        this.alias = '';
+        this.cvu = '';
+      }
+    },
     copiarCVU() {
       navigator.clipboard.writeText(this.cvu);
       this.mostrarCopiado();
@@ -109,12 +125,20 @@ export default {
         if (input) input.focus();
       });
     },
-    guardarAlias() {
+    async guardarAlias() {
       const len = this.nuevoAlias.trim().length;
       if (len >= 6 && len <= 20) {
-        this.alias = this.nuevoAlias.trim();
-        this.editandoAlias = false;
-        this.errorAlias = false;
+        try {
+          const payload = { alias: this.nuevoAlias.trim() };
+          console.log("Payload enviado a updateAlias:", payload);
+          await AccountApi.updateAlias(payload);
+          await this.cargarCuenta();
+          this.editandoAlias = false;
+          this.errorAlias = false;
+        } catch (e) {
+          this.errorAlias = true;
+          console.error("Error al actualizar el alias:", e);
+        }
       } else if (this.editandoAlias) {
         this.errorAlias = true;
       }

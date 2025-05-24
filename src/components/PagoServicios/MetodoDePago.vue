@@ -153,10 +153,10 @@
     <!-- Botones -->
     <div class="flex justify-between">
       <button
-        @click="$emit('cancel')"
+        @click="$emit('go-to-step-1')"
         class="bg-gray-300 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 font-semibold"
       >
-        Cancelar
+        Volver
       </button>
       <button
         @click="proceedToConfirmation"
@@ -177,7 +177,8 @@ const cardStore = useCardStore();
 
 const linkDePagoStore = useLinkDePagoStore();
 
-const emit = defineEmits(["proceed-to-confirmation", "cancel"]);
+const emit = defineEmits(["proceed-to-confirmation", "go-to-step-1"]);
+
 
 
 const getCardLogo = (type) => {
