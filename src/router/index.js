@@ -7,7 +7,6 @@ import PrincipalPage from "../components/Inicio/PaginaPrincipal.vue";
 import PerfilPage from "../components/Perfil/Perfil.vue";
 import Actividad from "../components/Actividad/Actividad.vue";
 import Transferecias from "../components/Transferencias/Transferencias.vue";
-import TransferenciasNuevoContacto from "../components/Transferencias/TransferenciasNuevoContacto.vue";
 import AdministracionDeTarjetas from "../components/Tarjetas/AdministracionDeTarjetas.vue";
 import Inversiones from "../components/Inversiones/Inversiones.vue";
 import CambiarContraseña from "../components/Perfil/CambiarContraseña.vue";
@@ -35,11 +34,6 @@ const routes = [
   { path: "/perfil", name: "Perfil", component: PerfilPage },
   { path: "/actividad", name: "Actividad", component: Actividad },
   { path: "/transferir", name: "Transferencias", component: Transferecias },
-  {
-    path: "/transferirNuevoContacto",
-    name: "TransferenciasNuevoContacto",
-    component: TransferenciasNuevoContacto,
-  },
   {
     path: "/tarjetas",
     name: "AdministracionDeTarjetas",
@@ -80,7 +74,7 @@ const routes = [
     path: "/verificacion",
     name: "Verificacion",
     component: VerificacionPage,
-  }
+  },
 ];
 
 const router = createRouter({

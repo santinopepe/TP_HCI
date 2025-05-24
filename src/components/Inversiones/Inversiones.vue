@@ -222,7 +222,7 @@
           v-if="showToast"
           class="fixed bottom-4 right-4 bg-green-600 text-white p-4 rounded-lg shadow-lg flex items-center"
         >
-          <span>Inversión rescatada con éxito!</span>
+          <span>{{ toastMessage }}</span>
           <button
             @click="showToast = false"
             class="ml-4 text-white hover:text-gray-200 text-xl leading-none"
@@ -264,6 +264,7 @@ export default defineComponent({
     const searchQuery = ref("");
     const showAddInvestmentModal = ref(false);
     const showToast = ref(false);
+    const toastMessage = ref("");
     const sortKey = ref("");
     const sortOrder = ref("asc");
     const showRescueModal = ref(false);
@@ -335,6 +336,7 @@ export default defineComponent({
         acquisitionDate: formattedDate,
       });
       showAddInvestmentModal.value = false;
+      toastMessage.value = "Inversión agregada con éxito!";
       showToast.value = true;
       setTimeout(() => {
         showToast.value = false;
@@ -502,6 +504,7 @@ export default defineComponent({
         );
         showRescueModal.value = false;
         selectedInvestment.value = null;
+        toastMessage.value = "Inversión rescatada con éxito!";
         showToast.value = true;
         setTimeout(() => {
           showToast.value = false;
@@ -523,6 +526,7 @@ export default defineComponent({
       formatPercentage,
       showAddInvestmentModal,
       showToast,
+      toastMessage,
       handleAddInvestment,
       showRescueModal,
       selectedInvestment,

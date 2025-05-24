@@ -39,12 +39,12 @@
       </div>
 
       <div class="max-w-md mx-auto mt-6 text-center">
-        <router-link
-          to="/transferirNuevoContacto"
+        <button
+          @click="showNewContactModal = true"
           class="bg-[#5D8C39] text-white px-4 py-2 rounded-lg hover:bg-[#5D8C39]/80"
         >
           Nuevo contacto
-        </router-link>
+        </button>
       </div>
     </div>
 
@@ -52,6 +52,12 @@
       :is-open="showTransferModal"
       @close="showTransferModal = false"
       @transfer-complete="handleTransferComplete"
+    />
+
+    <NuevoContactoModal
+      :is-open="showNewContactModal"
+      @close="showNewContactModal = false"
+      @contact-added="handleNewContact"
     />
   </div>
 </template>
@@ -62,17 +68,20 @@ import { useRouter } from "vue-router";
 import { useTransferenciaStore } from "../store/TransferenciasStore.js";
 import BarraLateral from "./../BarraLateral.vue";
 import TransferenciaModal from "./TransferenciaModal.vue";
+import NuevoContactoModal from "./NuevoContactoModal.vue";
 
 export default defineComponent({
   components: {
     BarraLateral,
     TransferenciaModal,
+    NuevoContactoModal,
   },
   setup() {
     const router = useRouter();
     const transferenciaStore = useTransferenciaStore();
     const activeButton = ref("transferir");
     const showTransferModal = ref(false);
+    const showNewContactModal = ref(false);
 
     const handleSelectContact = (contacto) => {
       transferenciaStore.selectContact(contacto);
@@ -83,12 +92,18 @@ export default defineComponent({
       showTransferModal.value = false;
     };
 
+    const handleNewContact = (contacto) => {
+      transferenciaStore.addContact(contacto);
+    };
+
     return {
       activeButton,
       transferenciaStore,
       showTransferModal,
+      showNewContactModal,
       handleSelectContact,
       handleTransferComplete,
+      handleNewContact,
     };
   },
 });
