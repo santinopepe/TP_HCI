@@ -36,9 +36,9 @@
 
           <!-- Sección derecha con el formulario -->
           <div class="flex-1 p-8 flex flex-col justify-center">
-            <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">
-              Inicio de Sesión
-            </h2>
+            <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">Inicio de Sesión</h2>
+            <!-- Mensaje de error -->
+            <p v-if="loginError" class="text-red-500 text-center mb-4">{{ loginError }}</p>
             <form @submit.prevent="handleSubmit">
               <!-- Campo Email -->
               <div class="mb-6 text-left">
@@ -97,7 +97,6 @@
               <!-- Botón de Inicio -->
               <button
                 type="submit"
-                @click="goToPaginaPrincipal"
                 class="w-full p-3 bg-[#5D8C39] text-white border-none rounded-md text-base cursor-pointer hover:bg-[#5D8C39]/80"
               >
                 Inicio
@@ -130,6 +129,7 @@
 
 <script>
 import { UserApi, Credentials } from "../../api/user.js";
+import { useSecurityStore } from "../store/securityStore.js";
 
 export default {
   name: "LoginPage",
@@ -173,9 +173,9 @@ export default {
       try {
         const credentials = new Credentials(this.email, this.password);
         await UserApi.login(credentials);
-        this.$router.push("/paginaprincipal");
+        this.$router.push('/paginaprincipal');
       } catch (e) {
-        this.loginError = "Usuario o contraseña incorrectos";
+        this.loginError = 'Usuario o contraseña incorrectos';
       }
     },
     goToRecuperar() {

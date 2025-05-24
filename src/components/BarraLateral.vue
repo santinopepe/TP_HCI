@@ -116,6 +116,8 @@
 </template>
 
 <script>
+import { useSecurityStore } from "../components/store/securityStore";
+
 export default {
   name: "BarraLateral",
   props: {
@@ -131,7 +133,10 @@ export default {
     goToInicio() {
       if (this.$router) this.$router.push("/paginaprincipal");
     },
-    goToInicioSesion() {
+    async goToInicioSesion() {
+      // Sincroniza con securityStore y cierra sesión
+      const security = useSecurityStore();
+      await security.logout();
       if (this.$router) this.$router.push("/");
     },
     goToActividad() {
