@@ -1,28 +1,39 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { ref } from "vue"
+import { defineStore } from "pinia"
+import { Card, CardApi } from "../../api/card.js"
 
-export const useCardsStore = defineStore('cards', () => {
-  // Estado inicial de las tarjetas
-  const cards = ref([
-    { id: 1, type: 'Visa', last4: '1234', name: 'Juan Perez', expiry: '12/25', bank: 'Mi Banco Principal' },
-    { id: 2, type: 'Mastercard', last4: '5678', name: 'Juan Perez', expiry: '08/24', bank: 'Otro Banco' },
-    { id: 3, type: 'American Express', last4: '9012', name: 'Juan Perez', expiry: '06/26', bank: 'Banco del Sur' },
-  ]);
+export const useCardStore = defineStore("card", () => {
+    const cards = ref([])
 
-  // Acciones
-  const addCard = (newCard) => {
-    // Genera un ID simple para la nueva tarjeta
-    const newId = cards.value.length > 0 ? Math.max(...cards.value.map(c => c.id)) + 1 : 1;
-    cards.value.unshift({ ...newCard, id: newId });
-  };
+    async function add(card) {
+        const result = await CardApi.add(card)
+        console.log("Tarjeta agregada:", result);
+        const newCard = Object.assign(new Card(), result);
+        cards.value.push(newCard);
+        return newCard;
+    }
+    async function modify(card) {
+        const result = await CardApi.modify(card);
+        await getAll();
+        return result;
+    }
 
-  const removeCard = (cardId) => {
-    cards.value = cards.value.filter(card => card.id !== cardId);
-  };
+    async function remove(id) {
+        const result = await CardApi.remove(id);
+        await getAll();
+        return result;
+    }
+    async function get(id) {
+        const result = await CardApi.get(id);
+        await getAll();
+        return Object.assign(new Card(), result);
+    }
 
-  return {
-    cards,
-    addCard,
-    removeCard,
-  };
-});
+    async function getAll(controller = null) {
+        let result = await CardApi.getAll(controller);
+        result = result.map((card) => Object.assign(new Card(), card));
+        cards.value = result;
+    }
+
+    return { cards, add, modify, remove, get, getAll }
+})

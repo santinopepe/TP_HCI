@@ -89,6 +89,27 @@
                 {{ errors.cvv }}
               </p>
             </div>
+            <div>
+              <label
+                for="cardType"
+                class="block text-sm font-medium text-gray-700 mb-1"
+                >Tipo de Tarjeta</label
+              >
+              <select
+                id="cardType"
+                v-model="newCard.type"
+                class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 h-10 text-gray-700"
+                :class="{ 'border-red-500': errors.type }"
+                required
+              >
+                <option value="">Selecciona tipo</option>
+                <option value="CREDIT">Crédito</option>
+                <option value="DEBIT">Débito</option>
+              </select>
+              <p v-if="errors.type" class="text-red-500 text-sm mt-1">
+                {{ errors.type }}
+              </p>
+            </div>
           </div>
         </div>
         <div class="mt-4 flex justify-between">
@@ -127,22 +148,24 @@
 
 <script setup>
 import { ref } from "vue";
+import { useCardStore } from "../store/TarjetasStore.js";
+const cardStore = useCardStore();
 
 const newCard = ref({
-  number: "",
-  name: "",
-  expiry: "",
-  cvv: "",
   type: "",
-  bank: "",
+  number: "",
+  expirationDate: "",
+  fullName: "",
+  cvv: "",
+  metadata: {},
 });
 const errors = ref({
-  number: "",
-  name: "",
-  expiry: "",
-  cvv: "",
   type: "",
-  bank: "",
+  number: "",
+  expirationDate: "",
+  fullName: "",
+  cvv: "",
+  metadata: {},
 });
 
 const emit = defineEmits(["add-card", "cancel"]);
@@ -194,6 +217,14 @@ const validateForm = () => {
     errors.value.expiry = "";
   }
 
+  // Validar tipo de tarjeta
+  if (!newCard.value.type) {
+    errors.value.type = "Selecciona el tipo de tarjeta.";
+    isValid = false;
+  } else {
+    errors.value.type = "";
+  }
+
   // Validar CVV
   if (!newCard.value.cvv.trim()) {
     errors.value.cvv = "El CVV no puede estar vacío.";
@@ -225,19 +256,19 @@ const getCardType = (cardNumber) => {
   }
 };
 
-const addCard = () => {
+const addCard = async () => {
   if (validateForm()) {
-    const last4 = newCard.value.number.slice(-4);
     const card = {
-      id: Date.now(),
-      type: getCardType(newCard.value.number),
-      last4,
-      name: newCard.value.name,
-      expiry: newCard.value.expiry,
-      bank: newCard.value.bank,
+      type: newCard.value.type,
+      number: newCard.value.number.replace(/\s+/g, ""),
+      expirationDate: newCard.value.expiry,
+      fullName: newCard.value.name,
+      cvv: newCard.value.cvv,
+      metadata: {},
     };
     emit("add-card", card);
     resetNewCardForm();
+    
   }
 };
 
@@ -248,20 +279,20 @@ const cancelAddCard = () => {
 
 const resetNewCardForm = () => {
   newCard.value = {
-    number: "",
-    name: "",
-    expiry: "",
-    cvv: "",
     type: "",
-    bank: "",
+    number: "",
+    expirationDate: "",
+    fullName: "",
+    cvv: "",
+    metadata: {},
   };
   errors.value = {
-    number: "",
-    name: "",
-    expiry: "",
-    cvv: "",
     type: "",
-    bank: "",
+    number: "",
+    expirationDate: "",
+    fullName: "",
+    cvv: "",
+    metadata: {},
   };
 };
 </script>

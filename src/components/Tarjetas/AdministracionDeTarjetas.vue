@@ -39,7 +39,7 @@
           </div>
 
           <div
-            v-if="cards.length === 0"
+            v-if="cardStore.cards.length === 0"
             class="text-center text-gray-500 py-8 mb-4"
           >
             Aún no tienes tarjetas vinculadas.
@@ -47,7 +47,7 @@
 
           <div class="flex flex-row gap-4 overflow-x-auto pb-4">
             <div
-              v-for="(card, index) in cards"
+              v-for="(card, index) in cardStore.cards"
               :key="card.id"
               @click="viewCardDetails(card)"
               @mouseenter="handleMouseEnter(index)"
@@ -59,22 +59,21 @@
               <div class="flex flex-col h-full">
                 <div class="flex-1">
                   <p class="text-lg font-semibold truncate">
-                    {{ card.type }} **** **** **** {{ card.last4 }}
+                    {{ card.type }} **** **** **** {{ card.number.slice(-4) }}
                   </p>
-                  <p class="text-base opacity-90 truncate">{{ card.bank }}</p>
                   <p class="text-sm opacity-80 mt-2 truncate">
-                    Titular: {{ card.name }}
+                    Titular: {{ card.fullName }}
                   </p>
                   <p class="text-sm opacity-80 truncate">
-                    Expira: {{ card.expiry }}
+                    Expira: {{ card.expirationDate }}
                   </p>
                   <p class="text-sm opacity-80 mt-2">
-                    Tipo: {{ getCardBrand(card.type) }}
+                    Tipo: {{ getCardBrand(card.number) }}
                   </p>
                 </div>
                 <div class="mt-auto flex justify-end">
                   <img
-                    :src="getCardLogo(card.type)"
+                    :src="getCardLogo(card.number)"
                     alt="Card Logo"
                     class="h-8 w-12 object-contain"
                   />
@@ -129,23 +128,22 @@
             >
               <div class="flex items-center mb-2">
                 <img
-                  :src="getCardLogo(selectedCard.type)"
+                  :src="getCardLogo(selectedCard.number)"
                   alt="Card Logo"
                   class="h-8 w-12 mr-2 object-contain"
                 />
                 <p class="text-xl font-semibold mb-2">
-                  {{ selectedCard.type }} **** **** {{ selectedCard.last4 }}
+                  {{ selectedCard.type }} **** **** {{ selectedCard.number.slice(-4) }}
                 </p>
               </div>
-              <p class="text-base opacity-90">{{ selectedCard.bank }}</p>
               <p class="text-sm opacity-80 mt-2">
-                Titular: {{ selectedCard.name }}
+                Titular: {{ selectedCard.fullName }}
               </p>
               <p class="text-sm opacity-80">
-                Expira: {{ selectedCard.expiry }}
+                Expira: {{ selectedCard.expirationDate }}
               </p>
               <p class="text-sm opacity-80 mt-2">
-                Tipo: {{ getCardBrand(selectedCard.type) }}
+                Tipo: {{ getCardBrand(selectedCard.number) }}
               </p>
             </div>
             <div class="flex justify-center">
@@ -194,13 +192,21 @@
 </template>
 
 <script setup>
-import { ref } from "vue";
-import { useCardsStore } from "../store/TarjetasStore.js";
+import { ref, onMounted } from "vue";
 import BarraLateral from "../BarraLateral.vue";
 import AddCardForm from "./AgregarTarjeta.vue";
+import { useCardStore } from "../store/TarjetasStore.js";
 
-const cardsStore = useCardsStore();
-const { cards, addCard, removeCard } = cardsStore;
+const cardStore = useCardStore();
+
+
+onMounted(async () => {
+  try {
+    await cardStore.getAll();
+  } catch (error) {
+    console.error("Error al cargar tarjetas desde la API:", error);
+  }
+});
 
 const activeButton = ref("tarjetas");
 
@@ -221,32 +227,47 @@ const handleMouseLeave = () => {
 
 const calculatedZIndex = (index) => {
   if (hoveredIndex.value === index) {
-    return cards.length + 1;
+    return cardStore.cards.length + 1;
   }
-  return cards.length - index;
+  return cardStore.cards.length - index;
 };
 
-const getCardBrand = (type) => {
-  switch (type.toLowerCase()) {
-    case "visa":
-      return "Visa";
-    case "mastercard":
-      return "Mastercard";
-    case "american express":
-      return "American Express";
-    default:
-      return "Otro";
+const getCardBrand = (number) => {
+  if (!number) return "Otro";
+  const sanitized = number.replace(/[\s-]/g, "");
+
+  if (/^4\d{12}(\d{3})?(\d{3})?$/.test(sanitized)) {
+    return "Visa";
   }
+
+  if (/^(5[1-5]\d{14}|2(2[2-9][1-9]|2[3-9]\d|[3-6]\d\d|7[01]\d|720)\d{12})$/.test(sanitized)) {
+    return "Mastercard";
+  }
+
+  if (/^3[47]\d{13}$/.test(sanitized)) {
+    return "American Express";
+  }
+
+  if (/^(6011\d{12}|65\d{14}|64[4-9]\d{13}|622(12[6-9]|1[3-9]\d|[2-8]\d{2}|9[01]\d|92[0-5])\d{10})$/.test(sanitized)) {
+    return "Discover";
+  }
+
+  return "Otro";
 };
 
-const getCardLogo = (type) => {
-  switch (type.toLowerCase()) {
+
+const getCardLogo = (number) => {
+  if (!number) return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
+  const brand = getCardBrand(number);
+  switch (brand.toLowerCase()) {
     case "visa":
       return "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png";
     case "mastercard":
       return "https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png";
     case "american express":
       return "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg";
+    case "discover":
+      return "https://upload.wikimedia.org/wikipedia/commons/5/53/Discover_Card_logo.svg";
     default:
       return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
   }
@@ -265,9 +286,13 @@ const getCardBackground = (type) => {
   }
 };
 
-const handleAddCard = (card) => {
-  cardsStore.addCard(card); // Usa la acción del store
-  showAddCardForm.value = false;
+const handleAddCard = async (card) => {
+  try {
+    await cardStore.add(card);
+    showAddCardForm.value = false;
+  } catch (error) {
+    console.error("Error al agregar tarjeta:", error);
+  }
 };
 
 const viewCardDetails = (card) => {
@@ -286,9 +311,13 @@ const requestRemoveCard = (cardId) => {
   showRemoveConfirmModal.value = true;
 };
 
-const confirmRemoveCard = () => {
+const confirmRemoveCard = async () => {
   if (cardIdToRemove.value !== null) {
-    cardsStore.removeCard(cardIdToRemove.value); // Usa la acción del store
+    try {
+      await cardStore.remove(cardIdToRemove.value);
+    } catch (error) {
+      console.error("Error al desvincular tarjeta:", error);
+    }
   }
   cardIdToRemove.value = null;
   showRemoveConfirmModal.value = false;

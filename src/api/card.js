@@ -31,11 +31,12 @@ class Card {
         if (id) {
             this.id = id;
         }
-        this.fullName = fullName; // no creo que haga falta porq es el nombre del usuario
-        this.cvv = cvv; // codigo de seguridad
+        this.type = type; // puede ser debito o credito
         this.number = number; // los primeros numeros determinan si es visa, mastercard, etc
         this.expirationDate = expirationDate;
-        this.type = type; // puede ser debito o credito
+        this.fullName = fullName; // no creo que haga falta porq es el nombre del usuario
+        this.cvv = cvv; // codigo de seguridad
+        this.metadata = {};
     }
     toString() {
         return JSON.stringify(this, null, 2);
