@@ -172,7 +172,9 @@ export default {
 
       try {
         const credentials = new Credentials(this.email, this.password);
-        await UserApi.login(credentials);
+        const security = useSecurityStore();
+        await security.login(credentials, true); // true si quieres recordar sesión
+        await security.getCurrentUser(); // opcional: cargar datos del usuario
         this.$router.push('/paginaprincipal');
       } catch (e) {
         this.loginError = 'Usuario o contraseña incorrectos';
