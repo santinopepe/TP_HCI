@@ -1,10 +1,16 @@
 <template>
-  <div class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+  <div
+    class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
+  >
     <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full m-4 relative">
-      <h2 class="text-2xl font-semibold text-gray-800 mb-6">Agregar Nueva Inversión</h2>
+      <h2 class="text-2xl font-semibold text-gray-800 mb-6">
+        Agregar Nueva Inversión
+      </h2>
       <form @submit.prevent="handleSubmit" class="space-y-6">
         <div>
-          <label for="name" class="block text-sm font-medium text-gray-700">Nombre del Activo</label>
+          <label for="name" class="block text-sm font-medium text-gray-700"
+            >Nombre del Activo</label
+          >
           <input
             v-model="form.name"
             type="text"
@@ -13,11 +19,15 @@
             placeholder="Ej: Acciones Apple (AAPL)"
             :class="{ 'border-red-500': errors.name }"
           />
-          <p v-if="errors.name" class="text-red-500 text-sm mt-1">{{ errors.name }}</p>
+          <p v-if="errors.name" class="text-red-500 text-sm mt-1">
+            {{ errors.name }}
+          </p>
         </div>
 
         <div>
-          <label for="type" class="block text-sm font-medium text-gray-700">Tipo de Activo</label>
+          <label for="type" class="block text-sm font-medium text-gray-700"
+            >Tipo de Activo</label
+          >
           <select
             v-model="form.type"
             id="type"
@@ -32,40 +42,58 @@
             <option value="ETFs">ETFs</option>
             <option value="Renta Fija">Renta Fija</option>
           </select>
-          <p v-if="errors.type" class="text-red-500 text-sm mt-1">{{ errors.type }}</p>
+          <p v-if="errors.type" class="text-red-500 text-sm mt-1">
+            {{ errors.type }}
+          </p>
         </div>
 
         <div>
-          <label for="quantity" class="block text-sm font-medium text-gray-700">Cantidad</label>
+          <label for="quantity" class="block text-sm font-medium text-gray-700"
+            >Cantidad</label
+          >
           <input
-            v-model.number="form.quantity"
-            type="number"
+            v-model="form.quantity"
+            type="text"
             id="quantity"
-            min="1"
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             placeholder="Ej: 50"
             :class="{ 'border-red-500': errors.quantity }"
+            @input="validateQuantity"
           />
-          <p v-if="errors.quantity" class="text-red-500 text-sm mt-1">{{ errors.quantity }}</p>
+          <p v-if="errors.quantity" class="text-red-500 text-sm mt-1">
+            {{ errors.quantity }}
+          </p>
         </div>
 
         <div>
-          <label for="purchasePricePerUnit" class="block text-sm font-medium text-gray-700">Precio de Compra por Unidad</label>
+          <label
+            for="purchasePricePerUnit"
+            class="block text-sm font-medium text-gray-700"
+            >Precio de Compra por Unidad</label
+          >
           <input
-            v-model.number="form.purchasePricePerUnit"
-            type="number"
+            v-model="form.purchasePricePerUnit"
+            type="text"
             id="purchasePricePerUnit"
-            min="0"
-            step="0.01"
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             placeholder="Ej: 150.00"
             :class="{ 'border-red-500': errors.purchasePricePerUnit }"
+            @input="validatePrice"
           />
-          <p v-if="errors.purchasePricePerUnit" class="text-red-500 text-sm mt-1">{{ errors.purchasePricePerUnit }}</p>
+          <p
+            v-if="errors.purchasePricePerUnit"
+            class="text-red-500 text-sm mt-1"
+          >
+            {{ errors.purchasePricePerUnit }}
+          </p>
         </div>
 
         <div>
-          <label for="acquisitionDate" class="block text-sm font-medium text-gray-700">Fecha de Adquisición</label>
+          <label
+            for="acquisitionDate"
+            class="block text-sm font-medium text-gray-700"
+            >Fecha de Adquisición</label
+          >
           <input
             v-model="form.acquisitionDate"
             type="date"
@@ -73,7 +101,9 @@
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             :class="{ 'border-red-500': errors.acquisitionDate }"
           />
-          <p v-if="errors.acquisitionDate" class="text-red-500 text-sm mt-1">{{ errors.acquisitionDate }}</p>
+          <p v-if="errors.acquisitionDate" class="text-red-500 text-sm mt-1">
+            {{ errors.acquisitionDate }}
+          </p>
         </div>
 
         <div class="mt-4 flex justify-between">
@@ -97,64 +127,69 @@
 </template>
 
 <script>
-import { defineComponent, ref } from 'vue';
+import { defineComponent, ref } from "vue";
 
 export default defineComponent({
-  name: 'FormularioAgregarInversion',
-  emits: ['submit', 'cancel'],
+  name: "FormularioAgregarInversion",
+  emits: ["submit", "cancel"],
   setup(_, { emit }) {
     const form = ref({
-      name: '',
-      type: '',
+      name: "",
+      type: "",
       quantity: null,
       purchasePricePerUnit: null,
-      acquisitionDate: '',
+      acquisitionDate: "",
     });
 
     const errors = ref({
-      name: '',
-      type: '',
-      quantity: '',
-      purchasePricePerUnit: '',
-      acquisitionDate: '',
+      name: "",
+      type: "",
+      quantity: "",
+      purchasePricePerUnit: "",
+      acquisitionDate: "",
     });
 
     const validateForm = () => {
       let isValid = true;
 
       if (!form.value.name.trim()) {
-        errors.value.name = 'El nombre del activo es obligatorio.';
+        errors.value.name = "El nombre del activo es obligatorio.";
         isValid = false;
       } else {
-        errors.value.name = '';
+        errors.value.name = "";
       }
 
       if (!form.value.type) {
-        errors.value.type = 'Selecciona un tipo de activo.';
+        errors.value.type = "Selecciona un tipo de activo.";
         isValid = false;
       } else {
-        errors.value.type = '';
+        errors.value.type = "";
       }
 
       if (!form.value.quantity || form.value.quantity <= 0) {
-        errors.value.quantity = 'La cantidad debe ser mayor a 0.';
+        errors.value.quantity = "La cantidad debe ser mayor a 0.";
         isValid = false;
       } else {
-        errors.value.quantity = '';
+        errors.value.quantity = "";
       }
 
-      if (!form.value.purchasePricePerUnit || form.value.purchasePricePerUnit < 0) {
-        errors.value.purchasePricePerUnit = 'El precio debe ser mayor o igual a 0.';
+      if (
+        !form.value.purchasePricePerUnit ||
+        form.value.purchasePricePerUnit < 0
+      ) {
+        errors.value.purchasePricePerUnit =
+          "El precio debe ser mayor o igual a 0.";
         isValid = false;
       } else {
-        errors.value.purchasePricePerUnit = '';
+        errors.value.purchasePricePerUnit = "";
       }
 
       if (!form.value.acquisitionDate) {
-        errors.value.acquisitionDate = 'La fecha de adquisición es obligatoria.';
+        errors.value.acquisitionDate =
+          "La fecha de adquisición es obligatoria.";
         isValid = false;
       } else {
-        errors.value.acquisitionDate = '';
+        errors.value.acquisitionDate = "";
       }
 
       return isValid;
@@ -162,28 +197,53 @@ export default defineComponent({
 
     const handleSubmit = () => {
       if (validateForm()) {
-        emit('submit', { ...form.value });
+        emit("submit", { ...form.value });
         form.value = {
-          name: '',
-          type: '',
+          name: "",
+          type: "",
           quantity: null,
           purchasePricePerUnit: null,
-          acquisitionDate: '',
+          acquisitionDate: "",
         };
         errors.value = {
-          name: '',
-          type: '',
-          quantity: '',
-          purchasePricePerUnit: '',
-          acquisitionDate: '',
+          name: "",
+          type: "",
+          quantity: "",
+          purchasePricePerUnit: "",
+          acquisitionDate: "",
         };
       }
+    };
+
+    const validateQuantity = (event) => {
+      form.value.quantity = event.target.value.replace(/\D/g, "");
+    };
+
+    const validatePrice = (event) => {
+      let value = event.target.value.replace(/[^\d.,]/g, "");
+
+      const hasDecimal = value.includes(".");
+      const hasComma = value.includes(",");
+
+      if (hasDecimal && hasComma) {
+        const decimalIndex = value.indexOf(".");
+        const commaIndex = value.indexOf(",");
+        if (decimalIndex < commaIndex) {
+          value = value.replace(",", "");
+        } else {
+          value = value.replace(".", "");
+        }
+      }
+
+      form.value.purchasePricePerUnit = value;
     };
 
     return {
       form,
       errors,
       handleSubmit,
+      validateQuantity,
+      validatePrice,
     };
   },
 });
