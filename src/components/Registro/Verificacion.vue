@@ -2,7 +2,13 @@
   <div class="flex justify-center items-center min-h-screen bg-[#d3e4cd] bg-[url('/images/fondo.png')] bg-cover bg-center bg-no-repeat overflow-hidden">
     <div class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-sm flex flex-col items-center">
       <h3 class="text-xl font-bold mb-4 text-[#2e4b3f]">Verifica tu cuenta</h3>
-      <p class="mb-4 text-gray-700 text-center">Ingresa el código que recibiste en tu correo para activar tu cuenta.</p>
+      <p class="mb-4 text-gray-700 text-center">Ingresa tu correo electrónico y el código que recibiste para activar tu cuenta.</p>
+      <input
+        v-model="email"
+        class="w-full mb-4 p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#5D8C39] outline-none transition"
+        placeholder="Correo electrónico"
+        type="email"
+      />
       <input
         v-model="verificationCode"
         class="w-full mb-4 p-3 border border-gray-300 rounded-lg text-base focus:ring-2 focus:ring-[#5D8C39] outline-none transition"
@@ -43,16 +49,20 @@ export default {
     };
   },
   created() {
-    // Obtiene el email desde la query si viene de registro
     this.email = this.$route.query.email || '';
   },
   methods: {
     async verifyCode() {
       this.verificationError = '';
-      if (!this.verificationCode) {
-        this.verificationError = 'Debes ingresar el código.';
+      if (!this.email) {
+        this.verificationError = 'Debes ingresar el correo electrónico.';
         return;
       }
+      if (!this.verificationCode) {
+        this.verificationError = 'Debes ingresar el código de verificación.';
+        return;
+      }
+      console.log("Datos enviados:", { email: this.email, code: this.verificationCode });
       try {
         await UserApi.verify({ email: this.email, code: this.verificationCode });
         this.apiMessage = '¡Cuenta verificada correctamente! Ahora puedes iniciar sesión.';

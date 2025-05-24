@@ -45,7 +45,8 @@ class Api {
         return await Api.fetch(url, secure, {}, controller);
     }
 
-    static async post(url, secure, data, controller) {
+static async post(url, secure, data, controller) {
+        console.log("Enviando datos al backend:", data);
         return await Api.fetch(url, secure, {
             method: "POST",
             headers: {

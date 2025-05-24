@@ -36,10 +36,10 @@ class UserApi {
         }
         return data;
     }
-
-    static async verify(data, controller) {
-        // data puede ser { email: ... } o { id: ... } según tu backend
-        return await Api.post(UserApi.getUrl("verify"), false, data, controller);
+    static async verify({ email, code }, controller) {
+        // El código va en la query, el email en el body
+        const url = UserApi.getUrl(`verify?code=${encodeURIComponent(code)}`);
+        return await Api.post(url, false, { email }, controller);
     }
 
 }
