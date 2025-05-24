@@ -118,7 +118,7 @@
             <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
             <div class="flex items-center gap-4 relative overflow-hidden">
               <button
-                @click="transferenciaStore.rotateCard('anterior')"
+                @click="rotateCard('anterior')"
                 class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-30"
               >
                 <img
@@ -130,7 +130,7 @@
 
               <div class="relative w-full h-[180px] overflow-hidden">
                 <div
-                  v-for="(card, index) in transferenciaStore.cards"
+                  v-for="(card, index) in cardStore.cards"
                   :key="card.id || index"
                   class="absolute w-full transition-all duration-500 ease-in-out"
                   :style="{
@@ -149,21 +149,18 @@
                   >
                     <div>
                       <p class="text-xl font-semibold">
-                        **** **** **** {{ card?.last4 || "****" }}
-                      </p>
-                      <p class="text-base opacity-90">
-                        {{ card?.bank || "Banco" }}
+                        {{ card.type }} **** **** **** {{ card.number.slice(-4) }}                      
                       </p>
                       <p class="text-sm opacity-80 mt-2">
-                        Titular: {{ card?.name || "Usuario" }}
+                        Titular: {{ card.fullName }}
                       </p>
                       <p class="text-sm opacity-80">
-                        Expira: {{ card?.expiry || "MM/YY" }}
+                        Expira: {{ card.expirationDate }}
                       </p>
                     </div>
                     <div class="absolute bottom-4 right-4">
                       <img
-                        :src="getCardLogo(card?.type)"
+                        :src="getCardLogo(card.number)"
                         alt="Card Logo"
                         class="h-8 w-12 object-contain"
                       />
@@ -173,7 +170,7 @@
               </div>
 
               <button
-                @click="transferenciaStore.rotateCard('siguiente')"
+                @click="rotateCard('siguiente')"
                 class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-20"
               >
                 <img
@@ -346,6 +343,8 @@
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useTransferenciaStore } from "../store/TransferenciasStore.js";
+import { useCardStore } from "../store/TarjetasStore.js";
+const cardStore = useCardStore();
 
 const props = defineProps({
   isOpen: {
@@ -456,10 +455,25 @@ const getCardBackground = (type) => {
 
 watch(
   () => props.isOpen,
-  (newValue) => {
+  async (newValue) => {
+    if (newValue) {
+      await cardStore.getAll();
+    }
     if (!newValue) {
       resetSteps();
     }
   }
 );
+
+  const rotateCard = (direction) => {
+    const cardsLength = cardStore.cards.length;
+    if (!cardsLength) return;
+    if (direction === "anterior") {
+      transferenciaStore.selectedCardIndex =
+        (transferenciaStore.selectedCardIndex - 1 + cardsLength) % cardsLength;
+    } else if (direction === "siguiente") {
+      transferenciaStore.selectedCardIndex =
+        (transferenciaStore.selectedCardIndex + 1) % cardsLength;
+    }
+  };
 </script>

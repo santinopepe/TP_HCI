@@ -22,32 +22,6 @@ export const useTransferenciaStore = defineStore("transferencia", () => {
   const paymentMethod = ref("tarjeta");
   const amount = ref("");
   const amountError = ref(false);
-  const cards = ref([
-    {
-      id: 1,
-      type: "Visa",
-      last4: "1234",
-      name: "Juan Perez",
-      expiry: "12/25",
-      bank: "Mi Banco Principal",
-    },
-    {
-      id: 2,
-      type: "Mastercard",
-      last4: "5678",
-      name: "Juan Perez",
-      expiry: "08/24",
-      bank: "Otro Banco",
-    },
-    {
-      id: 3,
-      type: "American Express",
-      last4: "9012",
-      name: "Juan Perez",
-      expiry: "06/26",
-      bank: "Banco del Sur",
-    },
-  ]);
   const selectedCardIndex = ref(0);
   const transactionCargo = ref(1.0);
   const accountBalance = ref(100000.0);
@@ -75,7 +49,7 @@ export const useTransferenciaStore = defineStore("transferencia", () => {
     return isNaN(parsedAmount) ? 0 : parsedAmount + transactionCargo.value;
   });
 
-  const currentCard = computed(() => cards.value[selectedCardIndex.value]);
+  const currentCard = computed(() => cardStore.cards[selectedCardIndex.value]);
 
   const formattedCurrentDate = computed(() => {
     const fecha = new Date();
@@ -115,15 +89,6 @@ export const useTransferenciaStore = defineStore("transferencia", () => {
     amountError.value = hasError;
   }
 
-  function rotateCard(direction) {
-    if (direction === "anterior") {
-      selectedCardIndex.value =
-        (selectedCardIndex.value - 1 + cards.value.length) % cards.value.length;
-    } else if (direction === "siguiente") {
-      selectedCardIndex.value =
-        (selectedCardIndex.value + 1) % cards.value.length;
-    }
-  }
 
   function confirmTransfer() {
     receiptDetails.value = {
@@ -161,7 +126,6 @@ export const useTransferenciaStore = defineStore("transferencia", () => {
     paymentMethod,
     amount,
     amountError,
-    cards,
     selectedCardIndex,
     transactionCargo,
     accountBalance,
@@ -179,7 +143,6 @@ export const useTransferenciaStore = defineStore("transferencia", () => {
     setPaymentMethod,
     setAmount,
     setAmountError,
-    rotateCard,
     confirmTransfer,
     resetTransferForm,
     resetTransferenciaFlow,
