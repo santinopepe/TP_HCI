@@ -78,78 +78,87 @@
 </template>
 
 <script>
-import { AccountApi } from "../../api/account.js";
+import { ref, computed, onMounted } from "vue";
+import { useAccountStore } from "../store/accountStore.js";
 
 export default {
   name: 'CVU',
-  data() {
-    return {
-      cvu: '',
-      alias: '',
-      editandoAlias: false,
-      nuevoAlias: '',
-      copiado: false,
-      copiadoTimeout: null,
-      errorAlias: false,
-    };
-  },
-  created() {
-    this.cargarCuenta();
-  },
-  methods: {
-    async cargarCuenta() {
-      try {
-        const account = await AccountApi.get();
-        this.alias = account.alias || '';
-        this.cvu = account.cvu || '';
-      } catch (e) {
-        console.error("Error al obtener la cuenta:", e);
-        this.alias = '';
-        this.cvu = '';
-      }
-    },
-    copiarCVU() {
-      navigator.clipboard.writeText(this.cvu);
-      this.mostrarCopiado();
-    },
-    copiarAlias() {
-      navigator.clipboard.writeText(this.alias);
-      this.mostrarCopiado();
-    },
-    modificarAlias() {
-      this.nuevoAlias = this.alias;
-      this.editandoAlias = true;
-      this.errorAlias = false;
-      this.$nextTick(() => {
-        const input = this.$el.querySelector('input');
+  setup() {
+    const accountStore = useAccountStore();
+
+    const editandoAlias = ref(false);
+    const nuevoAlias = ref("");
+    const copiado = ref(false);
+    const copiadoTimeout = ref(null);
+    const errorAlias = ref(false);
+
+    // Computed para alias y cvu desde el store
+    const alias = computed(() => accountStore.account?.alias || "");
+    const cvu = computed(() => accountStore.account?.cvu || "");
+
+    // Cargar cuenta al montar
+    onMounted(() => {
+      accountStore.getCurrentAccount();
+    });
+
+    function copiarCVU() {
+      navigator.clipboard.writeText(cvu.value);
+      mostrarCopiado();
+    }
+
+    function copiarAlias() {
+      navigator.clipboard.writeText(alias.value);
+      mostrarCopiado();
+    }
+
+    function modificarAlias() {
+      nuevoAlias.value = alias.value;
+      editandoAlias.value = true;
+      errorAlias.value = false;
+      setTimeout(() => {
+        const input = document.querySelector('input');
         if (input) input.focus();
       });
-    },
-    async guardarAlias() {
-      const len = this.nuevoAlias.trim().length;
+    }
+
+    async function guardarAlias() {
+      const len = nuevoAlias.value.trim().length;
       if (len >= 6 && len <= 20) {
         try {
-          const payload = { alias: this.nuevoAlias.trim() };
-          console.log("Payload enviado a updateAlias:", payload);
-          await AccountApi.updateAlias(payload);
-          await this.cargarCuenta();
-          this.editandoAlias = false;
-          this.errorAlias = false;
+          await accountStore.updateAlias(nuevoAlias.value.trim());
+          editandoAlias.value = false;
+          errorAlias.value = false;
         } catch (e) {
-          this.errorAlias = true;
+          errorAlias.value = true;
           console.error("Error al actualizar el alias:", e);
         }
-      } else if (this.editandoAlias) {
-        this.errorAlias = true;
+      } else if (editandoAlias.value) {
+        errorAlias.value = true;
       }
-    },
-    mostrarCopiado() {
-      this.copiado = true;
-      if (this.copiadoTimeout) clearTimeout(this.copiadoTimeout);
-      this.copiadoTimeout = setTimeout(() => {
-        this.copiado = false;
+    }
+
+    function mostrarCopiado() {
+      copiado.value = true;
+      if (copiadoTimeout.value) clearTimeout(copiadoTimeout.value);
+      copiadoTimeout.value = setTimeout(() => {
+        copiado.value = false;
       }, 1500);
-    },
+    }
+
+    return {
+      alias,
+      cvu,
+      editandoAlias,
+      nuevoAlias,
+      copiado,
+      copiadoTimeout,
+      errorAlias,
+      copiarCVU,
+      copiarAlias,
+      modificarAlias,
+      guardarAlias,
+      mostrarCopiado,
+    };
   },
 };
 </script>

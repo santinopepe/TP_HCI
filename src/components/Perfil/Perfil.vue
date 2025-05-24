@@ -1,4 +1,3 @@
-<!-- src/components/Perfil.vue -->
 <template>
   <div class="flex h-screen font-sans overflow-hidden">
     <BarraLateral
@@ -35,7 +34,7 @@
               />
             </div>
             <h2 class="text-2xl font-bold text-simsim-green-dark mt-4">
-              {{ perfilStore.user.name }}
+              {{ userData.firstName }} {{ userData.lastName }}
             </h2>
           </div>
 
@@ -45,13 +44,13 @@
                 N° de Documento
               </p>
               <p class="text-lg text-gray-700 font-bold border-b pb-2">
-                {{ perfilStore.user.accountNumber }}
+                {{ userData.dni }}
               </p>
             </div>
             <div>
               <p class="text-sm font-semibold text-simsim-green-dark">Email</p>
               <p class="text-lg text-gray-700 font-bold border-b pb-2">
-                {{ perfilStore.user.email }}
+                {{ userData.email }}
               </p>
             </div>
             <div>
@@ -59,19 +58,19 @@
                 Número telefónico
               </p>
               <p class="text-lg text-gray-700 font-bold border-b pb-2">
-                {{ perfilStore.user.phone }}
+                {{ userData.phone }}
               </p>
             </div>
             <div>
               <p class="text-sm font-semibold text-simsim-green-dark">Alias</p>
               <p class="text-lg text-gray-700 font-bold border-b pb-2">
-                {{ perfilStore.user.alias }}
+                {{ accountData.alias }}
               </p>
             </div>
             <div>
               <p class="text-sm font-semibold text-simsim-green-dark">Género</p>
               <p class="text-lg text-gray-700 font-bold">
-                {{ perfilStore.user.gender }}
+                {{ userData.gender }}
               </p>
             </div>
           </div>
@@ -116,8 +115,10 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { usePerfilStore } from "../store/PerfilStore.js";
+import { useSecurityStore } from "../store/securityStore.js";
+import { AccountApi } from "../../api/account.js";
 import BarraLateral from "../BarraLateral.vue";
 import CodeVerificationModal from "./ModalDeVerificacion.vue";
 import PasswordUpdateModal from "./ModalActulizacionContrasenia.vue";
@@ -133,6 +134,7 @@ export default defineComponent({
   },
   setup() {
     const perfilStore = usePerfilStore();
+    const securityStore = useSecurityStore();
     const activeButton = ref("perfil");
     const fileInput = ref(null);
     const code = ref("");
@@ -142,6 +144,42 @@ export default defineComponent({
     const errorMessage = ref("");
     const showFormModal = ref(false);
     const showSuccessModal = ref(false);
+
+    // Datos de usuario y cuenta
+    const userData = ref({
+      firstName: "",
+      lastName: "",
+      email: "",
+      dni: "",
+      phone: "",
+      gender: "",
+    });
+    const accountData = ref({
+      alias: "",
+      cvu: "",
+    });
+
+    // Cargar datos al montar el componente usando securityStore
+    onMounted(async () => {
+      try {
+        const user = await securityStore.getCurrentUser();
+        userData.value.firstName = user.firstName || "";
+        userData.value.lastName = user.lastName || "";
+        userData.value.email = user.email || "";
+        userData.value.dni = user.metadata?.dni || "";
+        userData.value.phone = user.metadata?.phone || "";
+        userData.value.gender = user.metadata?.gender || "";
+      } catch (e) {
+        console.error("Error al obtener usuario:", e);
+      }
+      try {
+        const account = await AccountApi.get();
+        accountData.value.alias = account.alias || "";
+        accountData.value.cvu = account.cvu || "";
+      } catch (e) {
+        console.error("Error al obtener cuenta:", e);
+      }
+    });
 
     const showChangePasswordModal = () => {
       showFormModal.value = true;
@@ -227,6 +265,8 @@ export default defineComponent({
       cancel,
       triggerFileInput,
       handleFileChange,
+      userData,
+      accountData,
     };
   },
 });
