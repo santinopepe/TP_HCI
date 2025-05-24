@@ -36,7 +36,9 @@
 
           <!-- Sección derecha con el formulario -->
           <div class="flex-1 p-8 flex flex-col justify-center">
-            <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">Inicio de Sesión</h2>
+            <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">
+              Inicio de Sesión
+            </h2>
             <!-- Mensaje de error -->
             <p v-if="loginError" class="text-red-500 text-center mb-4">{{ loginError }}</p>
             <form @submit.prevent="handleSubmit">
@@ -173,11 +175,24 @@ export default {
       try {
         const credentials = new Credentials(this.email, this.password);
         const security = useSecurityStore();
-        await security.login(credentials, true); // true si quieres recordar sesión
-        await security.getCurrentUser(); // opcional: cargar datos del usuario
-        this.$router.push('/paginaprincipal');
+        await security.login(credentials, true);
+        await security.getCurrentUser();
+        this.$router.push("/paginaprincipal");
       } catch (e) {
-        this.loginError = 'Usuario o contraseña incorrectos';
+        let msg = '';
+        if (e?.response?.data?.message) {
+          msg = e.response.data.message;
+        } else if (e?.message) {
+          msg = e.message;
+        } else {
+          msg = 'Error al iniciar sesión.';
+        }
+        if (msg === "User not found") {
+          this.loginError = "Usuario o contraseña incorrectos.";
+        }
+        else{
+          this.loginError = "Usuario no verificado.";
+        }
       }
     },
     goToRecuperar() {
