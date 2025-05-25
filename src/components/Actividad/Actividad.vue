@@ -54,9 +54,7 @@
                 <th class="p-3 font-semibold text-gray-600">Nombre</th>
                 <th class="p-3 font-semibold text-gray-600">Tipo</th>
                 <th class="p-3 font-semibold text-gray-600">Fecha</th>
-                <th class="p-3 font-semibold text-gray-600 text-right">
-                  Monto
-                </th>
+                <th class="p-3 font-semibold text-gray-600 text-right">Monto</th>
               </tr>
             </thead>
             <tbody>
@@ -66,21 +64,18 @@
                 </td>
               </tr>
               <tr
-                v-for="transaction in filteredTransactions"
-                :key="transaction.id"
+                v-for="payment in filteredTransactions"
+                :key="payment.id"
                 class="border-b border-gray-100 hover:bg-gray-50"
               >
-                <td class="p-3">{{ transaction.name }}</td>
-                <td class="p-3">{{ transaction.type }}</td>
-                <td class="p-3 text-sm text-gray-500">
-                  {{ transaction.date }}
+                <td class="p-3">
+                  {{ payment.payer?.firstName }} {{ payment.payer?.lastName }}
+                </td>
+                <td class="p-3">
+                  {{ payment.method === "ACCOUNT" ? "Transferencia Bancaria" : "Pago con Tarjeta" }}
                 </td>
                 <td class="p-3 text-red-500 font-medium text-right">
-                  {{
-                    formatCurrency(
-                      parseFloat(transaction.amount.replace(/[^0-9.-]+/g, ""))
-                    )
-                  }}
+                  {{ formatCurrency(payment.amount) }}
                 </td>
               </tr>
             </tbody>
@@ -100,7 +95,7 @@
 
 <script>
 import { defineComponent, ref, computed, onMounted } from "vue";
-import { useActividadStore } from "../store/ActividadStore.js";
+import { useCobrosStore } from "../store/CobrosStore.js";
 import { useAccountStore } from "../store/accountStore.js";
 import BarraLateral from "../BarraLateral.vue";
 import { Pie } from "vue-chartjs";
@@ -115,9 +110,10 @@ export default defineComponent({
     Pie,
   },
   setup() {
-    const actividadStore = useActividadStore();
+    const cobrosStore = useCobrosStore();
     const accountStore = useAccountStore();
     const activeButton = ref("actividad");
+    const searchQuery = ref("");
 
     // Traer el saldo principal desde el store de cuenta
     const mainAccountBalance = computed(() => {
@@ -127,9 +123,32 @@ export default defineComponent({
       return accountStore.account.balance;
     });
 
-    // Cargar la cuenta al montar
+    const chartData = computed(() => ({
+      labels: ['Sin datos'],
+      datasets: [
+        {
+          data: [1],
+          backgroundColor: ['#e5e7eb'],
+          hoverOffset: 4,
+        },
+      ],
+    }));
+
+    // Cargar la cuenta y los pagos al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
+      cobrosStore.fetchPagos();
+    });
+
+    // Filtro de búsqueda sobre pagos
+    const filteredTransactions = computed(() => {
+      const pagosValidos = cobrosStore.pagos.filter(p => p && typeof p.amount === "number");
+      if (!searchQuery.value) return pagosValidos;
+      return pagosValidos.filter(payment =>
+        ((payment.payer?.firstName || "") + " " + (payment.payer?.lastName || ""))
+          .toLowerCase()
+          .includes(searchQuery.value.toLowerCase())
+      );
     });
 
     const chartOptions = {
@@ -163,16 +182,13 @@ export default defineComponent({
 
     return {
       activeButton,
-      searchQuery: computed({
-        get: () => actividadStore.searchQuery,
-        set: (value) => actividadStore.setSearchQuery(value),
-      }),
-      filteredTransactions: computed(() => actividadStore.filteredTransactions),
-      chartData: actividadStore.getChartData,
+      searchQuery,
+      filteredTransactions,
       chartOptions,
+      chartData,
       mainAccountBalance,
-      activeInvestments: actividadStore.getActiveInvestments,
-      expenses: actividadStore.getExpenses,
+      activeInvestments: accountStore.activeInvestments, // o usa tu store de inversiones
+      expenses: accountStore.expenses, // o usa tu store de gastos
       formatCurrency,
     };
   },

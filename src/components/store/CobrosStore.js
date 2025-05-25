@@ -13,9 +13,11 @@ export const useCobrosStore = defineStore("pagos", () => {
     loading.value = true;
     error.value = null;
     try {
-      pagos.value = await PaymentApi.getAll();
+      const result = await PaymentApi.getAll();
+      pagos.value = Array.isArray(result) ? result : []; // <-- Esto asegura que siempre sea array
     } catch (e) {
       error.value = e;
+      pagos.value = []; // <-- Si hay error, deja pagos como array vacío
     } finally {
       loading.value = false;
     }
