@@ -47,6 +47,26 @@ export const useAccountStore = defineStore("account", () => {
     }
   }
 
+  async function deposit(amount) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const numericAmount = Number(amount);
+      if (!numericAmount || numericAmount <= 0) {
+        throw new Error("El monto debe ser mayor a 0.");
+      }
+      // Llama al endpoint recharge con el monto como número
+      await AccountApi.recharge(numericAmount);
+      await getCurrentAccount();
+      return account.value;
+    } catch (e) {
+      error.value = e;
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
+
   return {
     account,
     loading,
@@ -55,5 +75,6 @@ export const useAccountStore = defineStore("account", () => {
     reset,
     getCurrentAccount,
     updateAlias,
+    deposit,
   };
 });
