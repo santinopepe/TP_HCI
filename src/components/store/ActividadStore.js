@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia';
-import { ref, computed } from 'vue';
 
-export const useActividadStore = defineStore('finance', {
+/*export const useActividadStore = defineStore('finance', {
   state: () => ({
     mainAccountBalance: 44500.00,
     activeInvestments: 2911804.00,
@@ -55,4 +54,4 @@ export const useActividadStore = defineStore('finance', {
       this.expenses = amount;
     },
   },
-});
+});*/

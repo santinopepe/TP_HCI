@@ -2,20 +2,7 @@ import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 
 export const useTransferenciaStore = defineStore("transferencia", () => {
-  const contacts = ref([
-    {
-      id: 2,
-      nombre: "María García",
-      cbu: "0009876543210987654321",
-      avatar: "/images/mujer.png",
-    },
-    {
-      id: 3,
-      nombre: "Carlos Ruiz",
-      cbu: "0001122334455667788990",
-      avatar: "/images/fotoHombre.png",
-    },
-  ]);
+ 
   const searchQuery = ref("");
   const selectedContact = ref(null);
 
@@ -120,7 +107,6 @@ export const useTransferenciaStore = defineStore("transferencia", () => {
   }
 
   return {
-    contacts,
     searchQuery,
     selectedContact,
     paymentMethod,

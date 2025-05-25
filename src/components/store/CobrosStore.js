@@ -8,16 +8,15 @@ export const useCobrosStore = defineStore("pagos", () => {
   const loading = ref(false);
   const error = ref(null);
 
-  // Obtener todos los pagos
   async function fetchPagos() {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.getAll();
-      pagos.value = Array.isArray(result) ? result : []; // <-- Esto asegura que siempre sea array
+      pagos.value = Array.isArray(result?.results) ? result.results : [];
     } catch (e) {
       error.value = e;
-      pagos.value = []; // <-- Si hay error, deja pagos como array vacío
+      pagos.value = [];
     } finally {
       loading.value = false;
     }

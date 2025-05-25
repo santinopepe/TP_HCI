@@ -6,8 +6,9 @@ class PaymentApi {
     }
 
     // Realizar un pago
-    static async pay(payment, controller) {
-        return await Api.post(PaymentApi.getUrl(), true, payment, controller);
+    static async pay({ cardId, cvu, ...body }, controller) {
+    const url = `${PaymentApi.getUrl()}?cardId=${encodeURIComponent(cardId)}&cvu=${encodeURIComponent(cvu)}`;
+    return await Api.post(url, true, body, controller);
     }
 
     // Obtener pagos realizados (opcional)
@@ -28,8 +29,9 @@ class PaymentApi {
     static async transferByEmail(data, controller) {
     return await Api.post(PaymentApi.getUrl("transfer-email"), true, data, controller);
     }
-    static async transferByCVU(data, controller) {
-    return await Api.post(PaymentApi.getUrl("transfer-cvu"), true, data, controller);
+    static async transferByCVU(params, body, controller) {
+    const url = `${PaymentApi.getUrl("transfer-cvu")}${params}`;
+    return await Api.post(url, true, body, controller);
     }
     static async transferByAlias(data, controller) {
     return await Api.post(PaymentApi.getUrl("transfer-alias"), true, data, controller);
