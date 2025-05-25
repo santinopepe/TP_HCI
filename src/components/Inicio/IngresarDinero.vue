@@ -43,7 +43,6 @@
                   cvu
                 }}</span>
               </div>
-
             </div>
             <!-- Botón Compartir -->
             <button
@@ -61,6 +60,9 @@
 </template>
 
 <script>
+import { computed, onMounted } from "vue";
+import { useAccountStore } from "../store/accountStore.js";
+
 export default {
   name: "IngresarDinero",
   props: {
@@ -69,10 +71,32 @@ export default {
       required: true,
     },
   },
-  data() {
+  setup() {
+    const accountStore = useAccountStore();
+
+    // Computed para alias y cvu desde el store
+    const alias = computed(() => accountStore.account?.alias || "");
+    const cvu = computed(() => accountStore.account?.cvu || "");
+
+    // Cargar cuenta al montar
+    onMounted(() => {
+      accountStore.getCurrentAccount();
+    });
+
+    function shareData() {
+      const text = `Alias: ${alias.value}\nCVU: ${cvu.value}`;
+      if (navigator.share) {
+        navigator.share({ text });
+      } else {
+        navigator.clipboard.writeText(text);
+        alert("Datos copiados al portapapeles");
+      }
+    }
+
     return {
-      alias: "jmarquez01",
-      cvu: "00234819282019304576839",
+      alias,
+      cvu,
+      shareData,
     };
   },
 };
