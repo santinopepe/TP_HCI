@@ -35,6 +35,7 @@ export const useSecurityStore = defineStore("security", () => {
     function removeToken() {
         localStorage.removeItem(SECURITY_TOKEN_KEY);
         setToken(null);
+        setUser(null);
     }
 
     async function login(credentials, rememberMe) {
@@ -62,5 +63,14 @@ export const useSecurityStore = defineStore("security", () => {
     return await UserApi.register(user);
     }
 
-    return { user, isLoggedIn, initialize, login, logout, getCurrentUser, register };
+    async function resetPassword(emailOrDni) {
+        // Puedes adaptar esto si tu backend acepta DNI o solo email
+        return await UserApi.resetPassword(emailOrDni);
+    }
+
+    async function changePassword({ code, password }) {
+        return await UserApi.changePassword({ code, password });
+    }
+
+    return { user, isLoggedIn, initialize, login, logout, getCurrentUser, register, resetPassword, changePassword };
 });
