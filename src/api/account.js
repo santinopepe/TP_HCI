@@ -11,9 +11,10 @@ class AccountApi {
         return await Api.get(AccountApi.getUrl(), true, controller);
     }
 
-    static async recharge(data, controller) {
-        // POST /api/account/recharge
-        return await Api.post(AccountApi.getUrl("recharge"), true, data, controller);
+    static async recharge(amount, controller) {
+        // POST /api/account/recharge?amount=123
+        const url = `${AccountApi.getUrl("recharge")}?amount=${encodeURIComponent(amount)}`;
+        return await Api.post(url, true, undefined, controller);
     }
     
     static async updateAlias(data, controller) {

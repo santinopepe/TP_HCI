@@ -6,12 +6,6 @@
       <div
         class="bg-white p-6 rounded-lg shadow-md w-full max-w-md relative min-h-[400px] flex flex-col"
       >
-        <div
-          class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
-        >
-          Paso 3 de 3
-        </div>
-
         <div class="flex flex-col items-center flex-grow justify-center">
           <div
             class="w-16 h-16 bg-[#5D8C39] rounded-full flex items-center justify-center mx-auto mb-4"

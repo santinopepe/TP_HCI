@@ -76,7 +76,7 @@
             </tr>
           </thead>
           <tbody>
-            <tr v-if="sortedLinks.length === 0">
+            <tr v-if="!sortedLinks || sortedLinks.length === 0">
               <td colspan="6" class="p-3 text-center text-gray-500">
                 No se encontraron links de pago.
               </td>

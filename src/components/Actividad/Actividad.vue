@@ -180,6 +180,13 @@ export default defineComponent({
       }).format(value);
     };
 
+    const activeInvestments = computed(() => {
+      if (!accountStore.account || typeof accountStore.account.invested === "undefined") {
+        return 0;
+      }
+      return accountStore.account.invested;
+    });
+
     return {
       activeButton,
       searchQuery,
@@ -187,7 +194,7 @@ export default defineComponent({
       chartOptions,
       chartData,
       mainAccountBalance,
-      activeInvestments: accountStore.activeInvestments, // o usa tu store de inversiones
+      activeInvestments,
       expenses: accountStore.expenses, // o usa tu store de gastos
       formatCurrency,
     };
