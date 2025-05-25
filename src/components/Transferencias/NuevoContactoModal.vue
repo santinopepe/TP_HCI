@@ -56,7 +56,6 @@
             placeholder="CBU/CVU del contacto"
             class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-300"
             :class="{ 'border-red-500': errores.cbu }"
-            @input="validateCBU"
             maxlength="22"
           />
           <p v-if="errores.cbu" class="text-red-500 text-sm mt-1">
@@ -77,7 +76,7 @@
 </template>
 
 <script>
-import { useTransferenciaStore } from "../store/TransferenciasStore.js";
+import { ContactsApi } from "../../api/contacts.js";
 
 export default {
   name: "NuevoContactoModal",
@@ -93,7 +92,6 @@ export default {
       nuevoContacto: {
         nombre: "",
         cbu: "",
-        avatar: "https://randomuser.me/api/portraits/lego/1.jpg",
       },
       errores: {
         nombre: "",
@@ -102,10 +100,7 @@ export default {
     };
   },
   methods: {
-    validateCBU(event) {
-      // Remove any non-digit characters
-      this.nuevoContacto.cbu = event.target.value.replace(/\D/g, "");
-    },
+
     closeModal() {
       this.$emit("close");
       this.resetForm();
@@ -114,14 +109,13 @@ export default {
       this.nuevoContacto = {
         nombre: "",
         cbu: "",
-        avatar: "https://randomuser.me/api/portraits/lego/1.jpg",
       };
       this.errores = {
         nombre: "",
         cbu: "",
       };
     },
-    guardarContacto() {
+    async guardarContacto() {
       // Reiniciar errores
       this.errores.nombre = "";
       this.errores.cbu = "";
@@ -132,8 +126,8 @@ export default {
       }
 
       // Validar CBU/CVU
-      if (!/^\d{22}$/.test(this.nuevoContacto.cbu)) {
-        this.errores.cbu = "El CBU/CVU debe tener 22 dígitos.";
+      if (!/^[a-zA-Z0-9]{6,22}$/.test(this.nuevoContacto.cbu)) {
+        this.errores.cbu = "El CBU/CVU o alias debe tener entre 6 y 22 caracteres, solo letras y números.";
       }
 
       // Si hay errores, no continuar
@@ -141,11 +135,12 @@ export default {
         return;
       }
 
-      // Emitir evento para guardar el contacto
-      this.$emit("contact-added", { ...this.nuevoContacto });
-
-      // Cerrar el modal y resetear el formulario
+      this.$emit("contact-added", {
+        name: this.nuevoContacto.nombre,
+        cvu: this.nuevoContacto.cbu,
+      });
       this.closeModal();
+      
     },
   },
 };

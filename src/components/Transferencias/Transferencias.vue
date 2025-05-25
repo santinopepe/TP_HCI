@@ -14,7 +14,7 @@
 
       <div class="max-w-md mx-auto mb-6">
         <input
-          v-model="transferenciaStore.searchQuery"
+          v-model="searchQuery"
           type="text"
           placeholder="Buscar contacto..."
           class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-blue-300"
@@ -24,15 +24,16 @@
       <div class="max-w-md mx-auto">
         <ul class="space-y-4">
           <li
-            v-for="contacto in transferenciaStore.filteredContacts"
+            v-for="contacto in filteredContacts"
             :key="contacto.id"
             @click="handleSelectContact(contacto)"
             class="bg-white p-4 rounded-lg shadow hover:bg-gray-100 cursor-pointer flex items-center gap-4"
           >
-            <img :src="contacto.avatar" class="w-10 h-10 rounded-full" />
+            <img class="w-10 h-10 rounded-full" />
             <div>
-              <p class="font-semibold">{{ contacto.nombre }}</p>
-              <p class="text-sm text-gray-500">CBU/CVU: {{ contacto.cbu }}</p>
+              <p>{{ contacto.name }}</p>
+              <p>CBU/CVU: {{ contacto.cvu }}</p>
+              <p v-if="contacto.alias">Alias: {{ contacto.alias }}</p>
             </div>
           </li>
         </ul>
@@ -50,8 +51,8 @@
 
     <TransferenciaModal
       :is-open="showTransferModal"
+      :contacto="selectedContact"
       @close="showTransferModal = false"
-      @transfer-complete="handleTransferComplete"
     />
 
     <NuevoContactoModal
@@ -63,12 +64,13 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
-import { useTransferenciaStore } from "../store/TransferenciasStore.js";
+import { useCobrosStore } from "../store/CobrosStore.js";
 import BarraLateral from "./../BarraLateral.vue";
 import TransferenciaModal from "./TransferenciaModal.vue";
 import NuevoContactoModal from "./NuevoContactoModal.vue";
+import { useContactosStore } from "../store/ContactosStore.js";
 
 export default defineComponent({
   components: {
@@ -77,33 +79,57 @@ export default defineComponent({
     NuevoContactoModal,
   },
   setup() {
+    const selectedContact = ref(null);
     const router = useRouter();
-    const transferenciaStore = useTransferenciaStore();
+    const cobrosStore = useCobrosStore();
+    const contactosStore = useContactosStore();
     const activeButton = ref("transferir");
     const showTransferModal = ref(false);
     const showNewContactModal = ref(false);
+    const searchQuery = ref("");
 
+    // Cargar contactos reales al montar
+    onMounted(() => {
+      cobrosStore.fetchPagos();
+    });
+
+    // Filtro de búsqueda
+    const filteredContacts = computed(() => {
+      if (!searchQuery.value) return contactosStore.contactos;
+      return contactosStore.contactos.filter(contacto =>
+        (contacto.name || contacto.nombre || "")
+          .toLowerCase()
+          .includes(searchQuery.value.toLowerCase())
+      );
+    });
+
+    // Seleccionar contacto para transferir
     const handleSelectContact = (contacto) => {
-      transferenciaStore.selectContact(contacto);
+      selectedContact.value = contacto;
       showTransferModal.value = true;
     };
 
-    const handleTransferComplete = (transferDetails) => {
+    // Cuando se completa la transferencia
+    const handleTransferComplete = () => {
       showTransferModal.value = false;
     };
 
-    const handleNewContact = (contacto) => {
-      transferenciaStore.addContact(contacto);
-    };
-
+    // Cuando se agrega un nuevo contacto, refresca la lista
+    function handleNewContact(contacto) {
+      selectedContact.value = contacto;
+      showTransferModal.value = true;
+    }
+    
     return {
       activeButton,
-      transferenciaStore,
+      searchQuery,
+      filteredContacts,
       showTransferModal,
       showNewContactModal,
       handleSelectContact,
       handleTransferComplete,
       handleNewContact,
+      selectedContact,
     };
   },
 });

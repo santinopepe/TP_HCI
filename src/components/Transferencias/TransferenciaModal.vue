@@ -44,16 +44,15 @@
             class="flex items-center gap-4 mb-6"
           >
             <img
-              :src="transferenciaStore.selectedContact.avatar"
               alt="Avatar"
               class="w-12 h-12 rounded-full"
             />
             <div>
               <p class="text-lg font-semibold">
-                {{ transferenciaStore.selectedContact.nombre }}
+                {{ transferenciaStore.selectedContact?.nombre || transferenciaStore.selectedContact?.name || "Sin nombre" }}
               </p>
               <p class="text-sm text-gray-500">
-                CBU/CVU: {{ transferenciaStore.selectedContact.cbu }}
+                CBU/CVU: {{ transferenciaStore.selectedContact?.cbu || "-" }}
               </p>
             </div>
           </div>
@@ -241,7 +240,6 @@
           <div class="bg-gray-50 p-4 rounded-lg mb-6">
             <div class="flex items-center gap-4 mb-4">
               <img
-                :src="transferenciaStore.selectedContact.avatar"
                 alt="Avatar"
                 class="w-12 h-12 rounded-full"
               />
@@ -344,13 +342,16 @@ import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useTransferenciaStore } from "../store/TransferenciasStore.js";
 import { useCardStore, getCardLogo, getCardBackground } from "../store/TarjetasStore.js";
+import { useCobrosStore } from "../store/CobrosStore.js";
+import { PaymentApi } from "../../api/payment.js";
+
+const cobrosStore = useCobrosStore();
+
 const cardStore = useCardStore();
 
 const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    required: true,
-  },
+  isOpen: Boolean,
+  contacto: Object,
 });
 
 const emit = defineEmits(["close", "transfer-complete"]);
@@ -422,9 +423,40 @@ const validateAndShowConfirmation = () => {
   nextStep();
 };
 
-const confirmTransfer = () => {
-  transferenciaStore.confirmTransfer();
-  nextStep();
+const confirmTransfer = async () => {
+  try {
+    const amount = parseFloat(transferenciaStore.amount.replace(",", "."));
+    const destinatario = transferenciaStore.selectedContact;
+    const description =
+      transferenciaStore.paymentMethod === "tarjeta"
+        ? "Transferencia con tarjeta"
+        : "Transferencia desde la app";
+
+    // Construir el objeto para el body
+    const body = {
+      description,
+      amount,
+      metadata: {},
+    };
+
+    // Construir los query params
+    let params = `?cvu=${encodeURIComponent(destinatario.cvu)}`;
+    if (transferenciaStore.paymentMethod === "tarjeta") {
+      const selectedCard = cardStore.cards[transferenciaStore.selectedCardIndex];
+      params += `&cardId=${encodeURIComponent(selectedCard.id)}`;
+    }
+
+    // Llamar al endpoint usando PaymentApi directamente
+    await PaymentApi.transferByCVU(params, body);
+
+    nextStep(); // Avanza al comprobante
+    emit("transfer-complete");
+  } catch (e) {
+    alert(
+      "Error al realizar la transferencia: " +
+        (e?.response?.data?.message || e?.message || JSON.stringify(e))
+    );
+  }
 };
 
 
@@ -438,6 +470,15 @@ watch(
       resetSteps();
     }
   }
+);
+watch(
+  () => props.contacto,
+  (nuevoContacto) => {
+    if (nuevoContacto) {
+      transferenciaStore.selectedContact = nuevoContacto;
+    }
+  },
+  { immediate: true }
 );
 
   const rotateCard = (direction) => {
