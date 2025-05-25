@@ -88,7 +88,24 @@
       class="fixed inset-0 flex items-center justify-center z-60"
     >
       <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
-        <span class="text-green-600 text-3xl mb-2">✔️</span>
+        <div
+          class="w-16 h-16 bg-[#5D8C39] rounded-full flex items-center justify-center mx-auto mb-4"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            class="h-8 w-8 text-white"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M5 13l4 4L19 7"
+            />
+          </svg>
+        </div>
         <p class="text-lg font-semibold mb-4">Dinero ingresado exitosamente.</p>
         <button
           @click="closeSuccessPopup"
