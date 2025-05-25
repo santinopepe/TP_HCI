@@ -9,7 +9,6 @@ import Actividad from "../components/Actividad/Actividad.vue";
 import Transferecias from "../components/Transferencias/Transferencias.vue";
 import AdministracionDeTarjetas from "../components/Tarjetas/AdministracionDeTarjetas.vue";
 import Inversiones from "../components/Inversiones/Inversiones.vue";
-import CambiarContraseña from "../components/Perfil/CambiarContraseña.vue";
 import IngresarDinero from "../components/Inicio/IngresarDinero.vue";
 import CobroDeServicios from "../components/CobroDeServicios/cobroDeServicios.vue";
 import TuCVU from "../components/Inicio/CVU.vue";
@@ -40,12 +39,6 @@ const routes = [
     component: AdministracionDeTarjetas,
   },
   { path: "/inversiones", name: "Inversiones", component: Inversiones },
-  {
-    path: "/cambiarcontraseña",
-    name: "CambiarContraseña",
-    component: CambiarContraseña,
-    props: true,
-  },
   {
     path: "/ingresar-dinero",
     name: "IngresarDinero",

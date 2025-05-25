@@ -67,12 +67,6 @@
                 {{ accountData.alias }}
               </p>
             </div>
-            <div>
-              <p class="text-sm font-semibold text-simsim-green-dark">Género</p>
-              <p class="text-lg text-gray-700 font-bold">
-                {{ userData.gender }}
-              </p>
-            </div>
           </div>
 
           <div class="flex justify-center mt-8">
@@ -86,26 +80,18 @@
         </div>
       </div>
 
-      <!-- Code Verification Modal -->
-      <CodeVerificationModal
-        v-if="showFormModal && !isCodeVerified"
-        :code="code"
-        :errorMessage="errorMessage"
-        @update:code="code = $event"
-        @verify-code="verifyCode"
-        @cancel="cancel"
-      />
-
-      <!-- Password Update Modal -->
+      <!-- Password Update Modal (unificado, sin paso intermedio) -->
       <PasswordUpdateModal
-        v-if="showFormModal && isCodeVerified"
+        v-if="showFormModal"
+        :code="code"
         :newPassword="newPassword"
         :confirmPassword="confirmPassword"
         :errorMessage="errorMessage"
+        @update:code="code = $event"
         @update:newPassword="newPassword = $event"
         @update:confirmPassword="confirmPassword = $event"
         @update-password="updatePassword"
-        @back-to-step-1="isCodeVerified = false"
+        @cancel="cancel"
       />
 
       <!-- Success Modal -->
@@ -119,8 +105,8 @@ import { defineComponent, ref, onMounted } from "vue";
 import { usePerfilStore } from "../store/PerfilStore.js";
 import { useSecurityStore } from "../store/securityStore.js";
 import { AccountApi } from "../../api/account.js";
+import { UserApi } from "../../api/user.js";
 import BarraLateral from "../BarraLateral.vue";
-import CodeVerificationModal from "./ModalDeVerificacion.vue";
 import PasswordUpdateModal from "./ModalActulizacionContrasenia.vue";
 import SuccessModal from "./ModalDeCambioExitoso.vue";
 
@@ -128,7 +114,6 @@ export default defineComponent({
   name: "Perfil",
   components: {
     BarraLateral,
-    CodeVerificationModal,
     PasswordUpdateModal,
     SuccessModal,
   },
@@ -181,42 +166,67 @@ export default defineComponent({
       }
     });
 
-    const showChangePasswordModal = () => {
+    const showChangePasswordModal = async () => {
       showFormModal.value = true;
-      isCodeVerified.value = false;
       code.value = "";
       newPassword.value = "";
       confirmPassword.value = "";
       errorMessage.value = "";
-    };
-
-    const verifyCode = () => {
-      if (code.value === "123456") {
-        isCodeVerified.value = true;
-        errorMessage.value = "";
-      } else {
-        errorMessage.value = "El código ingresado es incorrecto.";
+      try {
+        const user = await securityStore.getCurrentUser();
+        if (!user || !user.email) {
+          throw new Error("No se pudo obtener la información del usuario");
+        }
+        await UserApi.resetPassword(user.email);
+      } catch (error) {
+        console.error("Error al solicitar cambio de contraseña:", error);
+        if (error.response?.data?.message) {
+          errorMessage.value = error.response.data.message;
+        } else if (error.description) {
+          errorMessage.value = error.description;
+        } else {
+          errorMessage.value =
+            "Error al solicitar el cambio de contraseña. Por favor, intente nuevamente.";
+        }
       }
     };
 
-    const updatePassword = () => {
+    const updatePassword = async () => {
       const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/;
       if (!passwordRegex.test(newPassword.value)) {
         errorMessage.value =
           "La contraseña debe tener al menos 8 caracteres, un carácter especial (!@#$%^&*) y un número.";
         return;
       }
-
       if (newPassword.value !== confirmPassword.value) {
         errorMessage.value = "Las contraseñas no coinciden.";
         return;
       }
-
-      errorMessage.value = "";
-      showFormModal.value = false;
-      showSuccessModal.value = true;
-      newPassword.value = "";
-      confirmPassword.value = "";
+      if (!code.value) {
+        errorMessage.value = "Debes ingresar el código recibido por email.";
+        return;
+      }
+      try {
+        await UserApi.changePassword({
+          code: code.value,
+          password: newPassword.value,
+        });
+        errorMessage.value = "";
+        showFormModal.value = false;
+        showSuccessModal.value = true;
+        newPassword.value = "";
+        confirmPassword.value = "";
+        code.value = "";
+      } catch (error) {
+        if (error.response?.data?.message) {
+          errorMessage.value = error.response.data.message;
+        } else if (error.description) {
+          errorMessage.value = error.description;
+        } else {
+          errorMessage.value =
+            "Error al cambiar la contraseña. Por favor, intente nuevamente.";
+        }
+      }
     };
 
     const closeSuccessModal = () => {
@@ -259,7 +269,6 @@ export default defineComponent({
       showFormModal,
       showSuccessModal,
       showChangePasswordModal,
-      verifyCode,
       updatePassword,
       closeSuccessModal,
       cancel,
