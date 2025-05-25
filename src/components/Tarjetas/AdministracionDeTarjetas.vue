@@ -53,7 +53,7 @@
               @mouseenter="handleMouseEnter(index)"
               @mouseleave="handleMouseLeave"
               class="text-white p-6 rounded-lg shadow cursor-pointer transform transition-all duration-300 hover:scale-105 relative flex-shrink-0 w-[90%] sm:w-[60%] md:w-[40%] lg:w-[30%]"
-              :class="getCardBackground(card.type)"
+              :class="getCardBackground(card.number)"
               :style="{ zIndex: calculatedZIndex(index) }"
             >
               <div class="flex flex-col h-full">
@@ -124,7 +124,7 @@
             </h2>
             <div
               class="text-white p-4 rounded-lg shadow mb-6"
-              :class="getCardBackground(selectedCard.type)"
+              :class="getCardBackground(selectedCard.number)"
             >
               <div class="flex items-center mb-2">
                 <img
@@ -195,7 +195,7 @@
 import { ref, onMounted } from "vue";
 import BarraLateral from "../BarraLateral.vue";
 import AddCardForm from "./AgregarTarjeta.vue";
-import { useCardStore } from "../store/TarjetasStore.js";
+import { useCardStore, getCardBrand, getCardLogo, getCardBackground } from "../store/TarjetasStore.js";
 
 const cardStore = useCardStore();
 
@@ -232,59 +232,6 @@ const calculatedZIndex = (index) => {
   return cardStore.cards.length - index;
 };
 
-const getCardBrand = (number) => {
-  if (!number) return "Otro";
-  const sanitized = number.replace(/[\s-]/g, "");
-
-  if (/^4\d{12}(\d{3})?(\d{3})?$/.test(sanitized)) {
-    return "Visa";
-  }
-
-  if (/^(5[1-5]\d{14}|2(2[2-9][1-9]|2[3-9]\d|[3-6]\d\d|7[01]\d|720)\d{12})$/.test(sanitized)) {
-    return "Mastercard";
-  }
-
-  if (/^3[47]\d{13}$/.test(sanitized)) {
-    return "American Express";
-  }
-
-  if (/^(6011\d{12}|65\d{14}|64[4-9]\d{13}|622(12[6-9]|1[3-9]\d|[2-8]\d{2}|9[01]\d|92[0-5])\d{10})$/.test(sanitized)) {
-    return "Discover";
-  }
-
-  return "Otro";
-};
-
-
-const getCardLogo = (number) => {
-  if (!number) return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
-  const brand = getCardBrand(number);
-  switch (brand.toLowerCase()) {
-    case "visa":
-      return "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png";
-    case "mastercard":
-      return "https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png";
-    case "american express":
-      return "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg";
-    case "discover":
-      return "https://upload.wikimedia.org/wikipedia/commons/5/53/Discover_Card_logo.svg";
-    default:
-      return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
-  }
-};
-
-const getCardBackground = (type) => {
-  switch (type.toLowerCase()) {
-    case "visa":
-      return "bg-gradient-to-br from-blue-600 to-gray-300";
-    case "mastercard":
-      return "bg-gradient-to-br from-red-500 to-yellow-400";
-    case "american express":
-      return "bg-gradient-to-br from-blue-500 to-green-400";
-    default:
-      return "bg-gradient-to-br from-orange-500 to-gray-500";
-  }
-};
 
 const handleAddCard = async (card) => {
   try {

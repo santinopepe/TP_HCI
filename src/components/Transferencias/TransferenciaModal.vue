@@ -145,7 +145,7 @@
                 >
                   <div
                     class="p-4 rounded-xl shadow-lg text-white text-center h-[140px] flex flex-col justify-between relative"
-                    :class="getCardBackground(card?.type)"
+                    :class="getCardBackground(card.number)"
                   >
                     <div>
                       <p class="text-xl font-semibold">
@@ -343,7 +343,7 @@
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useTransferenciaStore } from "../store/TransferenciasStore.js";
-import { useCardStore } from "../store/TarjetasStore.js";
+import { useCardStore, getCardLogo, getCardBackground } from "../store/TarjetasStore.js";
 const cardStore = useCardStore();
 
 const props = defineProps({
@@ -427,31 +427,6 @@ const confirmTransfer = () => {
   nextStep();
 };
 
-const getCardLogo = (type) => {
-  switch (type.toLowerCase()) {
-    case "visa":
-      return "https://upload.wikimedia.org/wikipedia/commons/4/41/Visa_Logo.png";
-    case "mastercard":
-      return "https://upload.wikimedia.org/wikipedia/commons/0/04/Mastercard-logo.png";
-    case "american express":
-      return "https://upload.wikimedia.org/wikipedia/commons/f/fa/American_Express_logo_%282018%29.svg";
-    default:
-      return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
-  }
-};
-
-const getCardBackground = (type) => {
-  switch (type.toLowerCase()) {
-    case "visa":
-      return "bg-gradient-to-br from-blue-600 to-gray-300";
-    case "mastercard":
-      return "bg-gradient-to-br from-red-500 to-yellow-400";
-    case "american express":
-      return "bg-gradient-to-br from-blue-500 to-green-400";
-    default:
-      return "bg-gradient-to-br from-orange-500 to-gray-500";
-  }
-};
 
 watch(
   () => props.isOpen,
