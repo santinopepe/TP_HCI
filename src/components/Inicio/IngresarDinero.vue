@@ -44,6 +44,12 @@
                 }}</span>
               </div>
             </div>
+            <button
+                class="bg-[#5D8C39] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#5D8C39]/80 transition-colors flex items-center justify-center gap-2 flex-1"
+              >
+                <img src="/images/share.png" alt="Compartir" class="w-5 h-5" />
+                Compartir datos
+            </button>
             <!-- Campo para ingresar monto -->
             <div class="flex flex-col">
               <label for="depositAmount" class="text-gray-500 text-sm"
@@ -51,31 +57,27 @@
               >
               <input
                 v-model.number="depositAmount"
-                type="number"
+                type="text"
                 id="depositAmount"
                 min="0"
                 step="0.01"
-                class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
+                class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500 [appearance:textfield]"
                 placeholder="Ej: 100.00"
+                :class="{ 'border-red-500': showAmountError }"
+                @input="onAmountInput"
+                autocomplete="off"
+                inputmode="decimal"
               />
+              <p v-if="showAmountError" class="text-red-500 text-sm mt-1">
+                Por favor, ingrese un monto válido mayor a 0.
+              </p>
             </div>
-            <!-- Botón Compartir y Botón Ingresar -->
-            <div class="flex gap-4 mt-4">
-              <button
-                @click="shareData"
-                class="bg-[#5D8C39] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#5D8C39]/80 transition-colors flex items-center justify-center gap-2 flex-1"
-              >
-                <img src="/images/share.png" alt="Compartir" class="w-5 h-5" />
-                Compartir datos
-              </button>
-              <button
-                @click="depositMoney"
-                class="bg-[#5D8C39] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#5D8C39]/80 transition-colors flex-1"
-                :disabled="!depositAmount || depositAmount <= 0"
-              >
-                Ingresar Dinero
-              </button>
-            </div>
+            <button
+              @click="depositMoney"
+              class="bg-[#5D8C39] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#5D8C39]/80 transition-colors flex-1"
+            >
+              Ingresar Dinero
+            </button>
           </div>
         </div>
       </div>
@@ -119,35 +121,39 @@ export default {
     const cvu = computed(() => accountStore.account?.cvu || "");
 
     // Estado para el monto a ingresar
-    const depositAmount = ref(null);
-    const showSuccessPopup = ref(false); // Nuevo estado para el pop-up
+    const depositAmount = ref("");
+    const showSuccessPopup = ref(false);
+    const showAmountError = ref(false);
 
     // Cargar cuenta al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
     });
 
-    function shareData() {
-      const text = `Alias: ${alias.value}\nCVU: ${cvu.value}`;
-      if (navigator.share) {
-        navigator.share({ text });
-      } else {
-        navigator.clipboard.writeText(text);
-        alert("Datos copiados al portapapeles");
+    function onAmountInput(e) {
+      // Permitir solo números y un punto decimal
+      let value = e.target.value.replace(/[^0-9.]/g, "");
+      // Solo un punto decimal permitido
+      const parts = value.split(".");
+      if (parts.length > 2) {
+        value = parts[0] + "." + parts.slice(1).join("");
       }
+      depositAmount.value = value;
     }
 
     async function depositMoney() {
-      if (!depositAmount.value || depositAmount.value <= 0) {
-        alert("Por favor, ingrese un monto válido mayor a 0.");
+      const amount = parseFloat(depositAmount.value);
+      if (!amount || amount <= 0) {
+        showAmountError.value = true;
         return;
       }
+      showAmountError.value = false;
 
       try {
-        await accountStore.deposit(depositAmount.value);
+        await accountStore.deposit(amount);
         await accountStore.getCurrentAccount();
-        showSuccessPopup.value = true; // Mostrar pop-up de éxito
-        depositAmount.value = null;
+        showSuccessPopup.value = true;
+        depositAmount.value = "";
       } catch (e) {
         alert(`Error al ingresar dinero: ${e.message || e.description || "Intente nuevamente."}`);
       }
@@ -161,11 +167,12 @@ export default {
     return {
       alias,
       cvu,
-      shareData,
       depositAmount,
       depositMoney,
       showSuccessPopup,
       closeSuccessPopup,
+      showAmountError,
+      onAmountInput,
     };
   },
 };

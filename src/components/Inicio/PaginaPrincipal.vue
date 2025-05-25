@@ -11,32 +11,31 @@
           <div
             class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center"
           >
-            <button
-              class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
-              @click="showCvuPopup = true"
-            >
-              Tu CVU
-            </button>
-            <div class="flex-1">
-              <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
-              <p class="text-3xl font-bold mt-4 text-left">
+          <button
+            class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
+            @click="showCvuPopup = true"
+          >
+            Tu CVU
+          </button>
+          <div class="flex-1 relative">
+            <h2 class="text-2xl font-bold text-left">Saldo</h2>
+            <div class="flex items-center mt-4">
+              <p class="text-3xl font-bold text-left">
                 {{ formattedAccountBalance }}
               </p>
               <button
-                class="absolute bottom-[33%] left-[45%] bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
+                class="ml-2 bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
                 @click="toggleSaldoVisibility"
+                style="position: static;"
               >
                 <img
-                  :src="
-                    isSaldoVisible
-                      ? '/images/visibilityOn.png'
-                      : '/images/visibilityOff.png'
-                  "
+                  :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'"
                   alt="Ver saldo"
                   class="w-6 h-6"
                 />
               </button>
             </div>
+          </div>
           </div>
           <div class="flex justify-center mt-4 gap-4">
             <button
