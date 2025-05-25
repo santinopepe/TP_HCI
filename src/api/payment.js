@@ -15,21 +15,44 @@ class PaymentApi {
         return await Api.get(PaymentApi.getUrl(), true, controller);
     }
 
-    // Obtener un pago por id (opcional)
     static async get(id, controller) {
         return await Api.get(PaymentApi.getUrl(id), true, controller);
     }
+
+    static async pull(payment, controller) {
+    return await Api.post(PaymentApi.getUrl("pull"), true, payment, controller);
+    }
+    static async push(payment, controller) {
+    return await Api.put(PaymentApi.getUrl("push"), true, payment, controller);
+    }
+    static async transferByEmail(data, controller) {
+    return await Api.post(PaymentApi.getUrl("transfer-email"), true, data, controller);
+    }
+    static async transferByCVU(data, controller) {
+    return await Api.post(PaymentApi.getUrl("transfer-cvu"), true, data, controller);
+    }
+    static async transferByAlias(data, controller) {
+    return await Api.post(PaymentApi.getUrl("transfer-alias"), true, data, controller);
+    }
+    
 }
+
 
 // Clase para representar un pago
 class Payment {
-    constructor({ amount, method, cardId, accountId, to, description }) {
-        this.amount = amount; // Monto a pagar
-        this.method = method; // 'card' o 'account'
-        this.cardId = cardId; // Si es con tarjeta
-        this.accountId = accountId; // Si es con cuenta
-        this.to = to; // destinatario (puede ser contacto, comercio, etc)
-        this.description = description; // opcional
+    constructor({id,description,amount,pending,uuid,method, payer, receiver, card, metadata}) {
+        if (id) {
+            this.id = id;
+        }
+        this.description = description;
+        this.amount = amount;
+        this.pending = pending;
+        this.uuid = uuid;
+        this.method = method; // "ACCOUNT" o "CARD"
+        this.payer = payer; // { id, firstName, lastName }
+        this.receiver = receiver; // { id, firstName, lastName }
+        this.card = card; // { id, number }
+        this.metadata = metadata || {};
     }
 }
 
