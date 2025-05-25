@@ -109,6 +109,9 @@
                 <span class="text-sm">Dinero en Cuenta</span>
               </label>
             </div>
+            <p v-if="errorMetodo" class="text-red-500 text-sm">
+              {{ errorMetodo }}
+            </p>
           </div>
 
           <div
@@ -116,7 +119,16 @@
             class="mb-6"
           >
             <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
-            <div class="flex items-center gap-4 relative overflow-hidden">
+            <div
+              v-if="cardStore.cards.length === 0"
+              class="text-center text-gray-500 py-8"
+            >
+              No hay tarjetas disponibles
+            </div>
+            <div
+              v-else
+              class="flex items-center gap-4 relative overflow-hidden"
+            >
               <button
                 @click="rotateCard('anterior')"
                 class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-30"
@@ -149,7 +161,8 @@
                   >
                     <div>
                       <p class="text-xl font-semibold">
-                        {{ card.type }} **** **** **** {{ card.number.slice(-4) }}                      
+                        {{ card.type }} **** **** ****
+                        {{ card.number.slice(-4) }}
                       </p>
                       <p class="text-sm opacity-80 mt-2">
                         Titular: {{ card.fullName }}
@@ -343,7 +356,11 @@
 import { ref, watch } from "vue";
 import { useRouter } from "vue-router";
 import { useTransferenciaStore } from "../store/TransferenciasStore.js";
-import { useCardStore, getCardLogo, getCardBackground } from "../store/TarjetasStore.js";
+import {
+  useCardStore,
+  getCardLogo,
+  getCardBackground,
+} from "../store/TarjetasStore.js";
 const cardStore = useCardStore();
 
 const props = defineProps({
@@ -358,6 +375,7 @@ const emit = defineEmits(["close", "transfer-complete"]);
 const router = useRouter();
 const transferenciaStore = useTransferenciaStore();
 const currentStep = ref(1);
+const errorMetodo = ref("");
 
 const closeModal = () => {
   emit("close");
@@ -405,19 +423,24 @@ const previousStep = () => {
 };
 
 const validateAndShowConfirmation = () => {
+  errorMetodo.value = "";
+  if (
+    transferenciaStore.paymentMethod === "tarjeta" &&
+    cardStore.cards.length === 0
+  ) {
+    errorMetodo.value = "Seleccione un método de pago válido";
+    return;
+  }
   if (!transferenciaStore.amount || transferenciaStore.amount.trim() === "") {
     transferenciaStore.setAmountError(true);
     return;
   }
-
   // Convertir el monto a un número válido
   const amount = parseFloat(transferenciaStore.amount.replace(",", "."));
-
   if (isNaN(amount) || amount <= 0) {
     transferenciaStore.setAmountError(true);
     return;
   }
-
   transferenciaStore.setAmountError(false);
   nextStep();
 };
@@ -426,7 +449,6 @@ const confirmTransfer = () => {
   transferenciaStore.confirmTransfer();
   nextStep();
 };
-
 
 watch(
   () => props.isOpen,
@@ -440,15 +462,15 @@ watch(
   }
 );
 
-  const rotateCard = (direction) => {
-    const cardsLength = cardStore.cards.length;
-    if (!cardsLength) return;
-    if (direction === "anterior") {
-      transferenciaStore.selectedCardIndex =
-        (transferenciaStore.selectedCardIndex - 1 + cardsLength) % cardsLength;
-    } else if (direction === "siguiente") {
-      transferenciaStore.selectedCardIndex =
-        (transferenciaStore.selectedCardIndex + 1) % cardsLength;
-    }
-  };
+const rotateCard = (direction) => {
+  const cardsLength = cardStore.cards.length;
+  if (!cardsLength) return;
+  if (direction === "anterior") {
+    transferenciaStore.selectedCardIndex =
+      (transferenciaStore.selectedCardIndex - 1 + cardsLength) % cardsLength;
+  } else if (direction === "siguiente") {
+    transferenciaStore.selectedCardIndex =
+      (transferenciaStore.selectedCardIndex + 1) % cardsLength;
+  }
+};
 </script>

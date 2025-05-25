@@ -79,7 +79,13 @@
     <!-- Tarjetas -->
     <div v-if="linkDePagoStore.metodo === 'tarjeta'" class="mb-6">
       <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
-      <div class="flex items-center gap-4 relative overflow-hidden">
+      <div
+        v-if="cardStore.cards.length === 0"
+        class="text-center text-gray-500 py-8"
+      >
+        No hay tarjetas disponibles
+      </div>
+      <div v-else class="flex items-center gap-4 relative overflow-hidden">
         <!-- Botón anterior -->
         <button
           @click="rotateCard('anterior')"
@@ -87,7 +93,6 @@
         >
           <img src="/images/backComplete.png" alt="Anterior" class="w-6 h-6" />
         </button>
-
         <!-- Contenedor de tarjetas con animación -->
         <div class="relative w-full h-[180px] overflow-hidden">
           <div
@@ -108,7 +113,7 @@
             >
               <div>
                 <p class="text-xl font-semibold">
-                  {{ card.type }} **** **** **** {{ card.number.slice(-4) }}                      
+                  {{ card.type }} **** **** **** {{ card.number.slice(-4) }}
                 </p>
                 <p class="text-sm opacity-80 mt-2">
                   Titular: {{ card.fullName }}
@@ -127,7 +132,6 @@
             </div>
           </div>
         </div>
-
         <!-- Botón siguiente -->
         <button
           @click="rotateCard('siguiente')"
@@ -150,6 +154,10 @@
       </div>
     </div>
 
+    <p v-if="errorMetodo" class="text-red-500 text-sm mb-4 text-center">
+        {{ errorMetodo }}
+    </p>
+
     <!-- Botones -->
     <div class="flex justify-between">
       <button
@@ -170,29 +178,32 @@
 
 <script setup>
 import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
-import { onMounted } from "vue";
-import { useCardStore, getCardLogo, getCardBackground } from "../store/TarjetasStore.js";
+import { ref, onMounted } from "vue";
+import {
+  useCardStore,
+  getCardLogo,
+  getCardBackground,
+} from "../store/TarjetasStore.js";
 
 const cardStore = useCardStore();
-
 const linkDePagoStore = useLinkDePagoStore();
+const errorMetodo = ref("");
 
 const emit = defineEmits(["proceed-to-confirmation", "go-to-step-1"]);
 
 const proceedToConfirmation = () => {
-  console.log(
-    "Proceeding to confirmation with method:",
-    linkDePagoStore.metodo
-  );
-  const paymentDetails = {
+  errorMetodo.value = "";
+  if (linkDePagoStore.metodo === "tarjeta" && cardStore.cards.length === 0) {
+    errorMetodo.value = "Seleccione un método de pago válido";
+    return;
+  }
+  emit("proceed-to-confirmation", {
     metodo: linkDePagoStore.metodo,
     card:
       linkDePagoStore.metodo === "tarjeta"
         ? linkDePagoStore.selectedCard
         : null,
-  };
-  console.log("Emitting proceed-to-confirmation with details:", paymentDetails);
-  emit("proceed-to-confirmation", paymentDetails);
+  });
 };
 
 onMounted(async () => {
