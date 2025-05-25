@@ -313,6 +313,8 @@
 
 <script>
 import { UserApi, User } from "../../api/user.js";
+import { useSecurityStore } from "../store/securityStore.js";
+
 
 export default {
   name: "RegistroPage",
@@ -406,6 +408,7 @@ export default {
 
       try {
         this.apiMessage = "";
+
         const user = new User(
           this.firstName,
           this.lastName,
@@ -414,7 +417,8 @@ export default {
           this.password,
           { dni: this.dni, phone: this.phone }
         );
-        await UserApi.register(user);
+        const security = useSecurityStore();
+        await security.register(user);
         this.showSuccessModal = true;
       } catch (e) {
         let msg = "";
@@ -437,6 +441,8 @@ export default {
           this.apiMessage = "El formato del teléfono es inválido.";
         } else if (msg === "User must be at least 13 years old.") {
           this.apiMessage = "El usuario debe tener al menos 13 años.";
+        } else if (msg === "Password must be at least 6 characters long.") {
+          this.apiMessage = "La contraseña debe tener al menos 6 caracteres.";
         } else {
           this.apiMessage = msg;
         }

@@ -51,11 +51,16 @@ export const useSecurityStore = defineStore("security", () => {
     }
 
     async function getCurrentUser() {
-
         if (user.value) return user.value;
         const result = await UserApi.get();
         setUser(result);
+        return result;
     }
 
-    return { user, isLoggedIn, initialize, login, logout, getCurrentUser };
+    async function register(user) {
+    // user es una instancia de User
+    return await UserApi.register(user);
+    }
+
+    return { user, isLoggedIn, initialize, login, logout, getCurrentUser, register };
 });

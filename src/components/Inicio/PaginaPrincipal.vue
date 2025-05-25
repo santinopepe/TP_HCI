@@ -20,15 +20,15 @@
             <div class="flex-1">
               <h2 class="text-2xl font-bold text-left absolute top-4">Saldo</h2>
               <p class="text-3xl font-bold mt-4 text-left">
-                {{ paginaPrincipalStore.formattedBalance }}
+                {{ formattedAccountBalance }}
               </p>
               <button
                 class="absolute bottom-[33%] left-[45%] bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
-                @click="paginaPrincipalStore.toggleSaldoVisibility"
+                @click="toggleSaldoVisibility"
               >
                 <img
                   :src="
-                    paginaPrincipalStore.isSaldoVisible
+                    isSaldoVisible
                       ? '/images/visibilityOn.png'
                       : '/images/visibilityOff.png'
                   "
@@ -208,9 +208,10 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 import { usePaginaPrincipalStore } from "../store/PaginaPrincipalStore.js";
+import { useAccountStore } from "../store/accountStore.js";
 import BarraLateral from "../BarraLateral.vue";
 import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
 import SeleccionarMetodoPago from "../PagoServicios/MetodoDePago.vue";
@@ -233,23 +234,44 @@ export default defineComponent({
   setup() {
     const linkDePagoStore = useLinkDePagoStore();
     const paginaPrincipalStore = usePaginaPrincipalStore();
+    const accountStore = useAccountStore();
     const activeButton = ref("inicio");
     const showPayServiceForm = ref(false);
     const currentStep = ref(1);
     const showCvuPopup = ref(false);
     const showIngresarDineroModal = ref(false);
 
+    // Control de visibilidad del saldo
+    const isSaldoVisible = ref(true);
+    function toggleSaldoVisibility() {
+      isSaldoVisible.value = !isSaldoVisible.value;
+    }
+
+    // Sincronizar el balance con el store de cuenta
+    const formattedAccountBalance = computed(() => {
+      if (!isSaldoVisible.value) return "••••••";
+      if (!accountStore.account || typeof accountStore.account.balance === "undefined") {
+        return "Cargando...";
+      }
+      return `$${Number(accountStore.account.balance).toLocaleString("es-AR", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      })}`;
+    });
+
+    // Cargar la cuenta al montar
+    onMounted(() => {
+      accountStore.getCurrentAccount();
+    });
+
     const handleLinkSubmit = (link) => {
-      console.log("Handling link submit with:", link);
       linkDePagoStore.setPaymentLink(link);
-      // Simular obtención de detalles del servicio
       linkDePagoStore.setServiceDetails({
         serviceName: "Servicio de Electricidad",
         serviceId: "12345",
         amount: 100.0,
         cargo: 5.0,
       });
-      console.log("Advancing to step 2");
       currentStep.value = 2;
     };
 
@@ -264,7 +286,6 @@ export default defineComponent({
 
     const handlePaymentConfirmation = () => {
       linkDePagoStore.confirmPayment();
-      // Update paginaPrincipalStore's balance and add transaction after payment confirmation
       paginaPrincipalStore.updateAccountBalance(linkDePagoStore.accountBalance);
       paginaPrincipalStore.addTransaction({
         id:
@@ -272,7 +293,7 @@ export default defineComponent({
           1,
         name: "Pago de Servicio",
         type: "Pago",
-        icon: "/images/sube.png", // Or a more generic icon for payments
+        icon: "/images/sube.png",
         date: new Date().toLocaleDateString("es-AR", {
           day: "2-digit",
           month: "short",
@@ -295,8 +316,7 @@ export default defineComponent({
     };
 
     const shareReceipt = () => {
-      console.log("Sharing receipt...");
-      // Add logic for sharing receipt
+      // Lógica para compartir comprobante
     };
 
     return {
@@ -313,6 +333,9 @@ export default defineComponent({
       shareReceipt,
       showCvuPopup,
       showIngresarDineroModal,
+      formattedAccountBalance,
+      isSaldoVisible,
+      toggleSaldoVisibility,
     };
   },
 });

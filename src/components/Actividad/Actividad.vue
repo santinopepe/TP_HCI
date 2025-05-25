@@ -99,8 +99,9 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import { useActividadStore } from "../store/ActividadStore.js";
+import { useAccountStore } from "../store/accountStore.js";
 import BarraLateral from "../BarraLateral.vue";
 import { Pie } from "vue-chartjs";
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
@@ -115,7 +116,21 @@ export default defineComponent({
   },
   setup() {
     const actividadStore = useActividadStore();
+    const accountStore = useAccountStore();
     const activeButton = ref("actividad");
+
+    // Traer el saldo principal desde el store de cuenta
+    const mainAccountBalance = computed(() => {
+      if (!accountStore.account || typeof accountStore.account.balance === "undefined") {
+        return 0;
+      }
+      return accountStore.account.balance;
+    });
+
+    // Cargar la cuenta al montar
+    onMounted(() => {
+      accountStore.getCurrentAccount();
+    });
 
     const chartOptions = {
       responsive: true,
@@ -155,7 +170,7 @@ export default defineComponent({
       filteredTransactions: computed(() => actividadStore.filteredTransactions),
       chartData: actividadStore.getChartData,
       chartOptions,
-      mainAccountBalance: actividadStore.getMainAccountBalance,
+      mainAccountBalance,
       activeInvestments: actividadStore.getActiveInvestments,
       expenses: actividadStore.getExpenses,
       formatCurrency,

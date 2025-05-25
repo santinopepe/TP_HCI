@@ -133,7 +133,7 @@
 </template>
 
 <script>
-import { UserApi, Credentials } from "../../api/user.js";
+import { Credentials } from "../../api/user.js";
 import { useSecurityStore } from "../store/securityStore.js";
 
 export default {

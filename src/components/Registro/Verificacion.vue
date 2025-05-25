@@ -56,6 +56,7 @@
 
 <script>
 import { UserApi } from "../../api/user.js";
+import { ContactsApi, Contact } from "../../api/contacts.js";
 
 export default {
   name: "VerificacionPage",
@@ -93,16 +94,10 @@ export default {
           "El código de verificación es obligatorio.";
         valid = false;
       }
-
-      if (!valid) return;
-
       try {
-        await UserApi.verify({
-          email: this.email,
-          code: this.verificationCode,
-        });
-        this.apiMessage =
-          "¡Cuenta verificada correctamente! Ahora puedes iniciar sesión.";
+        await UserApi.verify({ email: this.email, code: this.verificationCode });
+
+        this.apiMessage = '¡Cuenta verificada correctamente! Ahora puedes iniciar sesión.';
       } catch (e) {
         let msg = "";
         if (e?.response?.data?.message) {
