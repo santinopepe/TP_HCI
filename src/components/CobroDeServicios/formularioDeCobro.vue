@@ -111,8 +111,11 @@ export default defineComponent({
       }
 
       // Validar monto
-      if (!form.value.price || form.value.price <= 0) {
-        errors.value.price = "El monto debe ser mayor a 0.";
+      // Aquí es donde el parseFloat(form.value.price) puede ser NaN
+      // Por eso, la validación ahora verifica si el parseo resulta en NaN o si es <= 0
+      const parsedPrice = parseFloat(form.value.price);
+      if (isNaN(parsedPrice) || parsedPrice <= 0) {
+        errors.value.price = "El monto debe ser un número mayor a 0.";
         isValid = false;
       } else {
         errors.value.price = "";
@@ -121,26 +124,35 @@ export default defineComponent({
       return isValid;
     };
 
-    const handleSubmit = () => {
+     const handleSubmit = () => {
       if (validateForm()) {
-        emit("submit", { ...form.value });
+        emit("submit", form.value); 
         form.value = {
           title: "",
           description: "",
           price: null,
+      
         };
       }
     };
 
     const validatePrice = (event) => {
+      let value = event.target.value;
+
       // Permitir solo números y un punto decimal
-      let value = event.target.value.replace(/[^\d.]/g, "");
+      value = value.replace(/[^\d.]/g, "");
+
       // Solo un punto decimal
       const parts = value.split(".");
       if (parts.length > 2) {
         value = parts[0] + "." + parts.slice(1).join("");
       }
-      form.value.price = value;
+
+      if (value === "" || value === ".") {
+        form.value.price = null;
+      } else {
+        form.value.price = value;
+      }
     };
 
     return {
