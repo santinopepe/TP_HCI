@@ -53,7 +53,7 @@
               <tr class="border-b border-gray-200">
                 <th class="p-3 font-semibold text-gray-600">Nombre</th>
                 <th class="p-3 font-semibold text-gray-600">Tipo</th>
-                <th class="p-3 font-semibold text-gray-600">Fecha</th>
+                <!---<th class="p-3 font-semibold text-gray-600">Fecha</th>-->
                 <th class="p-3 font-semibold text-gray-600 text-right">Monto</th>
               </tr>
             </thead>
@@ -66,7 +66,8 @@
               <tr
                 v-for="payment in filteredTransactions"
                 :key="payment.id"
-                class="border-b border-gray-100 hover:bg-gray-50"
+                class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
+                @click="verDetalle(payment)"
               >
                 <td class="p-3">
                   {{ payment.payer?.firstName }} {{ payment.payer?.lastName }}
@@ -90,6 +91,29 @@
         </div>
       </div>
     </main>
+
+    <!-- Modal de Detalle de Transacción -->
+    <div
+      v-if="showDetalle"
+      class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
+    >
+      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
+        <button
+          @click="showDetalle = false"
+          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
+        >&times;</button>
+        <h3 class="text-xl font-bold mb-4">Detalle de la Transacción</h3>
+        <div v-if="detalleSeleccionado">
+          <p><strong>Nombre:</strong> {{ detalleSeleccionado.payer?.firstName }} {{ detalleSeleccionado.payer?.lastName }}</p>
+          <p><strong>Monto:</strong> {{ formatCurrency(detalleSeleccionado.amount) }}</p>
+          <p><strong>Tipo:</strong> {{ detalleSeleccionado.method === "ACCOUNT" ? "Transferencia Bancaria" : "Pago con Tarjeta" }}</p>
+          <p><strong>CBU/CVU:</strong> {{ detalleSeleccionado.cvu || '-' }}</p>
+          <p><strong>ID de transacción:</strong> {{ detalleSeleccionado.id }}</p>
+          <p><strong>UUID:</strong>{{ detalleSeleccionado.uuid }}</p>
+          <!-- Agrega aquí más campos si tu objeto payment los tiene -->
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
@@ -114,6 +138,9 @@ export default defineComponent({
     const accountStore = useAccountStore();
     const activeButton = ref("actividad");
     const searchQuery = ref("");
+    // Estado y función para el detalle de la transacción
+    const showDetalle = ref(false);
+    const detalleSeleccionado = ref(null);
 
     // Traer el saldo principal desde el store de cuenta
     const mainAccountBalance = computed(() => {
@@ -123,16 +150,39 @@ export default defineComponent({
       return accountStore.account.balance;
     });
 
-    const chartData = computed(() => ({
-      labels: ['Sin datos'],
-      datasets: [
-        {
-          data: [1],
-          backgroundColor: ['#e5e7eb'],
-          hoverOffset: 4,
-        },
-      ],
-    }));
+    const gastosPorDestinatario = computed(() => {
+    const map = {};
+    cobrosStore.pagos.forEach(pago => {
+      // Usar el nombre completo del destinatario (payer)
+      const destinatario = ((pago.payer?.firstName || "") + " " + (pago.payer?.lastName || "")).trim() || "Desconocido";
+      if (!map[destinatario]) map[destinatario] = 0;
+      if (typeof pago.amount === "number") map[destinatario] += pago.amount;
+    });
+    return map;
+    });
+
+    function getColors(count) {
+      const palette = [
+        "#5D8C39", "#CBFBA6", "#243219", "#A3E635", "#84CC16", "#FACC15", "#F87171", "#60A5FA", "#A78BFA", "#F472B6"
+      ];
+      // Si hay más destinatarios que colores, repetir la paleta
+      return Array.from({length: count}, (_, i) => palette[i % palette.length]);
+    }
+
+    const chartData = computed(() => {
+      const labels = Object.keys(gastosPorDestinatario.value);
+      const data = Object.values(gastosPorDestinatario.value);
+      return {
+        labels: labels.length ? labels : ["Sin datos"],
+        datasets: [
+          {
+            data: data.length ? data : [1],
+            backgroundColor: getColors(labels.length || 1),
+            hoverOffset: 4,
+          },
+        ],
+      };
+    });
 
     // Cargar la cuenta y los pagos al montar
     onMounted(() => {
@@ -187,6 +237,20 @@ export default defineComponent({
       return accountStore.account.invested;
     });
 
+    function verDetalle(payment) {
+      detalleSeleccionado.value = payment;
+      showDetalle.value = true;
+    }
+
+    const expenses = computed(() => {
+    return cobrosStore.pagos.reduce((total, pago) => {
+      // Si el pago tiene un amount válido, lo suma
+      return total + (typeof pago.amount === "number" ? pago.amount : 0);
+    }, 0);
+  });
+
+  
+
     return {
       activeButton,
       searchQuery,
@@ -195,8 +259,11 @@ export default defineComponent({
       chartData,
       mainAccountBalance,
       activeInvestments,
-      expenses: accountStore.expenses, // o usa tu store de gastos
+      expenses, 
       formatCurrency,
+      showDetalle,            
+      detalleSeleccionado,    
+      verDetalle,             
     };
   },
 });
