@@ -5,37 +5,37 @@
       @update:activeButton="activeButton = $event"
     />
 
-    <main class="flex-1 p-6 bg-gray-100 overflow-y-auto">
+    <main class="flex-1 p-6 bg-gray-100 overflow-hidden">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-        <div class="w-[calc(100%+8rem)] overflow-hidden">
+        <div class="w-[calc(100%+8rem)] md:h-[calc(100vh-36rem)] ">
           <div
-            class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center"
+            class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-4 rounded-lg shadow-md text-center text-white relative h-44 flex items-center"
           >
-          <button
-            class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
-            @click="showCvuPopup = true"
-          >
-            Tu CVU
-          </button>
-          <div class="flex-1 relative">
-            <h2 class="text-2xl font-bold text-left">Saldo</h2>
-            <div class="flex items-center mt-4">
-              <p class="text-3xl font-bold text-left">
-                {{ formattedAccountBalance }}
-              </p>
-              <button
-                class="ml-2 bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
-                @click="toggleSaldoVisibility"
-                style="position: static;"
-              >
-                <img
-                  :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'"
-                  alt="Ver saldo"
-                  class="w-6 h-6"
-                />
-              </button>
+            <button
+              class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
+              @click="showCvuPopup = true"
+            >
+              Tu CVU
+            </button>
+            <div class="flex-1 relative">
+              <h2 class="text-2xl font-bold text-left">Saldo</h2>
+              <div class="flex items-center mt-4">
+                <p class="text-3xl font-bold text-left">
+                  {{ formattedAccountBalance }}
+                </p>
+                <button
+                  class="ml-2 bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
+                  @click="toggleSaldoVisibility"
+                  style="position: static;"
+                >
+                  <img
+                    :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'"
+                    alt="Ver saldo"
+                    class="w-6 h-6"
+                  />
+                </button>
+              </div>
             </div>
-          </div>
           </div>
           <div class="flex justify-center mt-4 gap-4">
             <button
@@ -53,44 +53,51 @@
           </div>
         </div>
 
-        <div
-          class="bg-white p-6 rounded-lg shadow-md absolute right-4 w-[calc(100%-58rem)] h-[17rem] flex flex-col justify-end col-span-1 overflow-hidden"
-        >
-          <h2
-            class="text-2xl font-bold text-[#4B5563] text-left absolute top-4 left-6"
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div class="w-full md:col-span-2 overflow-hidden">
+            <!-- ...saldo y botones... -->
+          </div>
+
+          <!-- Transferencias Mensuales responsivo -->
+          <div
+            class="bg-white p-6 rounded-lg shadow-md flex flex-col col-span-1 overflow-hidden mt-6 md:mt-0 w-auto md:-ml-16 md:w-[calc(100%+27rem)]"
           >
-            Transferencias Mensuales
-          </h2>
-          <p
-            class="absolute top-6 right-6 text-[#A5A2A1] font-semibold text-sm"
-          >
-            +${{ paginaPrincipalStore.monthlyTransferSummary.toFixed(2) }} /
-            Último mes
-          </p>
-          <div class="h-48 flex items-end justify-center mt-auto">
-            <div class="flex items-end gap-4 w-full justify-between px-4">
-              <div
-                v-for="item in paginaPrincipalStore.transferChartData"
-                :key="item.month"
-                class="flex flex-col items-center flex-1"
-              >
+            <h2
+              class="text-2xl font-bold text-[#4B5563] text-left mb-2"
+            >
+              Transferencias Mensuales
+            </h2>
+            <p
+              class="text-[#A5A2A1] font-semibold text-sm mb-4"
+            >
+              +${{ paginaPrincipalStore.monthlyTransferSummary.toFixed(2) }} /
+              Último mes
+            </p>
+            <div class="h-48 flex items-end justify-center mt-auto">
+              <div class="flex items-end gap-4 w-full justify-between px-4">
                 <div
-                  :style="{
-                    backgroundColor: item.color,
-                    height: `${item.amount}px`,
-                  }"
-                  class="w-12 rounded"
-                ></div>
-                <span class="text-gray-500 text-sm mt-2">{{ item.month }}</span>
+                  v-for="item in paginaPrincipalStore.transferChartData"
+                  :key="item.month"
+                  class="flex flex-col items-center flex-1"
+                >
+                  <div
+                    :style="{
+                      backgroundColor: item.color,
+                      height: `${item.amount}px`,
+                    }"
+                    class="w-12 rounded"
+                  ></div>
+                  <span class="text-gray-500 text-sm mt-2">{{ item.month }}</span>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
 
-      <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mt-4">
+      <div class="grid grid-cols-1 md:grid-cols-3">
         <div
-          class="bg-white p-6 rounded-lg shadow-md w-[calc(100%+8rem)] overflow-hidden"
+          class="bg-white p-4 rounded-lg shadow-md w-[calc(100%+7rem)] overflow-hidden mb-4"
         >
           <div class="flex justify-between items-center">
             <h2 class="text-lg font-bold text-gray-700">
@@ -130,15 +137,16 @@
           </ul>
         </div>
 
-        <div class="absolute bottom-[12%] right-4 w-[calc(100%-58rem)] promu">
+        <div
+          class="p-4 rounded-lg flex flex-col justify-between col-span-2 overflow-hidden mt-6 mr-4 ml-48  "
+        >
           <div
-            class="bg-[#3C4F2E] text-white p-4 rounded-2xl flex justify-between items-center"
+            class="bg-[#3C4F2E] text-white p-4 rounded-2xl flex justify-between items-center mb-4"
           >
             <h2 class="text-lg font-bold">Inversiones Activas</h2>
           </div>
-
           <div
-            class="bg-white p-6 rounded-lg shadow-md w-[84%] justify-center mx-auto"
+            class="bg-white p-6 rounded-lg shadow-md w-full justify-center mx-auto"
           >
             <ul class="mt-4 flex flex-col gap-2">
               <li
