@@ -11,31 +11,31 @@
           <div
             class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-md text-center text-white relative h-44 flex items-center"
           >
-          <button
-            class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
-            @click="showCvuPopup = true"
-          >
-            Tu CVU
-          </button>
-          <div class="flex-1 relative">
-            <h2 class="text-2xl font-bold text-left">Saldo</h2>
-            <div class="flex items-center mt-4">
-              <p class="text-3xl font-bold text-left">
-                {{ formattedAccountBalance }}
-              </p>
-              <button
-                class="ml-2 bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
-                @click="toggleSaldoVisibility"
-                style="position: static;"
-              >
-                <img
-                  :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'"
-                  alt="Ver saldo"
-                  class="w-6 h-6"
-                />
-              </button>
+            <button
+              class="absolute top-4 right-4 text-white bg-[#5D8C39] font-semibold px-4 py-1 rounded-md shadow hover:bg-[#5D8C39]/80 transition-colors text-sm"
+              @click="showCvuPopup = true"
+            >
+              Tu CVU
+            </button>
+            <div class="flex-1 relative">
+              <h2 class="text-2xl font-bold text-left">Saldo</h2>
+              <div class="flex items-center mt-4">
+                <p class="text-3xl font-bold text-left">
+                  {{ formattedAccountBalance }}
+                </p>
+                <button
+                  class="ml-2 bg-[#3C4F2E]/80 p-2 rounded-full shadow-md hover:bg-[#3C4F2E]/20"
+                  @click="toggleSaldoVisibility"
+                  style="position: static;"
+                >
+                  <img
+                    :src="isSaldoVisible ? '/images/visibilityOn.png' : '/images/visibilityOff.png'"
+                    alt="Ver saldo"
+                    class="w-6 h-6"
+                  />
+                </button>
+              </div>
             </div>
-          </div>
           </div>
           <div class="flex justify-center mt-4 gap-4">
             <button
@@ -45,7 +45,7 @@
               Ingresar Dinero
             </button>
             <button
-              @click="showPayServiceForm = true"
+              @click="openPaymentFlow"
               class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(50%-0.5rem)] flex items-center justify-center"
             >
               Pagar Servicio
@@ -166,30 +166,27 @@
     >
       <IngresarLinkPago
         v-if="currentStep === 1"
-        @submit-link="handleLinkSubmit"
+        @submit-link="currentStep = 2"
         @cancel="closePaymentFlow"
         @click.stop=""
       />
 
       <SeleccionarMetodoPago
-        v-if="currentStep === 2"
-        @proceed-to-confirmation="handleMethodSelection"
-        @cancel="closePaymentFlow"
+        v-else-if="currentStep === 2"
+        @proceed-to-confirmation="currentStep = 3"
         @go-to-step-1="currentStep = 1"
         @click.stop=""
       />
 
       <ConfirmacionPago
-        v-if="currentStep === 3"
-        :amount="linkDePagoStore.amount"
+        v-else-if="currentStep === 3"
         @confirm="handlePaymentConfirmation"
-        @cancel="currentStep = 2"
+        @go-to-step-2="currentStep = 2"
         @click.stop=""
       />
 
       <ComprobantePago
-        v-if="currentStep === 4"
-        :amount="linkDePagoStore.amount"
+        v-else-if="currentStep === 4"
         @make-another-payment="restartPaymentFlow"
         @return-to-home="closePaymentFlow"
         @share-receipt="shareReceipt"
@@ -210,12 +207,15 @@
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 import { usePaginaPrincipalStore } from "../store/PaginaPrincipalStore.js";
-import { useAccountStore } from "../store/accountStore.js";
+import { useAccountStore } from "../store/accountStore.js"; // Asegúrate de que esta ruta sea correcta
 import BarraLateral from "../BarraLateral.vue";
+
+// Componentes de Pago de Servicios (ajusta las rutas si es necesario)
 import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
 import SeleccionarMetodoPago from "../PagoServicios/MetodoDePago.vue";
 import ConfirmacionPago from "../PagoServicios/ConfirmacionDePago.vue";
-import ComprobantePago from "../PagoServicios/ComprobantePago.vue";
+import ComprobantePago from "../PagoServicios/ComprobantePago.vue"; // Usar el nombre de archivo consistente
+
 import CvuPopup from "../Inicio/CVU.vue";
 import IngresarDinero from "../Inicio/IngresarDinero.vue";
 
@@ -249,8 +249,9 @@ export default defineComponent({
     // Sincronizar el balance con el store de cuenta
     const formattedAccountBalance = computed(() => {
       if (!isSaldoVisible.value) return "••••••";
+      // Asegúrate de que `accountStore.account` y `accountStore.account.balance` existan.
       if (!accountStore.account || typeof accountStore.account.balance === "undefined") {
-        return "Cargando...";
+        return "Cargando..."; // O un valor predeterminado como "$0.00"
       }
       return `$${Number(accountStore.account.balance).toLocaleString("es-AR", {
         minimumFractionDigits: 2,
@@ -261,61 +262,72 @@ export default defineComponent({
     // Cargar la cuenta al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
+      // Opcional: Cargar los datos de transacciones/inversiones aquí también si no se hacen en un router view
+      // paginaPrincipalStore.fetchTransactions();
+      // paginaPrincipalStore.fetchInvestments();
+      // paginaPrincipalStore.fetchMonthlyTransferSummary();
     });
 
-    const handleLinkSubmit = (link) => {
-      linkDePagoStore.setPaymentLink(link);
-      linkDePagoStore.setServiceDetails({
-        serviceName: "Servicio de Electricidad",
-        serviceId: "12345",
-        amount: 100.0,
-        cargo: 5.0,
-      });
-      currentStep.value = 2;
+    const openPaymentFlow = () => {
+      linkDePagoStore.resetPayment(); // Limpiar el estado del store de pago al iniciar un nuevo flujo
+      currentStep.value = 1; // Volver al primer paso
+      showPayServiceForm.value = true; // Mostrar el modal
     };
 
-    const handleMethodSelection = (details) => {
-      linkDePagoStore.setPaymentMethod(details.metodo);
-      if (details.card) {
-        linkDePagoStore.tarjetas[linkDePagoStore.tarjetaSeleccionada] =
-          details.card;
+    // `handleLinkSubmit` ya no es necesario aquí, IngresarLinkPago.vue lo maneja internamente.
+    // Simplemente avanzamos al siguiente paso cuando IngresarLinkPago emite `submit-link`.
+    // const handleLinkSubmit = () => {
+    //   currentStep.value = 2;
+    // };
+
+    // `handleMethodSelection` ya no es necesario aquí, SeleccionarMetodoPago.vue lo maneja internamente.
+    // Simplemente avanzamos al siguiente paso cuando SeleccionarMetodoPago emite `proceed-to-confirmation`.
+    // const handleMethodSelection = () => {
+    //   currentStep.value = 3;
+    // };
+
+    const handlePaymentConfirmation = async () => {
+      // La acción confirmPayment del store ya no necesita parámetros, toma la información del estado.
+      const success = await linkDePagoStore.confirmPayment();
+      if (success) {
+        // Actualizar el saldo de la cuenta principal después de un pago exitoso
+        // En un caso real, esto debería venir de una API que actualice el saldo.
+        // Aquí actualizamos el accountStore si el linkDePagoStore.accountBalance se actualizó.
+        // Asegúrate de que accountStore.updateAccountBalance acepte el nuevo saldo.
+        accountStore.getCurrentAccount(); // Mejor: volver a obtener el saldo desde la API
+
+        // Agregar la transacción a la lista de transacciones
+        paginaPrincipalStore.addTransaction({
+          id: Date.now(), // Un ID único simple, en producción usarías un ID del backend
+          name: linkDePagoStore.serviceName, // Nombre del servicio pagado
+          type: "Pago de Servicio",
+          icon: "/images/payment_icon.png", // Icono genérico para pagos
+          date: new Date().toLocaleDateString("es-AR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+          amount: -linkDePagoStore.total, // El monto es negativo porque es una salida
+        });
+        currentStep.value = 4; // Avanzar al comprobante
       }
-      currentStep.value = 3;
-    };
-
-    const handlePaymentConfirmation = () => {
-      linkDePagoStore.confirmPayment();
-      paginaPrincipalStore.updateAccountBalance(linkDePagoStore.accountBalance);
-      paginaPrincipalStore.addTransaction({
-        id:
-          Math.max(...paginaPrincipalStore.transactions.map((t) => t.id), 0) +
-          1,
-        name: "Pago de Servicio",
-        type: "Pago",
-        icon: "/images/sube.png",
-        date: new Date().toLocaleDateString("es-AR", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }),
-        amount: -linkDePagoStore.total,
-      });
-      currentStep.value = 4;
     };
 
     const restartPaymentFlow = () => {
-      linkDePagoStore.resetPayment();
-      currentStep.value = 1;
+      linkDePagoStore.resetPayment(); 
+      currentStep.value = 1; 
     };
 
     const closePaymentFlow = () => {
-      showPayServiceForm.value = false;
-      currentStep.value = 1;
-      linkDePagoStore.resetPayment();
+      showPayServiceForm.value = false; 
+      currentStep.value = 1; 
+      linkDePagoStore.resetPayment(); 
+      
+      accountStore.getCurrentAccount();
     };
 
     const shareReceipt = () => {
-      // Lógica para compartir comprobante
+      alert("Función de compartir comprobante no implementada aún.");
     };
 
     return {
@@ -324,12 +336,11 @@ export default defineComponent({
       currentStep,
       linkDePagoStore,
       paginaPrincipalStore,
-      handleLinkSubmit,
-      handleMethodSelection,
       handlePaymentConfirmation,
       restartPaymentFlow,
       closePaymentFlow,
       shareReceipt,
+      openPaymentFlow, 
       showCvuPopup,
       showIngresarDineroModal,
       formattedAccountBalance,

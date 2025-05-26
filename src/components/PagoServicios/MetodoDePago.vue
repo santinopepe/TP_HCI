@@ -1,22 +1,21 @@
+// MetodoDePago.vue
 <template>
   <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 relative">
-    <!-- Indicador de pasos -->
     <div
       class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
     >
       Paso 2 de 4
     </div>
-    <!-- Datos del servicio -->
     <div class="flex items-center gap-4 mb-6">
       <div>
         <p class="text-lg font-semibold">
-          {{ linkDePagoStore.serviceName || "Servicio" }}
+          {{ linkDePagoStore.serviceName || "Cargando servicio..." }}
         </p>
         <p class="text-sm text-gray-500">
-          ID: {{ linkDePagoStore.serviceId || "N/A" }}
+          UUID: {{ linkDePagoStore.paymentLink || "N/A" }}
         </p>
         <p class="text-sm text-gray-500">
-          Monto a pagar: ${{ (linkDePagoStore.total || 0).toFixed(2) }}
+          Monto a pagar: {{ formatCurrency(linkDePagoStore.total) }} (Servicio: {{ formatCurrency(linkDePagoStore.amount) }} + Cargo: {{ formatCurrency(linkDePagoStore.cargo) }})
         </p>
       </div>
     </div>
@@ -24,7 +23,6 @@
     <div class="mb-4">
       <p class="text-sm font-medium mb-2">Seleccionar método de pago</p>
       <div class="flex gap-4">
-        <!-- Opción Tarjeta -->
         <label class="flex items-center gap-2 cursor-pointer">
           <input
             type="radio"
@@ -49,7 +47,6 @@
           <span class="text-sm">Tarjeta</span>
         </label>
 
-        <!-- Opción Dinero en Cuenta -->
         <label class="flex items-center gap-2 cursor-pointer">
           <input
             type="radio"
@@ -76,24 +73,30 @@
       </div>
     </div>
 
-    <!-- Tarjetas -->
     <div v-if="linkDePagoStore.metodo === 'tarjeta'" class="mb-6">
       <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
       <div
-        v-if="cardStore.cards.length === 0"
+        v-if="cardStore.loading"
+        class="text-center text-blue-600 py-8"
+      >
+        Cargando tarjetas...
+      </div>
+      <div
+        v-else-if="cardStore.cards.length === 0"
         class="text-center text-gray-500 py-8"
       >
-        No hay tarjetas disponibles
+        No hay tarjetas disponibles.
+        <p v-if="cardStore.error" class="text-red-500 text-sm mt-2">
+          Error al cargar tarjetas: {{ cardStore.error.message }}
+        </p>
       </div>
       <div v-else class="flex items-center gap-4 relative overflow-hidden">
-        <!-- Botón anterior -->
         <button
           @click="rotateCard('anterior')"
           class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-30"
         >
           <img src="/images/backComplete.png" alt="Anterior" class="w-6 h-6" />
         </button>
-        <!-- Contenedor de tarjetas con animación -->
         <div class="relative w-full h-[180px] overflow-hidden">
           <div
             v-for="(card, index) in cardStore.cards"
@@ -132,7 +135,6 @@
             </div>
           </div>
         </div>
-        <!-- Botón siguiente -->
         <button
           @click="rotateCard('siguiente')"
           class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-20"
@@ -142,23 +144,24 @@
       </div>
     </div>
 
-    <!-- Dinero en cuenta -->
     <div v-if="linkDePagoStore.metodo === 'cuenta'" class="mb-6">
       <div
         class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-4 rounded-xl text-white shadow"
       >
         <p class="text-sm">Dinero disponible en cuenta</p>
         <p class="text-xl font-bold tracking-widest mt-2">
-          ${{ (linkDePagoStore.accountBalance || 0).toFixed(2) }}
+          {{ formatCurrency(linkDePagoStore.accountBalance) }}
         </p>
       </div>
     </div>
 
     <p v-if="errorMetodo" class="text-red-500 text-sm mb-4 text-center">
-        {{ errorMetodo }}
+      {{ errorMetodo }}
+    </p>
+    <p v-if="linkDePagoStore.errors.api" class="text-red-500 text-sm mb-4 text-center">
+      {{ linkDePagoStore.errors.api.message }}
     </p>
 
-    <!-- Botones -->
     <div class="flex justify-between">
       <button
         @click="$emit('go-to-step-1')"
@@ -169,8 +172,10 @@
       <button
         @click="proceedToConfirmation"
         class="bg-[#5D8C39] text-white px-4 py-2 rounded-lg hover:bg-[#5D8C39]/80 font-semibold"
+        :disabled="linkDePagoStore.loading"
       >
-        Continuar
+        <span v-if="linkDePagoStore.loading">Cargando...</span>
+        <span v-else>Continuar</span>
       </button>
     </div>
   </div>
@@ -193,21 +198,43 @@ const emit = defineEmits(["proceed-to-confirmation", "go-to-step-1"]);
 
 const proceedToConfirmation = () => {
   errorMetodo.value = "";
-  if (linkDePagoStore.metodo === "tarjeta" && cardStore.cards.length === 0) {
-    errorMetodo.value = "Seleccione un método de pago válido";
+  if (linkDePagoStore.metodo === "tarjeta") {
+    if (cardStore.cards.length === 0) {
+      errorMetodo.value = "No hay tarjetas disponibles. Agregue una tarjeta o elija otro método.";
+      return;
+    }
+    if (!linkDePagoStore.selectedCard) {
+      errorMetodo.value = "Por favor, seleccione una tarjeta.";
+      return;
+    }
+  } else if (linkDePagoStore.metodo === "cuenta") {
+    if (linkDePagoStore.accountBalance < linkDePagoStore.total) {
+      errorMetodo.value = `Saldo insuficiente. Necesita ${formatCurrency(
+        linkDePagoStore.total
+      )} pero tiene ${formatCurrency(
+        linkDePagoStore.accountBalance
+      )}. Recargue su cuenta o use otro método.`;
+      return;
+    }
+  } else {
+    errorMetodo.value = "Por favor, seleccione un método de pago.";
     return;
   }
-  emit("proceed-to-confirmation", {
-    metodo: linkDePagoStore.metodo,
-    card:
-      linkDePagoStore.metodo === "tarjeta"
-        ? linkDePagoStore.selectedCard
-        : null,
+
+  emit("proceed-to-confirmation");
+};
+
+const formatCurrency = (value) => {
+  if (typeof value !== "number" || isNaN(value)) return "$0.00";
+  return value.toLocaleString("es-AR", {
+    style: "currency",
+    currency: "ARS",
   });
 };
 
 onMounted(async () => {
   await cardStore.getAll();
+  await linkDePagoStore.fetchAccountBalance(); // Obtener saldo al montar el componente
 });
 
 const rotateCard = (direction) => {
