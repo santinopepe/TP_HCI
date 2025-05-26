@@ -45,7 +45,7 @@
               Ingresar Dinero
             </button>
             <button
-              @click="showPayServiceForm = true"
+              @click="openPaymentFlow"
               class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(50%-0.5rem)] flex items-center justify-center"
             >
               Pagar Servicio
@@ -177,30 +177,27 @@
     >
       <IngresarLinkPago
         v-if="currentStep === 1"
-        @submit-link="handleLinkSubmit"
+        @submit-link="currentStep = 2"
         @cancel="closePaymentFlow"
         @click.stop=""
       />
 
       <SeleccionarMetodoPago
-        v-if="currentStep === 2"
-        @proceed-to-confirmation="handleMethodSelection"
-        @cancel="closePaymentFlow"
+        v-else-if="currentStep === 2"
+        @proceed-to-confirmation="currentStep = 3"
         @go-to-step-1="currentStep = 1"
         @click.stop=""
       />
 
       <ConfirmacionPago
-        v-if="currentStep === 3"
-        :amount="linkDePagoStore.amount"
+        v-else-if="currentStep === 3"
         @confirm="handlePaymentConfirmation"
-        @cancel="currentStep = 2"
+        @go-to-step-2="currentStep = 2"
         @click.stop=""
       />
 
       <ComprobantePago
-        v-if="currentStep === 4"
-        :amount="linkDePagoStore.amount"
+        v-else-if="currentStep === 4"
         @make-another-payment="restartPaymentFlow"
         @return-to-home="closePaymentFlow"
         @share-receipt="shareReceipt"
@@ -222,12 +219,15 @@ import { defineComponent, ref, computed, onMounted } from "vue";
 import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 import { usePaginaPrincipalStore } from "../store/PaginaPrincipalStore.js";
 import { useAccountStore } from "../store/accountStore.js";
-import { useCobrosStore } from "../store/CobrosStore.js";
 import BarraLateral from "../BarraLateral.vue";
+import { useCobrosStore } from "../store/CobrosStore.js";
+
+// Componentes de Pago de Servicios (ajusta las rutas si es necesario)
 import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
 import SeleccionarMetodoPago from "../PagoServicios/MetodoDePago.vue";
 import ConfirmacionPago from "../PagoServicios/ConfirmacionDePago.vue";
-import ComprobantePago from "../PagoServicios/ComprobantePago.vue";
+import ComprobantePago from "../PagoServicios/ComprobantePago.vue"; // Usar el nombre de archivo consistente
+
 import CvuPopup from "../Inicio/CVU.vue";
 import IngresarDinero from "../Inicio/IngresarDinero.vue";
 
@@ -262,8 +262,9 @@ export default defineComponent({
     // Sincronizar el balance con el store de cuenta
     const formattedAccountBalance = computed(() => {
       if (!isSaldoVisible.value) return "••••••";
+      // Asegúrate de que `accountStore.account` y `accountStore.account.balance` existan.
       if (!accountStore.account || typeof accountStore.account.balance === "undefined") {
-        return "Cargando...";
+        return "Cargando..."; // O un valor predeterminado como "$0.00"
       }
       return `$${Number(accountStore.account.balance).toLocaleString("es-AR", {
         minimumFractionDigits: 2,
@@ -274,18 +275,6 @@ export default defineComponent({
     // Cargar la cuenta y los pagos al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
-      cobrosStore.fetchPagos();
-    });
-
-    // Usuario actual para comparar si es enviada o recibida
-    const userId = computed(() => accountStore.account?.id);
-
-    // Últimas transferencias (puedes limitar a las 5 más recientes)
-    const ultimasTransferencias = computed(() => {
-      return cobrosStore.pagos
-        .slice()
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 5);
     });
 
     const handleLinkSubmit = (link) => {
@@ -299,48 +288,54 @@ export default defineComponent({
       currentStep.value = 2;
     };
 
-    const handleMethodSelection = (details) => {
-      linkDePagoStore.setPaymentMethod(details.metodo);
-      if (details.card) {
-        linkDePagoStore.tarjetas[linkDePagoStore.tarjetaSeleccionada] =
-          details.card;
-      }
-      currentStep.value = 3;
-    };
+    // `handleMethodSelection` ya no es necesario aquí, SeleccionarMetodoPago.vue lo maneja internamente.
+    // Simplemente avanzamos al siguiente paso cuando SeleccionarMetodoPago emite `proceed-to-confirmation`.
+    // const handleMethodSelection = () => {
+    //   currentStep.value = 3;
+    // };
 
-    const handlePaymentConfirmation = () => {
-      linkDePagoStore.confirmPayment();
-      paginaPrincipalStore.updateAccountBalance(linkDePagoStore.accountBalance);
-      paginaPrincipalStore.addTransaction({
-        id:
-          Math.max(...paginaPrincipalStore.transactions.map((t) => t.id), 0) +
-          1,
-        name: "Pago de Servicio",
-        type: "Pago",
-        icon: "/images/sube.png",
-        date: new Date().toLocaleDateString("es-AR", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }),
-        amount: -linkDePagoStore.total,
-      });
-      currentStep.value = 4;
+    const handlePaymentConfirmation = async () => {
+      // La acción confirmPayment del store ya no necesita parámetros, toma la información del estado.
+      const success = await linkDePagoStore.confirmPayment();
+      if (success) {
+        // Actualizar el saldo de la cuenta principal después de un pago exitoso
+        // En un caso real, esto debería venir de una API que actualice el saldo.
+        // Aquí actualizamos el accountStore si el linkDePagoStore.accountBalance se actualizó.
+        // Asegúrate de que accountStore.updateAccountBalance acepte el nuevo saldo.
+        accountStore.getCurrentAccount(); // Mejor: volver a obtener el saldo desde la API
+
+        // Agregar la transacción a la lista de transacciones
+        paginaPrincipalStore.addTransaction({
+          id: Date.now(), // Un ID único simple, en producción usarías un ID del backend
+          name: linkDePagoStore.serviceName, // Nombre del servicio pagado
+          type: "Pago de Servicio",
+          icon: "/images/payment_icon.png", // Icono genérico para pagos
+          date: new Date().toLocaleDateString("es-AR", {
+            day: "2-digit",
+            month: "short",
+            year: "numeric",
+          }),
+          amount: -linkDePagoStore.total, // El monto es negativo porque es una salida
+        });
+        currentStep.value = 4; // Avanzar al comprobante
+      }
     };
 
     const restartPaymentFlow = () => {
-      linkDePagoStore.resetPayment();
-      currentStep.value = 1;
+      linkDePagoStore.resetPayment(); 
+      currentStep.value = 1; 
     };
 
     const closePaymentFlow = () => {
-      showPayServiceForm.value = false;
-      currentStep.value = 1;
-      linkDePagoStore.resetPayment();
+      showPayServiceForm.value = false; 
+      currentStep.value = 1; 
+      linkDePagoStore.resetPayment(); 
+      
+      accountStore.getCurrentAccount();
     };
 
     const shareReceipt = () => {
-      // Lógica para compartir comprobante
+      alert("Función de compartir comprobante no implementada aún.");
     };
 
     return {
@@ -349,12 +344,11 @@ export default defineComponent({
       currentStep,
       linkDePagoStore,
       paginaPrincipalStore,
-      handleLinkSubmit,
-      handleMethodSelection,
       handlePaymentConfirmation,
       restartPaymentFlow,
       closePaymentFlow,
       shareReceipt,
+      //openPaymentFlow, 
       showCvuPopup,
       showIngresarDineroModal,
       formattedAccountBalance,

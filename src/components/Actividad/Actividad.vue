@@ -75,7 +75,9 @@
                 <td class="p-3">
                   {{ payment.method === "ACCOUNT" ? "Transferencia Bancaria" : "Pago con Tarjeta" }}
                 </td>
-                <td class="p-3 text-red-500 font-medium text-right">
+                <td
+                  :class="payment.receiver?.id === userId ? 'text-green-600' : 'text-red-500'"
+                >
                   {{ formatCurrency(payment.amount) }}
                 </td>
               </tr>
@@ -138,6 +140,10 @@ export default defineComponent({
     const accountStore = useAccountStore();
     const activeButton = ref("actividad");
     const searchQuery = ref("");
+
+    const userId = computed(() => accountStore.account?.id);
+    
+
     // Estado y función para el detalle de la transacción
     const showDetalle = ref(false);
     const detalleSeleccionado = ref(null);
@@ -257,6 +263,7 @@ export default defineComponent({
       filteredTransactions,
       chartOptions,
       chartData,
+      userId,
       mainAccountBalance,
       activeInvestments,
       expenses, 
