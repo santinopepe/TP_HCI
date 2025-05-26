@@ -203,7 +203,7 @@
             >
               <p class="text-sm">Dinero disponible en cuenta</p>
               <p class="text-xl font-bold tracking-widest mt-2">
-                ${{ transferenciaStore.accountBalance.toFixed(2) }}
+                {{ formatCurrency(accountBalance) }}
               </p>
             </div>
           </div>
@@ -351,16 +351,19 @@
 </template>
 
 <script setup>
-import { ref, watch } from "vue";
+import { ref, watch, computed } from "vue";
 import { useRouter } from "vue-router";
 import { useTransferenciaStore } from "../store/TransferenciasStore.js";
 import { useCardStore, getCardLogo, getCardBackground } from "../store/TarjetasStore.js";
 import { useCobrosStore } from "../store/CobrosStore.js";
 import { PaymentApi } from "../../api/payment.js";
+import { useAccountStore } from "../store/accountStore.js";
 
 const cobrosStore = useCobrosStore();
-
+const accountStore = useAccountStore();
 const cardStore = useCardStore();
+
+const accountBalance = computed(() => accountStore.account?.balance ?? 0);
 
 const props = defineProps({
   isOpen: Boolean,
@@ -377,6 +380,13 @@ const errorMetodo = ref("");
 const closeModal = () => {
   emit("close");
   resetSteps();
+};
+
+const formatCurrency = (value) => {
+    return new Intl.NumberFormat("es-AR", {
+      style: "currency",
+      currency: "ARS",
+    }).format(value);
 };
 
 const validateAmount = (event) => {
@@ -418,6 +428,7 @@ const previousStep = () => {
     currentStep.value--;
   }
 };
+
 
 const validateAndShowConfirmation = () => {
   errorMetodo.value = "";
