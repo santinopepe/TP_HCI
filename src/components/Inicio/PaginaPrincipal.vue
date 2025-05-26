@@ -343,6 +343,23 @@ export default defineComponent({
       alert("Función de compartir comprobante no implementada aún.");
     };
 
+    const userId = computed(() => accountStore.account?.id);
+
+
+    const ultimasTransferencias = computed(() => {
+  // Tomamos las 5 más recientes
+  return cobrosStore.pagos
+    .slice()
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5)
+    .map(tx => {
+      // Si el usuario es el receiver, es entrante; si es el payer, es saliente
+      let tipo = "entrante";
+      if (userId.value === tx.payer?.id) tipo = "saliente";
+      return { ...tx, tipo };
+    });
+});
+
     return {
       activeButton,
       showPayServiceForm,
