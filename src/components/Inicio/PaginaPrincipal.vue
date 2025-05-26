@@ -218,7 +218,7 @@
 import { defineComponent, ref, computed, onMounted } from "vue";
 import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 import { usePaginaPrincipalStore } from "../store/PaginaPrincipalStore.js";
-import { useAccountStore } from "../store/accountStore.js";
+import { useAccountStore } from "../store/accountStore.js"; // Asegúrate de que esta ruta sea correcta
 import BarraLateral from "../BarraLateral.vue";
 import { useCobrosStore } from "../store/CobrosStore.js";
 
@@ -275,18 +275,23 @@ export default defineComponent({
     // Cargar la cuenta y los pagos al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
+      // Opcional: Cargar los datos de transacciones/inversiones aquí también si no se hacen en un router view
+      // paginaPrincipalStore.fetchTransactions();
+      // paginaPrincipalStore.fetchInvestments();
+      // paginaPrincipalStore.fetchMonthlyTransferSummary();
     });
 
-    const handleLinkSubmit = (link) => {
-      linkDePagoStore.setPaymentLink(link);
-      linkDePagoStore.setServiceDetails({
-        serviceName: "Servicio de Electricidad",
-        serviceId: "12345",
-        amount: 100.0,
-        cargo: 5.0,
-      });
-      currentStep.value = 2;
+    const openPaymentFlow = () => {
+      linkDePagoStore.resetPayment(); // Limpiar el estado del store de pago al iniciar un nuevo flujo
+      currentStep.value = 1; // Volver al primer paso
+      showPayServiceForm.value = true; // Mostrar el modal
     };
+
+    // `handleLinkSubmit` ya no es necesario aquí, IngresarLinkPago.vue lo maneja internamente.
+    // Simplemente avanzamos al siguiente paso cuando IngresarLinkPago emite `submit-link`.
+    // const handleLinkSubmit = () => {
+    //   currentStep.value = 2;
+    // };
 
     // `handleMethodSelection` ya no es necesario aquí, SeleccionarMetodoPago.vue lo maneja internamente.
     // Simplemente avanzamos al siguiente paso cuando SeleccionarMetodoPago emite `proceed-to-confirmation`.
@@ -348,7 +353,7 @@ export default defineComponent({
       restartPaymentFlow,
       closePaymentFlow,
       shareReceipt,
-      //openPaymentFlow, 
+      openPaymentFlow, 
       showCvuPopup,
       showIngresarDineroModal,
       formattedAccountBalance,

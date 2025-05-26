@@ -37,6 +37,22 @@ export const useCobrosStore = defineStore("pagos", () => {
       loading.value = false;
     }
   }
+  async function put(payment) {
+    loading.value = true;
+    error.value = null;
+    try {
+      const result = await PaymentApi.put(payment);
+      console.log("put response:", result);
+      await fetchPagos();
+      return result;
+    } catch (e) {
+      console.error("put error:", e);
+      error.value = e;
+      throw e;
+    } finally {
+      loading.value = false;
+    }
+  }
 
   
   async function pull(payment) {
@@ -116,5 +132,6 @@ export const useCobrosStore = defineStore("pagos", () => {
     transferByEmail,
     transferByCVU,
     transferByAlias,
+    put,
   };
 });

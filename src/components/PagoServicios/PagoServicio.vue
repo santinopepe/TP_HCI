@@ -1,6 +1,6 @@
+// PagoServicio.vue
 <template>
   <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full m-4 relative">
-    <!-- Indicador de pasos -->
     <div
       class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
     >
@@ -15,7 +15,7 @@
           <label
             for="paymentLink"
             class="block text-sm font-medium text-gray-700 mb-1"
-            >Código de Pago</label
+            >Código de Pago (UUID)</label
           >
           <input
             type="text"
@@ -31,9 +31,11 @@
           >
             {{ linkDePagoStore.errors.paymentLink }}
           </p>
+          <p v-if="linkDePagoStore.errors.api" class="text-red-500 text-sm mt-1">
+            Error al buscar pago: {{ linkDePagoStore.errors.api.message || 'Error desconocido' }}
+          </p>
         </div>
       </div>
-      <!-- Botones -->
       <div class="mt-4 flex justify-between">
         <button
           type="button"
@@ -45,8 +47,10 @@
         <button
           type="submit"
           class="bg-[#5D8C39] text-white font-semibold py-2 px-4 rounded-lg shadow transition duration-200 flex items-center hover:bg-[#5D8C39]/80"
+          :disabled="linkDePagoStore.loading"
         >
-          Continuar
+          <span v-if="linkDePagoStore.loading">Cargando...</span>
+          <span v-else>Continuar</span>
         </button>
       </div>
     </form>
@@ -59,17 +63,19 @@ import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 const linkDePagoStore = useLinkDePagoStore();
 const emit = defineEmits(["submit-link", "cancel"]);
 
-const submitLink = () => {
-  // Validar que el link no esté vacío
+const submitLink = async () => {
+  linkDePagoStore.errors.paymentLink = null; // Limpiar errores previos
+  linkDePagoStore.errors.api = null; // Limpiar errores de API previos
+
   if (!linkDePagoStore.paymentLink.trim()) {
-    linkDePagoStore.errors.paymentLink = "Por favor, ingrese un link de pago";
+    linkDePagoStore.errors.paymentLink = "Por favor, ingrese un código de pago.";
     return;
   }
 
-  console.log(
-    "Emitting submit-link event with link:",
-    linkDePagoStore.paymentLink
-  );
-  emit("submit-link", linkDePagoStore.paymentLink);
+  const success = await linkDePagoStore.fetchPaymentDetailsByUuid(linkDePagoStore.paymentLink);
+
+  if (success) {
+    emit("submit-link"); // Emitir para pasar al siguiente paso
+  }
 };
-</script>
+</script> 

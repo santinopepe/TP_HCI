@@ -11,6 +11,22 @@ class PaymentApi {
     return await Api.post(url, true, body, controller);
     }
 
+    static async put(payment, controller) {
+        const { id, uuid, amount, method, cardId, cvu } = payment;
+        let query = `?uuid=${uuid}`;
+        if (method === "CARD" && cardId) {
+            query += `&cardId=${cardId}`;
+        }
+        const url = `${PaymentApi.getUrl("push")}${query}`;
+        try {
+            // Mandar el objeto de pago como body
+            return await Api.put(url, true,  controller);
+        } catch (error) {
+            console.error("Error in PaymentApi.put:", error.response?.data || error.message);
+            throw error;
+        }
+    }
+
     // Obtener pagos realizados (opcional)
     static async getAll(controller) {
         return await Api.get(PaymentApi.getUrl(), true, controller);

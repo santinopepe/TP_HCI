@@ -1,6 +1,6 @@
+// ComprobanteDePago.vue
 <template>
   <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 relative">
-    <!-- Indicador de pasos -->
     <div
       class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
     >
@@ -28,9 +28,18 @@
           </svg>
         </div>
         <h3 class="text-xl font-semibold text-gray-800">¡Pago exitoso!</h3>
+        <p class="text-gray-600 text-sm mt-2">
+            El pago para "{{ linkDePagoStore.serviceName }}" ha sido procesado.
+        </p>
+        <p class="text-gray-600 text-sm">
+            Monto: {{ formatCurrency(linkDePagoStore.total) }}
+        </p>
+        <p class="text-gray-600 text-sm">
+            UUID: {{ linkDePagoStore.paymentLink }}
+        </p>
       </div>
 
-      
+
     </div>
 
     <div class="flex flex-col gap-4 items-center mt-auto">
@@ -63,4 +72,12 @@ const emit = defineEmits([
   "return-to-home",
   "share-receipt",
 ]);
+
+const formatCurrency = (value) => {
+      if (typeof value !== "number" || isNaN(value)) return "$0.00";
+      return value.toLocaleString("es-AR", {
+        style: "currency",
+        currency: "ARS",
+      });
+};
 </script>
