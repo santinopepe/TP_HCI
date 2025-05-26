@@ -28,7 +28,7 @@ export const useCobrosStore = defineStore("pagos", () => {
     error.value = null;
     try {
       const result = await PaymentApi.pay(payment);
-      await fetchPagos(); // Actualiza la lista
+      await fetchPagos(); 
       return result;
     } catch (e) {
       error.value = e;
@@ -38,7 +38,7 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Pull payment
+  
   async function pull(payment) {
     loading.value = true;
     error.value = null;
@@ -52,7 +52,6 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Push payment
   async function push(payment) {
     loading.value = true;
     error.value = null;
