@@ -11,32 +11,22 @@ class PaymentApi {
     return await Api.post(url, true, body, controller);
     }
 
-    static async put(payment) {
-        // Destructure the properties from the 'payment' object
+    static async put(payment, controller) {
         const { id, uuid, amount, method, cardId, cvu } = payment;
-
-        // 1. Construct the query parameters
-        // 'query' must be defined *before* it's used in the console.log or url
         let query = `?uuid=${uuid}`;
         if (method === "CARD" && cardId) {
             query += `&cardId=${cardId}`;
         }
-        
-        // 3. Define the full URL with the correct endpoint and query parameters
-        const url = `/api/payment/push${query}`;
-
-        console.log("Payment API push (PUT) Request URL:", url);
-        console.log("Payment API push (PUT) Request Payload:", payload);
-
+        const url = `${PaymentApi.getUrl("push")}${query}`;
         try {
-            // Make the PUT request
-            return await Api.put(url, NULL).then((res) => res.data);
+            // Mandar el objeto de pago como body
+            return await Api.put(url, true,  controller);
         } catch (error) {
-            // Log the error response from the API for better debugging
             console.error("Error in PaymentApi.put:", error.response?.data || error.message);
-            throw error; // Re-throw the error so it can be handled by the calling store
+            throw error;
         }
     }
+
     // Obtener pagos realizados (opcional)
     static async getAll(controller) {
         return await Api.get(PaymentApi.getUrl(), true, controller);
