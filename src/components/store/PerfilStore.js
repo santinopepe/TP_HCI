@@ -1,39 +1,27 @@
-import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { defineStore } from "pinia";
+import { AccountApi } from "../../api/account.js";
+import { UserApi } from "../../api/user.js";
 
-export const usePerfilStore = defineStore('perfil', () => {
-  // State
-  const user = ref({
-    cvu: "0023481928201930457639",
-    name: "Juliana Márquez",
-    accountNumber: "44.887.744",
-    email: "jmarquez01@gmail.com",
-    phone: "+54 9 11 5325-6201",
-    alias: "jmarquez01",
-    gender: "Mujer",
-  });
+export const usePerfilStore = defineStore("perfil", () => {
+    
+    async function getProfile() {
+        const result = await AccountApi.get();
+        return result;
+    }
 
-  const profileImage = ref("/images/mujer.png"); // Initial profile image
+    async function resetPassword(email) {
+        const result = await UserApi.resetPassword(email);
+        return result;
+    }
 
-  // Actions
-  function setProfileImage(newImageBase64) {
-    profileImage.value = newImageBase64;
-  }
+    async function changePassword({ code, password }) {
+        const result = await UserApi.changePassword({ code, password });
+        return result;
+    }
 
-  // You can also add actions to update other user details if needed in the future
-  function updateUserName(newName) {
-    user.value.name = newName;
-  }
-
-  function updateUserEmail(newEmail) {
-    user.value.email = newEmail;
-  }
-
-  return {
-    user,
-    profileImage,
-    setProfileImage,
-    updateUserName,
-    updateUserEmail,
-  };
-});
+    return { 
+        getProfile, 
+        resetPassword, 
+        changePassword 
+    };
+}); 

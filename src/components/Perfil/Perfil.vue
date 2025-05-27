@@ -13,26 +13,6 @@
       <div class="w-full max-w-md">
         <div class="bg-white p-6 rounded-lg shadow-md text-center">
           <div class="flex flex-col items-center mb-6">
-            <div class="relative">
-              <img
-                :src="perfilStore.profileImage"
-                alt="Profile Picture"
-                class="w-24 h-24 rounded-full border-2 border-simsim-green-dark"
-              />
-              <span
-                @click="triggerFileInput"
-                class="absolute top-0 right-0 bg-simsim-green-darker text-white w-6 h-6 flex items-center justify-center rounded-full text-xs cursor-pointer"
-              >
-                ✎
-              </span>
-              <input
-                type="file"
-                ref="fileInput"
-                accept="image/*"
-                class="hidden"
-                @change="handleFileChange"
-              />
-            </div>
             <h2 class="text-2xl font-bold text-simsim-green-dark mt-4">
               {{ userData.firstName }} {{ userData.lastName }}
             </h2>
@@ -102,13 +82,13 @@
 
 <script>
 import { defineComponent, ref, onMounted } from "vue";
-import { usePerfilStore } from "../store/PerfilStore.js";
-import { useSecurityStore } from "../store/securityStore.js";
-import { AccountApi } from "../../api/account.js";
-import { UserApi } from "../../api/user.js";
+
 import BarraLateral from "../BarraLateral.vue";
 import PasswordUpdateModal from "./ModalActulizacionContrasenia.vue";
 import SuccessModal from "./ModalDeCambioExitoso.vue";
+import { usePerfilStore } from "../store/PerfilStore.js";
+import { useSecurityStore } from "../store/securityStore.js";
+
 
 export default defineComponent({
   name: "Perfil",
@@ -118,8 +98,9 @@ export default defineComponent({
     SuccessModal,
   },
   setup() {
-    const perfilStore = usePerfilStore();
-    const securityStore = useSecurityStore();
+    const securityStore = useSecurityStore(); 
+    const perfilStore = usePerfilStore();    
+    
     const activeButton = ref("perfil");
     const fileInput = ref(null);
     const code = ref("");
@@ -158,7 +139,7 @@ export default defineComponent({
         console.error("Error al obtener usuario:", e);
       }
       try {
-        const account = await AccountApi.get();
+        const account = await perfilStore.getProfile();
         accountData.value.alias = account.alias || "";
         accountData.value.cvu = account.cvu || "";
       } catch (e) {
@@ -177,7 +158,7 @@ export default defineComponent({
         if (!user || !user.email) {
           throw new Error("No se pudo obtener la información del usuario");
         }
-        await UserApi.resetPassword(user.email);
+        await perfilStore.resetPassword(user.email);
       } catch (error) {
         console.error("Error al solicitar cambio de contraseña:", error);
         if (error.response?.data?.message) {
@@ -207,7 +188,7 @@ export default defineComponent({
         return;
       }
       try {
-        await UserApi.changePassword({
+        await perfilStore.changePassword({
           code: code.value,
           password: newPassword.value,
         });
@@ -246,20 +227,9 @@ export default defineComponent({
       fileInput.value.click();
     };
 
-    const handleFileChange = (event) => {
-      const file = event.target.files[0];
-      if (file) {
-        const reader = new FileReader();
-        reader.onload = (e) => {
-          perfilStore.setProfileImage(e.target.result);
-        };
-        reader.readAsDataURL(file);
-      }
-    };
 
     return {
       activeButton,
-      perfilStore,
       fileInput,
       code,
       isCodeVerified,
@@ -273,7 +243,6 @@ export default defineComponent({
       closeSuccessModal,
       cancel,
       triggerFileInput,
-      handleFileChange,
       userData,
       accountData,
     };
