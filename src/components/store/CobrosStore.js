@@ -98,11 +98,11 @@ export const useCobrosStore = defineStore("pagos", () => {
   }
 
   // Transferencias
-  async function transferByEmail(data) {
+  async function transferByCVU(params, body, controller) {
     loading.value = true;
     error.value = null;
     try {
-      return await PaymentApi.transferByEmail(data);
+      return await PaymentApi.transferByCVU(params, body, controller);
     } catch (e) {
       error.value = e;
       throw e;
@@ -111,11 +111,11 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  async function transferByCVU(data) {
+  async function transferByAlias(params, body, controller) {
     loading.value = true;
     error.value = null;
     try {
-      return await PaymentApi.transferByCVU(data);
+      return await PaymentApi.transferByAlias(params, body, controller);
     } catch (e) {
       error.value = e;
       throw e;
@@ -124,11 +124,11 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  async function transferByAlias(data) {
+  async function transferByEmail(params, body, controller) {
     loading.value = true;
     error.value = null;
     try {
-      return await PaymentApi.transferByAlias(data);
+      return await PaymentApi.transferByEmail(params, body, controller);
     } catch (e) {
       error.value = e;
       throw e;
