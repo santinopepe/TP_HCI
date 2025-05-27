@@ -77,7 +77,7 @@ function getCardLogo(number) {
     case "discover":
       return "https://upload.wikimedia.org/wikipedia/commons/5/53/Discover_Card_logo.svg";
     default:
-      return "https://upload.wikimedia.org/wikipedia/commons/3/39/Generic_Credit_Card_Icon.png";
+      return null;
   }
 }
 
