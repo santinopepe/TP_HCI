@@ -143,17 +143,17 @@
         </div>
 
         <div
-          class="p-4 rounded-lg flex flex-col justify-between col-span-2 overflow-hidden mt-6 mr-4 ml-48"
+          class="p-4 rounded-lg flex flex-col justify-between col-span-2 overflow-hidden mt-8 mr-4 ml-48"
         >
           <div
-            class="bg-[#3C4F2E] text-white p-4 rounded-2xl flex justify-between items-center mb-4"
+            class="bg-[#3C4F2E] text-white p-4 rounded-2xl flex justify-between items-center mb-2"
           >
             <h2 class="text-lg font-bold">Inversiones Activas</h2>
           </div>
           <div
-            class="bg-white p-6 rounded-lg shadow-md w-full justify-center mx-auto"
+            class="bg-white p-6 rounded-lg shadow-md w-full justify-center mb-12"
           >
-            <ul class="mt-4 flex flex-col gap-2">
+            <ul class="mt-3 flex flex-col gap-2">
               <li
                 v-for="investment in paginaPrincipalStore.investments"
                 :key="investment.name"

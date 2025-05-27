@@ -153,10 +153,10 @@
                   </div>
                   <div class="absolute bottom-4 right-4">
                     <img
-                      v-if="cardStore.getCardLogo"
                       :src="getCardLogo(card.number)"
                       alt="Card Logo"
                       class="h-8 w-12 object-contain"
+                      @error="handleImageError"
                     />
                   </div>
                 </div>
