@@ -52,13 +52,13 @@
             >Cantidad</label
           >
           <input
-            v-model="form.quantity"
-            type="text"
+            v-model.number="form.quantity"
+            type="number"
+            min="0"
             id="quantity"
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             placeholder="Ej: 50"
             :class="{ 'border-red-500': errors.quantity }"
-            @input="validateQuantity"
           />
           <p v-if="errors.quantity" class="text-red-500 text-sm mt-1">
             {{ errors.quantity }}
@@ -72,13 +72,14 @@
             >Precio de Compra por Unidad</label
           >
           <input
-            v-model="form.purchasePricePerUnit"
-            type="text"
+            v-model.number="form.purchasePricePerUnit"
+            type="number"
+            min="0"
+            step="0.01"
             id="purchasePricePerUnit"
             class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
             placeholder="Ej: 150.00"
             :class="{ 'border-red-500': errors.purchasePricePerUnit }"
-            @input="validatePrice"
           />
           <p
             v-if="errors.purchasePricePerUnit"
@@ -106,6 +107,11 @@
           </p>
         </div>
 
+        <!-- Aquí se muestra el error general del backend -->
+        <p v-if="errors.general" class="text-red-500 text-sm mt-2 text-center">
+          {{ errors.general }}
+        </p>
+
         <div class="mt-4 flex justify-between">
           <button
             type="button"
@@ -128,10 +134,12 @@
 
 <script>
 import { defineComponent, ref } from "vue";
+import { useInvestmentStore } from "../store/investmentStore";
+import { useAccountStore } from "../store/accountStore";
 
 export default defineComponent({
   name: "FormularioAgregarInversion",
-  emits: ["submit", "cancel"],
+  emits: ["cancel", "success"],
   setup(_, { emit }) {
     const form = ref({
       name: "",
@@ -147,32 +155,33 @@ export default defineComponent({
       quantity: "",
       purchasePricePerUnit: "",
       acquisitionDate: "",
+      general: "",
     });
+
+    const investmentStore = useInvestmentStore();
+    const accountStore = useAccountStore();
 
     const validateForm = () => {
       let isValid = true;
-
+      errors.value.general = "";
       if (!form.value.name.trim()) {
         errors.value.name = "El nombre del activo es obligatorio.";
         isValid = false;
       } else {
         errors.value.name = "";
       }
-
       if (!form.value.type) {
         errors.value.type = "Selecciona un tipo de activo.";
         isValid = false;
       } else {
         errors.value.type = "";
       }
-
       if (!form.value.quantity || form.value.quantity <= 0) {
         errors.value.quantity = "La cantidad debe ser mayor a 0.";
         isValid = false;
       } else {
         errors.value.quantity = "";
       }
-
       if (
         !form.value.purchasePricePerUnit ||
         form.value.purchasePricePerUnit < 0
@@ -183,7 +192,6 @@ export default defineComponent({
       } else {
         errors.value.purchasePricePerUnit = "";
       }
-
       if (!form.value.acquisitionDate) {
         errors.value.acquisitionDate =
           "La fecha de adquisición es obligatoria.";
@@ -191,13 +199,22 @@ export default defineComponent({
       } else {
         errors.value.acquisitionDate = "";
       }
-
       return isValid;
     };
 
-    const handleSubmit = () => {
-      if (validateForm()) {
-        emit("submit", { ...form.value });
+  const handleSubmit = async () => {
+    if (validateForm()) {
+      const quantity = Number(form.value.quantity);
+      const price = Number(form.value.purchasePricePerUnit);
+      const amount = quantity * price;
+
+      const investmentData = { amount };
+
+      try {
+        await investmentStore.invest(investmentData);
+        await accountStore.getCurrentAccount();
+        emit("success");
+        // Limpiar formulario solo si fue exitoso
         form.value = {
           name: "",
           type: "",
@@ -211,39 +228,18 @@ export default defineComponent({
           quantity: "",
           purchasePricePerUnit: "",
           acquisitionDate: "",
+          general: "",
         };
+      } catch (errMsg) {
+        errors.value.general = errMsg || "Error al invertir. Intenta nuevamente.";
       }
-    };
-
-    const validateQuantity = (event) => {
-      form.value.quantity = event.target.value.replace(/\D/g, "");
-    };
-
-    const validatePrice = (event) => {
-      let value = event.target.value.replace(/[^\d.,]/g, "");
-
-      const hasDecimal = value.includes(".");
-      const hasComma = value.includes(",");
-
-      if (hasDecimal && hasComma) {
-        const decimalIndex = value.indexOf(".");
-        const commaIndex = value.indexOf(",");
-        if (decimalIndex < commaIndex) {
-          value = value.replace(",", "");
-        } else {
-          value = value.replace(".", "");
-        }
-      }
-
-      form.value.purchasePricePerUnit = value;
-    };
+    }
+  };
 
     return {
       form,
       errors,
       handleSubmit,
-      validateQuantity,
-      validatePrice,
     };
   },
 });
