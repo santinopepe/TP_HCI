@@ -66,6 +66,24 @@ export const useAccountStore = defineStore("account", () => {
     }
   }
 
+  const validateCVU = async (alias) => {
+    try {
+      await AccountApi.verifyCVU(alias);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
+  const validateAlias = async (alias) => {
+    try {
+      await AccountApi.verifyAlias(alias);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  };
+
   return {
     account,
     loading,
@@ -75,5 +93,7 @@ export const useAccountStore = defineStore("account", () => {
     getCurrentAccount,
     updateAlias,
     deposit,
+    validateCVU,
+    validateAlias
   };
 });

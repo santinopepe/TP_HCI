@@ -142,7 +142,7 @@
                 >
                   <div>
                     <p class="text-xl font-semibold">
-                      {{ card.type }} **** **** **** {{ card.number.slice(-4) }}
+                      {{ (card.type === "CREDIT") ? "CRÉDITO" : "DÉBITO" }} **** **** **** {{ card.number.slice(-4) }}
                     </p>
                     <p class="text-sm opacity-80 mt-2">
                       Titular: {{ card.fullName }}
@@ -153,6 +153,7 @@
                   </div>
                   <div class="absolute bottom-4 right-4">
                     <img
+                      v-if="getCardLogo(card.number)"
                       :src="getCardLogo(card.number)"
                       alt="Card Logo"
                       class="h-8 w-12 object-contain"
@@ -321,7 +322,6 @@ import {
 } from "../store/TarjetasStore.js";
 import { useAccountStore } from "../store/accountStore.js";
 import { useCobrosStore } from "../store/CobrosStore.js";
-import { AccountApi } from "../../api/account.js";
 
 const router = useRouter();
 const cardStore = useCardStore();
@@ -364,25 +364,7 @@ const validateEmail = (email) => {
   return emailRegex.test(email);
 };
 
-// Validar CVU usando la API
-const validateCVU = async (cvu) => {
-  try {
-    await AccountApi.verifyCVU(cvu);
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
 
-// Validar Alias usando la API
-const validateAlias = async (alias) => {
-  try {
-    await AccountApi.verifyAlias(alias);
-    return true;
-  } catch (e) {
-    return false;
-  }
-};
 
 // Validar identificación (CVU, Alias o Email)
 const validateIdentification = async () => {
@@ -397,13 +379,13 @@ const validateIdentification = async () => {
       return false;
     }
   } else if (identificationType.value === "cvu") {
-    const isValid = await validateCVU(identificationValue.value);
+    const isValid = await accountStore.validateCVU(identificationValue.value);
     if (!isValid) {
       identificationError.value = "El CVU no existe";
       return false;
     }
   } else if (identificationType.value === "alias") {
-    const isValid = await validateAlias(identificationValue.value);
+    const isValid = await accountStore.validateAlias(identificationValue.value);
     if (!isValid) {
       identificationError.value = "El alias no existe";
       return false;

@@ -107,7 +107,7 @@
             >
               <div>
                 <p class="text-xl font-semibold">
-                  {{ card.type }} **** **** **** {{ card.number.slice(-4) }}
+                  {{ card.type === "CREDIT" ? "CRÉDITO" : "DÉBITO" }} **** **** **** {{ card.number.slice(-4) }}
                 </p>
                 <p class="text-sm opacity-80 mt-2">
                   Titular: {{ card.fullName }}
