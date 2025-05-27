@@ -53,7 +53,7 @@
               <tr class="border-b border-gray-200">
                 <th class="p-3 font-semibold text-gray-600">Nombre</th>
                 <th class="p-3 font-semibold text-gray-600">Tipo</th>
-                <!---<th class="p-3 font-semibold text-gray-600">Fecha</th>-->
+                <th class="p-3 font-semibold text-gray-600">Fecha</th>
                 <th class="p-3 font-semibold text-gray-600 text-right">Monto</th>
               </tr>
             </thead>
@@ -80,11 +80,14 @@
                 <td class="p-3">
                   {{ payment.method === "ACCOUNT" ? "Transferencia Bancaria" : "Pago con Tarjeta" }}
                 </td>
+                <td class="p-3">
+                  {{ formatDate(payment.date || payment.metadata?.transferDate) }}
+                </td>
                 <td
                   :class="payment.receiver?.id === userId ? 'text-green-600' : 'text-red-500'"
                   class="p-3 text-right"
                 >
-                  {{ payment.receiver?.id === userId ? '+' : '-' }}{{ formatCurrency(Math.abs(payment.amount)) }}
+                  {{ formatCurrency(Math.abs(payment.amount)) }}
                 </td>
               </tr>
             </tbody>
@@ -115,9 +118,10 @@
           <p><strong>Nombre:</strong> {{ detalleSeleccionado.payer?.firstName }} {{ detalleSeleccionado.payer?.lastName }}</p>
           <p><strong>Monto:</strong> {{ formatCurrency(detalleSeleccionado.amount) }}</p>
           <p><strong>Tipo:</strong> {{ detalleSeleccionado.method === "ACCOUNT" ? "Transferencia Bancaria" : "Pago con Tarjeta" }}</p>
+          <p><strong>Fecha:</strong> {{ formatDate(detalleSeleccionado.date || detalleSeleccionado.metadata?.transferDate) }}</p>
           <p><strong>CBU/CVU:</strong> {{ detalleSeleccionado.cvu || '-' }}</p>
           <p><strong>ID de transacción:</strong> {{ detalleSeleccionado.id }}</p>
-          <p><strong>UUID:</strong>{{ detalleSeleccionado.uuid }}</p>
+          <p><strong>UUID:</strong> {{ detalleSeleccionado.uuid }}</p>
           <!-- Agrega aquí más campos si tu objeto payment los tiene -->
         </div>
       </div>
@@ -246,6 +250,19 @@ export default defineComponent({
       }).format(safeValue);
     };
 
+    const formatDate = (dateString) => {
+      if (!dateString) return "-";
+      try {
+        return new Date(dateString).toLocaleDateString("es-AR", {
+          day: "2-digit",
+          month: "2-digit",
+          year: "numeric"
+        });
+      } catch (e) {
+        return "-";
+      }
+    };
+
     function verDetalle(payment) {
       detalleSeleccionado.value = payment;
       showDetalle.value = true;
@@ -287,6 +304,7 @@ export default defineComponent({
       mainAccountBalance,
       expenses, 
       formatCurrency,
+      formatDate,
       showDetalle,            
       detalleSeleccionado,    
       verDetalle,       

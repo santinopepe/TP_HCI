@@ -7,8 +7,8 @@ class PaymentApi {
 
     // Realizar un pago
     static async pay({ cardId, cvu, ...body }, controller) {
-    const url = `${PaymentApi.getUrl()}?cardId=${encodeURIComponent(cardId)}&cvu=${encodeURIComponent(cvu)}`;
-    return await Api.post(url, true, body, controller);
+        const url = `${PaymentApi.getUrl()}?cardId=${encodeURIComponent(cardId)}&cvu=${encodeURIComponent(cvu)}`;
+        return await Api.post(url, true, body, controller);
     }
 
     static async put(payment, controller) {
@@ -19,15 +19,13 @@ class PaymentApi {
         }
         const url = `${PaymentApi.getUrl("push")}${query}`;
         try {
-            // Mandar el objeto de pago como body
-            return await Api.put(url, true,  controller);
+            return await Api.put(url, true, payment, controller); // Include payment in body
         } catch (error) {
             console.error("Error in PaymentApi.put:", error.response?.data || error.message);
             throw error;
         }
     }
 
-    // Obtener pagos realizados (opcional)
     static async getAll(controller) {
         return await Api.get(PaymentApi.getUrl(), true, controller);
     }
@@ -35,32 +33,58 @@ class PaymentApi {
     static async get(id, controller) {
         return await Api.get(PaymentApi.getUrl(id), true, controller);
     }
-    
+
     static async pull(payment, controller) {
-    return await Api.post(PaymentApi.getUrl("pull"), true, payment, controller);
+        return await Api.post(PaymentApi.getUrl("pull"), true, payment, controller);
     }
+
     static async push(payment, controller) {
-    return await Api.put(PaymentApi.getUrl("push"), true, payment, controller);
+        return await Api.put(PaymentApi.getUrl("push"), true, payment, controller);
     }
+
     static async transferByEmail(params, body, controller) {
         const url = `${PaymentApi.getUrl("transfer-email")}${params}`;
-        return await Api.post(url, true, body, controller);
+        // Add date to metadata
+        const updatedBody = {
+            ...body,
+            metadata: {
+                ...body.metadata,
+                transferDate: new Date().toISOString()
+            }
+        };
+        return await Api.post(url, true, updatedBody, controller);
     }
+
     static async transferByCVU(params, body, controller) {
         const url = `${PaymentApi.getUrl("transfer-cvu")}${params}`;
-        return await Api.post(url, true, body, controller);
+        // Add date to metadata
+        const updatedBody = {
+            ...body,
+            metadata: {
+                ...body.metadata,
+                transferDate: new Date().toISOString()
+            }
+        };
+        return await Api.post(url, true, updatedBody, controller);
     }
+
     static async transferByAlias(params, body, controller) {
         const url = `${PaymentApi.getUrl("transfer-alias")}${params}`;
-        return await Api.post(url, true, body, controller);
+        // Add date to metadata
+        const updatedBody = {
+            ...body,
+            metadata: {
+                ...body.metadata,
+                transferDate: new Date().toISOString()
+            }
+        };
+        return await Api.post(url, true, updatedBody, controller);
     }
-     
 }
-
 
 // Clase para representar un pago
 class Payment {
-    constructor({id,description,amount,pending,uuid,method, payer, receiver, card, metadata}) {
+    constructor({ id, description, amount, pending, uuid, method, payer, receiver, card, metadata }) {
         if (id) {
             this.id = id;
         }
@@ -72,8 +96,8 @@ class Payment {
         this.payer = payer; // { id, firstName, lastName }
         this.receiver = receiver; // { id, firstName, lastName }
         this.card = card; // { id, number }
-        this.metadata = metadata || {};
+        this.metadata = metadata || { transferDate: new Date().toISOString() }; // Default date if metadata is empty
     }
 }
 
-export { PaymentApi, Payment }
+export { PaymentApi, Payment };

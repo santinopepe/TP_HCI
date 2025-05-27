@@ -59,35 +59,18 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="w-full md:col-span-2 overflow-hidden">
-            <!-- ...saldo y botones... -->
+            <!-- Placeholder for saldo and buttons (already included above) -->
           </div>
 
-          <!-- Transferencias Mensuales responsivo -->
+          <!-- Transferencias en la última semana -->
           <div
             class="bg-white p-6 rounded-lg shadow-md flex flex-col col-span-1 overflow-hidden mt-6 md:mt-0 w-auto md:-ml-16 md:w-[calc(100%+27rem)]"
           >
             <h2 class="text-2xl font-bold text-[#4B5563] text-left mb-2">
               Transferencias en la última semana
             </h2>
-            <div class="h-48 flex items-end justify-center mt-auto">
-              <div class="flex items-end gap-4 w-full justify-between px-4">
-                <div
-                  v-for="item in lastSevenDaysData"
-                  :key="item.date"
-                  class="flex flex-col items-center flex-1"
-                >
-                  <div
-                    :style="{
-                      backgroundColor: item.color,
-                      height: `${item.amount}px`,
-                    }"
-                    class="w-12 rounded"
-                  ></div>
-                  <span class="text-gray-500 text-sm mt-2">{{
-                    item.formattedDate
-                  }}</span>
-                </div>
-              </div>
+            <div class="h-48 flex items-center justify-center mt-auto">
+              <canvas id="transfersChart"></canvas>
             </div>
           </div>
         </div>
@@ -145,7 +128,7 @@
                   "
                   class="block"
                 >
-                  {{ userId === transaction.payer?.id ? "-" : "+" }}${{
+                 ${{
                     Math.abs(transaction.amount).toFixed(2)
                   }}
                 </span>
@@ -236,20 +219,19 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, onMounted } from "vue";
+import { defineComponent, ref, computed, onMounted, watch } from "vue";
 import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 import { usePaginaPrincipalStore } from "../store/PaginaPrincipalStore.js";
-import { useAccountStore } from "../store/accountStore.js"; // Asegúrate de que esta ruta sea correcta
-import BarraLateral from "../BarraLateral.vue";
+import { useAccountStore } from "../store/accountStore.js";
 import { useCobrosStore } from "../store/CobrosStore.js";
-
+import BarraLateral from "../BarraLateral.vue";
 import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
 import SeleccionarMetodoPago from "../PagoServicios/MetodoDePago.vue";
 import ConfirmacionPago from "../PagoServicios/ConfirmacionDePago.vue";
-import ComprobantePago from "../PagoServicios/ComprobantePago.vue"; 
-
+import ComprobantePago from "../PagoServicios/ComprobantePago.vue";
 import CvuPopup from "../Inicio/CVU.vue";
 import IngresarDinero from "../Inicio/IngresarDinero.vue";
+import Chart from "chart.js/auto";
 
 export default defineComponent({
   name: "PaginaPrincipal",
@@ -272,8 +254,9 @@ export default defineComponent({
     const currentStep = ref(1);
     const showCvuPopup = ref(false);
     const showIngresarDineroModal = ref(false);
-
     const isSaldoVisible = ref(true);
+    let chartInstance = null; // Store Chart.js instance
+
     function toggleSaldoVisibility() {
       isSaldoVisible.value = !isSaldoVisible.value;
     }
@@ -284,7 +267,7 @@ export default defineComponent({
         !accountStore.account ||
         typeof accountStore.account.balance === "undefined"
       ) {
-        return "Cargando..."; 
+        return "Cargando...";
       }
       return `$${Number(accountStore.account.balance).toLocaleString("es-AR", {
         minimumFractionDigits: 2,
@@ -292,41 +275,130 @@ export default defineComponent({
       })}`;
     });
 
+    const userId = computed(() => accountStore.account?.id);
+
     const lastSevenDaysData = computed(() => {
       const days = [];
       const today = new Date();
-
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setDate(today.getDate() - i);
+        date.setHours(0, 0, 0, 0);
 
         const formattedDate = date.toLocaleDateString("es-AR", {
           day: "2-digit",
           month: "2-digit",
         });
 
+        // Filter only outgoing transfers (where userId is payer.id)
+        const transfersForDay = cobrosStore.pagos.filter((payment) => {
+          if (!payment.metadata?.transferDate || !userId.value) return false;
+          const transferDate = new Date(payment.metadata.transferDate);
+          transferDate.setHours(0, 0, 0, 0);
+          const isSameDay = transferDate.getTime() === date.getTime();
+          const isOutgoing = payment.payer?.id === userId.value;
+          console.log(
+            `Payment ID: ${payment.id}, Date: ${payment.metadata.transferDate}, Is Same Day: ${isSameDay}, Is Outgoing: ${isOutgoing}`
+          ); // Debug: Log filtering
+          return isSameDay && isOutgoing;
+        });
 
-        const storeDataIndex = Math.min(
-          6 - i,
-          paginaPrincipalStore.transferChartData.length - 1
+        const totalAmount = transfersForDay.reduce(
+          (sum, payment) => sum + payment.amount,
+          0
         );
-        const storeItem =
-          paginaPrincipalStore.transferChartData[storeDataIndex];
 
         days.push({
           date: date.toISOString(),
           formattedDate,
-          amount: storeItem?.amount || Math.floor(Math.random() * 100) + 20,
-          color: storeItem?.color || "#5D8C39",
+          amount: totalAmount,
         });
       }
-
+      console.log("lastSevenDaysData:", days); // Debug: Log computed data
       return days;
     });
 
+    const ultimasTransferencias = computed(() => {
+      const transfers = cobrosStore.pagos
+        .filter((payment) => payment.metadata?.transferDate)
+        .slice()
+        .sort((a, b) => new Date(b.metadata.transferDate) - new Date(a.metadata.transferDate))
+        .slice(0, 5)
+        .map((tx) => ({
+          ...tx,
+          date: tx.metadata.transferDate,
+          tipo: userId.value === tx.payer?.id ? "saliente" : "entrante",
+        }));
+      console.log("ultimasTransferencias:", transfers); // Debug: Log transfers
+      return transfers;
+    });
+
+    // Initialize or update Chart.js
+    const updateChart = () => {
+      const ctx = document.getElementById("transfersChart")?.getContext("2d");
+      if (!ctx) {
+        console.error("Canvas context not found for transfersChart");
+        return;
+      }
+
+      if (chartInstance) {
+        chartInstance.destroy(); // Destroy existing chart to prevent memory leaks
+      }
+
+      chartInstance = new Chart(ctx, {
+        type: "bar",
+        data: {
+          labels: lastSevenDaysData.value.map((item) => item.formattedDate),
+          datasets: [
+            {
+              label: "Transferencias Enviadas ($)",
+              data: lastSevenDaysData.value.map((item) => item.amount),
+              backgroundColor: "#5D8C39",
+              borderColor: "#3C4F2E",
+              borderWidth: 1,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          scales: {
+            y: {
+              beginAtZero: true,
+              title: {
+                display: true,
+                text: "Monto ($)",
+              },
+            },
+            x: {
+              title: {
+                display: true,
+                text: "Fecha",
+              },
+            },
+          },
+          plugins: {
+            legend: {
+              display: false,
+            },
+          },
+        },
+      });
+      console.log("Chart initialized/updated"); // Debug: Confirm chart creation
+    };
+
     onMounted(() => {
       accountStore.getCurrentAccount();
-      cobrosStore.fetchPagos();
+      cobrosStore.fetchTransfers().then(() => {
+        console.log("fetchTransfers completed on mount"); // Debug: Confirm fetch
+        updateChart(); // Initialize chart after data fetch
+      });
+    });
+
+    // Watch for changes in lastSevenDaysData to update the chart
+    watch(lastSevenDaysData, () => {
+      console.log("lastSevenDaysData changed, updating chart"); // Debug: Confirm reactivity
+      updateChart();
     });
 
     const openPaymentFlow = () => {
@@ -363,7 +435,6 @@ export default defineComponent({
       showPayServiceForm.value = false;
       currentStep.value = 1;
       linkDePagoStore.resetPayment();
-
       accountStore.getCurrentAccount();
     };
 
@@ -371,19 +442,6 @@ export default defineComponent({
       alert("Función de compartir comprobante no implementada aún.");
     };
 
-    const userId = computed(() => accountStore.account?.id);
-
-    const ultimasTransferencias = computed(() => {
-      return cobrosStore.pagos
-        .slice()
-        .sort((a, b) => new Date(b.date) - new Date(a.date))
-        .slice(0, 5)
-        .map((tx) => {
-          let tipo = "entrante";
-          if (userId.value === tx.payer?.id) tipo = "saliente";
-          return { ...tx, tipo };
-        });
-    });
 
     return {
       activeButton,
