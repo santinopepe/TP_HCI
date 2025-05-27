@@ -24,6 +24,10 @@
         </p>
       </div>
     </div>
+    
+    <p v-if="linkDePagoStore.errors.api" class="text-red-500 text-sm mb-4 text-center">
+        Error al procesar el pago: {{ linkDePagoStore.errors.api.message || 'Error desconocido' }}
+    </p>
 
     <div class="flex justify-between mt-auto">
       <button
