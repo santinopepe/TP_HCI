@@ -163,19 +163,18 @@
           <p class="text-lg font-mono text-gray-800 mb-4 break-all">{{ currentUuid }}</p>
           <div class="flex justify-between items-center ">
             <button
-              @click="copyUuidToClipboard"
-              class="bg-[#5D8C39]  hover:bg-[#5D8C39]/80 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out"
-            >
-              Copiar UUID
-            </button>
-            <button
               @click="showUuidModal = false"
               class="bg-gray-200 text-gray-700 hover:bg-gray-400 font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out"
             >
               Cerrar
             </button>
-          </div>
-          
+            <button
+              @click="copyUuidToClipboard"
+              class="bg-[#5D8C39]  hover:bg-[#5D8C39]/80 text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out"
+            >
+              Copiar UUID
+            </button>
+          </div>    
         </div>
       </div>
     </main>

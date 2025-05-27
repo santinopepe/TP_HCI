@@ -64,18 +64,15 @@ const linkDePagoStore = useLinkDePagoStore();
 const emit = defineEmits(["submit-link", "cancel"]);
 
 const submitLink = async () => {
-  linkDePagoStore.errors.paymentLink = null; // Limpiar errores previos
-  linkDePagoStore.errors.api = null; // Limpiar errores de API previos
+  linkDePagoStore.errors.paymentLink = null; 
+  linkDePagoStore.errors.api = null; 
 
   if (!linkDePagoStore.paymentLink.trim()) {
     linkDePagoStore.errors.paymentLink = "Por favor, ingrese un código de pago.";
     return;
+  
+  
   }
-
-  const success = await linkDePagoStore.fetchPaymentDetailsByUuid(linkDePagoStore.paymentLink);
-
-  if (success) {
-    emit("submit-link"); // Emitir para pasar al siguiente paso
-  }
+  emit("submit-link"); 
 };
 </script> 
