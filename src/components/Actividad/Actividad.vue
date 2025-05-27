@@ -205,15 +205,15 @@ export default defineComponent({
       cobrosStore.fetchPagos();
     });
 
-    // Filtro de búsqueda sobre pagos
     const filteredTransactions = computed(() => {
       const pagosValidos = cobrosStore.pagos.filter(p => p && typeof p.amount === "number");
       if (!searchQuery.value) return pagosValidos;
-      return pagosValidos.filter(payment =>
-        ((payment.payer?.firstName || "") + " " + (payment.payer?.lastName || ""))
-          .toLowerCase()
-          .includes(searchQuery.value.toLowerCase())
-      );
+      return pagosValidos.filter(payment => {
+        const payerName = ((payment.payer?.firstName || "") + " " + (payment.payer?.lastName || "")).toLowerCase();
+        const receiverName = ((payment.receiver?.firstName || "") + " " + (payment.receiver?.lastName || "")).toLowerCase();
+        return payerName.includes(searchQuery.value.toLowerCase()) ||
+              receiverName.includes(searchQuery.value.toLowerCase());
+      });
     });
 
     const chartOptions = {
