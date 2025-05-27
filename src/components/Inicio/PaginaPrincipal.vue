@@ -272,13 +272,9 @@ export default defineComponent({
       })}`;
     });
 
-    // Cargar la cuenta y los pagos al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
-      // Opcional: Cargar los datos de transacciones/inversiones aquí también si no se hacen en un router view
-      // paginaPrincipalStore.fetchTransactions();
-      // paginaPrincipalStore.fetchInvestments();
-      // paginaPrincipalStore.fetchMonthlyTransferSummary();
+      cobrosStore.fetchPagos();
     });
 
     const openPaymentFlow = () => {
