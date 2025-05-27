@@ -6,7 +6,7 @@
       Paso 1 de 4
     </div>
     <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-      Código de Pago
+      Código de pago
     </h2>
     <form @submit.prevent="submitLink">
       <div class="grid grid-cols-1 gap-4 mb-6">
@@ -14,7 +14,7 @@
           <label
             for="paymentLink"
             class="block text-sm font-medium text-gray-700 mb-1"
-            >Código de Pago (UUID)</label
+            >Código de pago (UUID)</label
           >
           <input
             type="text"

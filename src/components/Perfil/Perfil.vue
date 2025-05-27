@@ -21,7 +21,7 @@
           <div class="space-y-6 text-left">
             <div>
               <p class="text-sm font-semibold text-simsim-green-dark">
-                N° de Documento
+                N° de documento
               </p>
               <p class="text-lg text-gray-700 font-bold border-b pb-2">
                 {{ userData.dni }}
@@ -54,7 +54,7 @@
               @click="showChangePasswordModal"
               class="bg-[#5D8C39] text-white py-2 px-6 rounded-lg hover:bg-[#4A6F2E] transition duration-200"
             >
-              Cambiar Contraseña
+              Cambiar contraseña
             </button>
           </div>
         </div>

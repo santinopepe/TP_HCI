@@ -91,7 +91,7 @@
                   class="w-3 h-3 rounded-full"
                 ></div>
               </div>
-              <span class="text-sm">Dinero en Cuenta</span>
+              <span class="text-sm">Dinero en cuenta</span>
             </label>
           </div>
         </div>
@@ -297,7 +297,7 @@
             class="flex items-center gap-2 bg-[#5D8C39] text-white px-6 py-2 rounded-lg hover:bg-[#5D8C39]/80 w-[300px] justify-center"
           >
             <img src="/images/share.png" alt="Compartir" class="w-5 h-5" />
-            <span>Compartir Comprobante</span>
+            <span>Compartir comprobante</span>
           </button>
           <button
             @click="handleSuccessClose"
@@ -358,15 +358,11 @@ const getIdentificationPlaceholder = computed(() => {
   return placeholders[identificationType.value];
 });
 
-// Validar email
 const validateEmail = (email) => {
   const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return emailRegex.test(email);
 };
 
-
-
-// Validar identificación (CVU, Alias o Email)
 const validateIdentification = async () => {
   if (!identificationValue.value) {
     identificationError.value = "Este campo es requerido";
@@ -396,7 +392,6 @@ const validateIdentification = async () => {
   return true;
 };
 
-// Validar monto
 const validateAmount = () => {
   if (!amount.value) {
     amountError.value = "El monto es requerido";
@@ -418,7 +413,6 @@ const validateAmount = () => {
   return true;
 };
 
-// Validar todo el formulario antes de abrir el modal
 const validateForm = async () => {
   const isIdentificationValid = await validateIdentification();
   const isAmountValid = validateAmount();
@@ -427,7 +421,6 @@ const validateForm = async () => {
   }
 };
 
-// Manejar la transferencia
 const handleTransfer = async () => {
   const numAmount = parseFloat(amount.value.replace(",", "."));
   const description =

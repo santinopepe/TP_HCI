@@ -4,7 +4,7 @@
   >
     <div class="bg-white p-6 rounded-lg shadow-xl max-w-lg w-full m-4 relative">
       <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-        Agregar Nueva Tarjeta
+        Agregar nueva tarjeta
       </h2>
       <form @submit.prevent="addCard">
         <div class="grid grid-cols-1 gap-4 mb-6">
@@ -12,7 +12,7 @@
             <label
               for="cardNumber"
               class="block text-sm font-medium text-gray-700 mb-1"
-              >Número de Tarjeta</label
+              >Número de tarjeta</label
             >
             <input
               type="text"
@@ -33,7 +33,7 @@
             <label
               for="cardName"
               class="block text-sm font-medium text-gray-700 mb-1"
-              >Nombre del Titular</label
+              >Nombre del titular</label
             >
             <input
               type="text"
@@ -53,7 +53,7 @@
               <label
                 for="cardExpiry"
                 class="block text-sm font-medium text-gray-700 mb-1"
-                >Fecha de Vencimiento (MM/AA)</label
+                >Fecha de vencimiento (MM/AA)</label
               >
               <input
                 type="text"
@@ -93,14 +93,13 @@
               <label
                 for="cardType"
                 class="block text-sm font-medium text-gray-700 mb-1"
-                >Tipo de Tarjeta</label
+                >Tipo de tarjeta</label
               >
               <select
                 id="cardType"
                 v-model="newCard.type"
                 class="block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-green-500 focus:border-green-500 h-10 text-gray-700"
                 :class="{ 'border-red-500': errors.type }"
-                required
               >
                 <option value="">Selecciona tipo</option>
                 <option value="CREDIT">Crédito</option>
@@ -112,6 +111,9 @@
             </div>
           </div>
         </div>
+        <p v-if="apiError" class="text-red-500 text-center mt-2">
+          {{ apiError }}
+        </p>
         <div class="mt-4 flex justify-between">
           <button
             type="button"
@@ -138,7 +140,7 @@
                 d="M12 4v16m8-8H4"
               />
             </svg>
-            Vincular Tarjeta
+            Vincular tarjeta
           </button>
         </div>
       </form>
@@ -154,16 +156,16 @@ const cardStore = useCardStore();
 const newCard = ref({
   type: "",
   number: "",
-  expirationDate: "",
-  fullName: "",
+  expiry: "",
+  name: "",
   cvv: "",
   metadata: {},
 });
 const errors = ref({
   type: "",
   number: "",
-  expirationDate: "",
-  fullName: "",
+  expiry: "",
+  name: "",
   cvv: "",
   metadata: {},
 });
@@ -185,7 +187,7 @@ const formatCvv = (event) => {
 
 const formatCardNumber = (event) => {
   let value = event.target.value.replace(/\D/g, ""); 
-  value = value.replace(/(.{4})/g, "$1 ").trim(); 
+  value = value.replace(/(.{4})/g, "$1 ").trim();
   newCard.value.number = value; 
 };
 
@@ -233,25 +235,11 @@ const validateForm = () => {
 
   return isValid;
 };
-const getCardType = (cardNumber) => {
-  const sanitizedCardNumber = cardNumber.replace(/\s+/g, "");
-  if (/^4[0-9]{12}(?:[0-9]{3})?$/.test(sanitizedCardNumber)) {
-    return "Visa";
-  } else if (
-    /^5[1-5][0-9]{14}$/.test(sanitizedCardNumber) ||
-    /^2(2[2-9][0-9]{2}|[3-6][0-9]{3}|7[01][0-9]{2}|720[0-9]{2})[0-9]{12}$/.test(
-      sanitizedCardNumber
-    )
-  ) {
-    return "Mastercard";
-  } else if (/^3[47][0-9]{13}$/.test(sanitizedCardNumber)) {
-    return "American Express";
-  } else {
-    return "Unknown";
-  }
-};
+
+const apiError = ref(""); 
 
 const addCard = async () => {
+  apiError.value = "";
   if (validateForm()) {
     const card = {
       type: newCard.value.type,
@@ -261,9 +249,23 @@ const addCard = async () => {
       cvv: newCard.value.cvv,
       metadata: {},
     };
-    emit("add-card", card);
-    resetNewCardForm();
-    
+    try {
+      await cardStore.add(card);
+      emit("add-card", card);
+      resetNewCardForm();
+      router.push('/tarjetas');
+    } catch (error) {
+        apiError.value = error?.response?.data?.message || error.message || "Error al agregar la tarjeta.";
+        if(apiError.value === "Card expired."){
+          apiError.value = "La tarjeta ha expirado. Por favor, verifica la fecha de vencimiento.";
+        }
+        else if(apiError.value === "Invalid card number. It must be 15, 16, or 19 digits."){
+          apiError.value = "Numero de tarjeta inválido. Debe tener 15, 16 o 19 dígitos.";
+        }
+        else if(apiError.value === "Card already added."){
+          apiError.value = "Esta tarjeta ya ha sido agregada.";
+        }
+    }
   }
 };
 
@@ -276,7 +278,7 @@ const resetNewCardForm = () => {
   newCard.value = {
     type: "",
     number: "",
-    expirationDate: "",
+    expiry: "",
     fullName: "",
     cvv: "",
     metadata: {},
@@ -284,7 +286,7 @@ const resetNewCardForm = () => {
   errors.value = {
     type: "",
     number: "",
-    expirationDate: "",
+    expiry: "",
     fullName: "",
     cvv: "",
     metadata: {},

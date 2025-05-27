@@ -8,14 +8,14 @@
       <div class="flex justify-between items-center mb-6">
         <div>
           <h1 class="text-3xl font-bold text-gray-800 mb-2">
-            Cobro de Servicios
+            Cobro de servicios
           </h1>
         </div>
         <button
           @click="showAddLinkModal = true"
           class="bg-[#5D8C39] hover:bg-[#4A7030] text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out"
         >
-          + Crear Link de Pago
+          + Crear link de pago
         </button>
       </div>
 
@@ -30,7 +30,7 @@
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Total Cobrado</h2>
+          <h2 class="text-lg font-semibold">Total cobrado</h2>
           <p class="text-3xl font-bold mt-2">
             {{ formatCurrency(totalCollected) }}
           </p>
@@ -38,20 +38,20 @@
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Links Activos</h2>
+          <h2 class="text-lg font-semibold">Links activos</h2>
           <p class="text-3xl font-bold mt-2">{{ activeLinks }}</p>
         </div>
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Total Links Generados</h2>
+          <h2 class="text-lg font-semibold">Total links generados</h2>
           <p class="text-3xl font-bold mt-2">{{ totalLinks }}</p>
         </div>
       </div>
 
-      <div class="bg-white p-4 rounded-lg shadow-lg overflow-x-auto">
+      <div class="bg-white p-4 rounded-lg shadow-lg">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold text-gray-700">Links de Pago</h2>
+          <h2 class="text-lg font-semibold text-gray-700">Links de pago</h2>
           <input
             v-model="searchQuery"
             type="text"
@@ -135,7 +135,7 @@
             id="modal-title"
             class="text-2xl font-semibold mb-6 text-gray-800"
           >
-            Crear Nuevo Link de Pago
+            Crear nuevo link de pago
           </h3>
           <AddPaymentLinkForm
             @submit="handleAddLink"
@@ -196,7 +196,6 @@ import { defineComponent, ref, computed, onMounted } from "vue";
 import { useCobrosStore } from "../store/CobrosStore.js";
 import BarraLateral from "../BarraLateral.vue";
 import AddPaymentLinkForm from "./formularioDeCobro.vue";
-import { useToast } from "vue-toastification";
 
 export default defineComponent({
   name: "CobrosDashboard",

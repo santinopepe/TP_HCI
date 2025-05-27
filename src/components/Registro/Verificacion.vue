@@ -47,7 +47,7 @@
       </p>
       <p class="mt-6 text-sm">
         <router-link to="/" class="text-[#2e4b3f] no-underline hover:underline"
-          >Volver al Inicio de Sesión</router-link
+          >Volver al inicio de sesión</router-link
         >
       </p>
     </div>

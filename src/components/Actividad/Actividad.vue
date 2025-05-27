@@ -19,7 +19,7 @@
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Saldo en Cuenta Principal</h2>
+          <h2 class="text-lg font-semibold">Saldo en cuenta principal</h2>
           <p class="text-3xl font-bold mt-2">
             {{ formatCurrency(mainAccountBalance) }}
           </p>
@@ -42,10 +42,10 @@
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
         <div
-          class="lg:col-span-2 bg-white p-4 rounded-lg shadow-lg overflow-x-auto h-full"
+          class="lg:col-span-2 bg-white p-4 rounded-lg shadow-lg overflow-x-auto h-auto"
         >
           <h2 class="text-lg font-semibold mb-4 text-gray-700">
-            Últimas Transacciones
+            Últimas transacciones
           </h2>
           <table class="w-full text-left min-w-[600px]">
             <thead>
@@ -53,7 +53,9 @@
                 <th class="p-3 font-semibold text-gray-600">Nombre</th>
                 <th class="p-3 font-semibold text-gray-600">Tipo</th>
                 <th class="p-3 font-semibold text-gray-600">Fecha</th>
-                <th class="p-3 font-semibold text-gray-600 text-right">Monto</th>
+                <th class="p-3 font-semibold text-gray-600 text-right">
+                  Monto
+                </th>
               </tr>
             </thead>
             <tbody>
@@ -65,25 +67,35 @@
               <tr
                 v-for="payment in filteredTransactions"
                 :key="payment.id"
-                class="border-b border-gray-100 hover:bg-gray-50 cursor-pointer"
-                @click="verDetalle(payment)"
+                class="border-b border-gray-100 hover:bg-gray-50"
               >
                 <td class="p-3">
                   <span v-if="payment.payer?.id === userId">
-                    {{ payment.receiver?.firstName }} {{ payment.receiver?.lastName }}
+                    {{ payment.receiver?.firstName }}
+                    {{ payment.receiver?.lastName }}
                   </span>
                   <span v-else>
                     {{ payment.payer?.firstName }} {{ payment.payer?.lastName }}
                   </span>
                 </td>
                 <td class="p-3">
-                  {{ payment.method === "ACCOUNT" ? "Transferencia Bancaria" : "Pago con Tarjeta" }}
+                  {{
+                    payment.method === "ACCOUNT"
+                      ? "Transferencia bancaria"
+                      : "Pago con tarjeta"
+                  }}
                 </td>
                 <td class="p-3">
-                  {{ formatDate(payment.date || payment.metadata?.transferDate) }}
+                  {{
+                    formatDate(payment.date || payment.metadata?.transferDate)
+                  }}
                 </td>
                 <td
-                  :class="payment.receiver?.id === userId ? 'text-green-600' : 'text-red-500'"
+                  :class="
+                    payment.receiver?.id === userId
+                      ? 'text-green-600'
+                      : 'text-red-500'
+                  "
                   class="p-3 text-right"
                 >
                   {{ formatCurrency(Math.abs(payment.amount)) }}
@@ -100,28 +112,6 @@
         </div>
       </div>
     </main>
-
-    <div
-      v-if="showDetalle"
-      class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
-    >
-      <div class="bg-white rounded-lg shadow-lg p-6 w-full max-w-md relative">
-        <button
-          @click="showDetalle = false"
-          class="absolute top-2 right-2 text-gray-500 hover:text-gray-700 text-xl"
-        >&times;</button>
-        <h3 class="text-xl font-bold mb-4">Detalle de la Transacción</h3>
-        <div v-if="detalleSeleccionado">
-          <p><strong>Nombre:</strong> {{ detalleSeleccionado.payer?.firstName }} {{ detalleSeleccionado.payer?.lastName }}</p>
-          <p><strong>Monto:</strong> {{ formatCurrency(detalleSeleccionado.amount) }}</p>
-          <p><strong>Tipo:</strong> {{ detalleSeleccionado.method === "ACCOUNT" ? "Transferencia Bancaria" : "Pago con Tarjeta" }}</p>
-          <p><strong>Fecha:</strong> {{ formatDate(detalleSeleccionado.date || detalleSeleccionado.metadata?.transferDate) }}</p>
-          <p><strong>CBU/CVU:</strong> {{ detalleSeleccionado.cvu || '-' }}</p>
-          <p><strong>ID de transacción:</strong> {{ detalleSeleccionado.id }}</p>
-          <p><strong>UUID:</strong> {{ detalleSeleccionado.uuid }}</p>
-        </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -148,23 +138,27 @@ export default defineComponent({
     const searchQuery = ref("");
 
     const userId = computed(() => accountStore.account?.id);
-    
-
-    const showDetalle = ref(false);
-    const detalleSeleccionado = ref(null);
 
     const mainAccountBalance = computed(() => {
-      if (!accountStore.account || typeof accountStore.account.balance === "undefined") {
+      if (
+        !accountStore.account ||
+        typeof accountStore.account.balance === "undefined"
+      ) {
         return 0;
       }
       return accountStore.account.balance;
     });
 
-   const gastosPorDestinatario = computed(() => {
+    const gastosPorDestinatario = computed(() => {
       const map = {};
-      cobrosStore.pagos.forEach(pago => {
+      cobrosStore.pagos.forEach((pago) => {
         if (pago.payer?.id === userId.value) {
-          const destinatario = ((pago.receiver?.firstName || "") + " " + (pago.receiver?.lastName || "")).trim() || "Desconocido";
+          const destinatario =
+            (
+              (pago.receiver?.firstName || "") +
+              " " +
+              (pago.receiver?.lastName || "")
+            ).trim() || "Desconocido";
           if (!map[destinatario]) map[destinatario] = 0;
           if (typeof pago.amount === "number") map[destinatario] += pago.amount;
         }
@@ -174,9 +168,21 @@ export default defineComponent({
 
     function getColors(count) {
       const palette = [
-        "#5D8C39", "#CBFBA6", "#243219", "#A3E635", "#84CC16", "#FACC15", "#F87171", "#60A5FA", "#A78BFA", "#F472B6"
+        "#5D8C39",
+        "#CBFBA6",
+        "#243219",
+        "#A3E635",
+        "#84CC16",
+        "#FACC15",
+        "#F87171",
+        "#60A5FA",
+        "#A78BFA",
+        "#F472B6",
       ];
-      return Array.from({length: count}, (_, i) => palette[i % palette.length]);
+      return Array.from(
+        { length: count },
+        (_, i) => palette[i % palette.length]
+      );
     }
 
     const chartData = computed(() => {
@@ -200,13 +206,25 @@ export default defineComponent({
     });
 
     const filteredTransactions = computed(() => {
-      const pagosValidos = cobrosStore.pagos.filter(p => p && typeof p.amount === "number");
+      const pagosValidos = cobrosStore.pagos.filter(
+        (p) => p && typeof p.amount === "number"
+      );
       if (!searchQuery.value) return pagosValidos;
-      return pagosValidos.filter(payment => {
-        const payerName = ((payment.payer?.firstName || "") + " " + (payment.payer?.lastName || "")).toLowerCase();
-        const receiverName = ((payment.receiver?.firstName || "") + " " + (payment.receiver?.lastName || "")).toLowerCase();
-        return payerName.includes(searchQuery.value.toLowerCase()) ||
-              receiverName.includes(searchQuery.value.toLowerCase());
+      return pagosValidos.filter((payment) => {
+        const payerName = (
+          (payment.payer?.firstName || "") +
+          " " +
+          (payment.payer?.lastName || "")
+        ).toLowerCase();
+        const receiverName = (
+          (payment.receiver?.firstName || "") +
+          " " +
+          (payment.receiver?.lastName || "")
+        ).toLowerCase();
+        return (
+          payerName.includes(searchQuery.value.toLowerCase()) ||
+          receiverName.includes(searchQuery.value.toLowerCase())
+        );
       });
     });
 
@@ -219,7 +237,7 @@ export default defineComponent({
         },
         title: {
           display: true,
-          text: "Distribución de Gastos",
+          text: "Distribución de gastos",
           padding: {
             bottom: 20,
           },
@@ -246,21 +264,19 @@ export default defineComponent({
         return new Date(dateString).toLocaleDateString("es-AR", {
           day: "2-digit",
           month: "2-digit",
-          year: "numeric"
+          year: "numeric",
         });
       } catch (e) {
         return "-";
       }
     };
 
-    function verDetalle(payment) {
-      detalleSeleccionado.value = payment;
-      showDetalle.value = true;
-    }
-
     const expenses = computed(() => {
       return cobrosStore.pagos.reduce((total, pago) => {
-        if (pago.payer?.id === userId.value && typeof pago.amount === "number") {
+        if (
+          pago.payer?.id === userId.value &&
+          typeof pago.amount === "number"
+        ) {
           return total + pago.amount;
         }
         return total;
@@ -291,13 +307,10 @@ export default defineComponent({
       chartData,
       userId,
       mainAccountBalance,
-      expenses, 
+      expenses,
       formatCurrency,
       formatDate,
-      showDetalle,            
-      detalleSeleccionado,    
-      verDetalle,       
-      income,      
+      income,
     };
   },
 });

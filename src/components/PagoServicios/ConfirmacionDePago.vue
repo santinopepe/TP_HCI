@@ -16,7 +16,7 @@
         
         <p class="text-sm">
           <span class="font-medium">Método:</span>
-          {{ linkDePagoStore.metodo === "tarjeta" ? `Tarjeta ****${linkDePagoStore.selectedCard?.number.slice(-4)}` : "Dinero en Cuenta" }}
+          {{ linkDePagoStore.metodo === "tarjeta" ? `Tarjeta ****${linkDePagoStore.selectedCard?.number.slice(-4)}` : "Dinero en cuenta" }}
         </p>
         <p class="text-sm">
           <span class="font-medium">Fecha:</span>
@@ -56,7 +56,7 @@ const emit = defineEmits(["confirm", "go-to-step-2"]);
 
 const confirmAndProceed = async () => {
     linkDePagoStore.errors.api = null;
-    linkDePagoStore.loading = true; // Empieza a cargar
+    linkDePagoStore.loading = true; 
 
     try {
         const success = await linkDePagoStore.confirmPayment();

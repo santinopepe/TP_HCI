@@ -88,7 +88,7 @@
         @click.prevent="goToCobroDeServicios"
       >
         <img src="/images/cobro.png" alt="Cobro de Servicios" class="w-6 h-6" />
-        <span>Cobro de Servicios</span>
+        <span>Cobro de servicios</span>
       </a>
     </nav>
     <div class="mt-auto flex justify-center">
@@ -96,7 +96,7 @@
         class="flex justify-between items-center gap-2 bg-[#5D8C39] hover:bg-[#5D8C39]/80 p-3 rounded-xl w-60 border-none cursor-pointer"
         @click.prevent="goToInicioSesion"
       >
-        <span>Cerrar Sesión</span>
+        <span>Cerrar sesión</span>
         <img src="/images/logout.png" alt="Cerrar Sesión" class="w-6 h-6" />
       </button>
     </div>
@@ -122,7 +122,6 @@ export default {
       if (this.$router) this.$router.push("/paginaprincipal");
     },
     async goToInicioSesion() {
-      // Sincroniza con securityStore y cierra sesión
       const security = useSecurityStore();
       await security.logout();
       if (this.$router) this.$router.push("/");

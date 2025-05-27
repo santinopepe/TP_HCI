@@ -6,13 +6,19 @@ export { useCardStore, getCardBrand, getCardLogo, getCardBackground }
 
 const useCardStore = defineStore("card", () => {
     const cards = ref([])
-
+    
     async function add(card) {
-        const result = await CardApi.add(card)
-        const newCard = Object.assign(new Card(), result);
-        cards.value.push(newCard);
-        return newCard;
+        try {
+            const result = await CardApi.add(card);
+            console.log("Tarjeta agregada:", result);
+            const newCard = Object.assign(new Card(), result);
+            cards.value.push(newCard);
+            return newCard;
+        } catch (error) {
+            throw error;
+        }
     }
+
     async function modify(card) {
         const result = await CardApi.modify(card);
         await getAll();

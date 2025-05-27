@@ -7,10 +7,10 @@ export const usePaginaPrincipalStore = defineStore('paginaPrincipal', () => {
   const monthlyTransferSummary = ref(123.44);
   const investments = ref([
     { name: 'SBS pesos plus', amount: 121042.00 },
-    { name: 'Renta Fija', amount: 504070.00 },
-    { name: 'Fondo Fima', amount: 1030091.00 },
+    { name: 'Renta fija', amount: 504070.00 },
+    { name: 'Fondo fima', amount: 1030091.00 },
     { name: 'CEDEARs', amount: 308700.00 },
-    { name: 'MAF Ahorro Pesos', amount: 947700.40 },
+    { name: 'MAF ahorro pesos', amount: 947700.40 },
   ]);
  
 

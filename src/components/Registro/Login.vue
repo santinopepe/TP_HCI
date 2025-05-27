@@ -32,7 +32,7 @@
 
           <div class="flex-1 p-8 flex flex-col justify-center">
             <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">
-              Inicio de Sesión
+              Inicio de sesión
             </h2>
             <form @submit.prevent="handleSubmit">
               <div class="mb-6 text-left">
@@ -43,7 +43,7 @@
                   type="text"
                   id="email"
                   v-model="email"
-                  placeholder="Ingresa tu Email o DNI"
+                  placeholder="Ingresa tu email o DNI"
                   class="w-full p-3 border border-gray-300 rounded-l-md rounded-r-md text-base box-border"
                   :class="{ 'border-red-500': errors.email }"
                 />

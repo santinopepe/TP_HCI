@@ -17,7 +17,7 @@
 
       <div class="grid grid-cols-1 gap-6">
         <div class="text-center mt-12">
-          <h2 class="text-2xl font-bold text-gray-800">Ingresar Dinero</h2>
+          <h2 class="text-2xl font-bold text-gray-800">Ingresar dinero</h2>
           <p class="text-lg mt-4 font-semibold text-gray-800">
             Compartí tu alias o CVU para recibir dinero de cuentas bancarias o
             digitales
@@ -73,7 +73,7 @@
               @click="depositMoney"
               class="bg-[#5D8C39] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#5D8C39]/80 transition-colors flex-1"
             >
-              Ingresar Dinero
+              Ingresar dinero
             </button>
           </div>
         </div>

@@ -61,7 +61,7 @@
               class="w-3 h-3 rounded-full"
             ></div>
           </div>
-          <span class="text-sm">Dinero en Cuenta</span>
+          <span class="text-sm">Dinero en cuenta</span>
         </label>
       </div>
     </div>

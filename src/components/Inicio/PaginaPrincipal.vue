@@ -46,13 +46,13 @@
               @click="showIngresarDineroModal = true"
               class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(50%-0.5rem)] flex items-center justify-center"
             >
-              Ingresar Dinero
+              Ingresar dinero
             </button>
             <button
               @click="openPaymentFlow"
               class="text-white font-bold py-3 px-6 rounded-lg shadow-md bg-[#5D8C39] hover:bg-[#5D8C39]/60 transition-colors w-[calc(50%-0.5rem)] flex items-center justify-center"
             >
-              Pagar Servicio
+              Pagar servicio
             </button>
           </div>
         </div>
@@ -80,7 +80,7 @@
         >
           <div class="flex justify-between items-center">
             <h2 class="text-lg font-bold text-gray-700">
-              Últimas Transferencias
+              Últimas transferencias
             </h2>
           </div>
           <ul class="mt-4 flex flex-col gap-4">
@@ -148,7 +148,7 @@
           <div
             class="bg-[#3C4F2E] text-white p-4 rounded-2xl flex justify-between items-center mb-2"
           >
-            <h2 class="text-lg font-bold">Inversiones Activas</h2>
+            <h2 class="text-lg font-bold">Inversiones activas</h2>
           </div>
           <div
             class="bg-white p-6 rounded-lg shadow-md w-full justify-center mb-12"

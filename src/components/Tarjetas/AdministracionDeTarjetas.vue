@@ -7,14 +7,14 @@
 
     <main class="flex-1 p-5 bg-gray-100 overflow-y-auto">
       <div class="mb-4">
-        <h1 class="text-3xl font-bold text-gray-800">Mis Tarjetas</h1>
+        <h1 class="text-3xl font-bold text-gray-800">Mis tarjetas</h1>
       </div>
 
       <div class="flex justify-center">
         <div class="bg-white p-4 rounded-lg shadow-lg w-full max-w-7xl">
           <div class="flex justify-between items-center mb-6">
             <h2 class="text-xl font-semibold text-gray-700">
-              Tarjetas Vinculadas
+              Tarjetas vinculadas
             </h2>
             <button
               @click="showAddCardForm = true"
@@ -59,7 +59,7 @@
               <div class="flex flex-col h-full">
                 <div class="flex-1">
                   <p class="text-lg font-semibold truncate">
-                    {{ card.type }} **** **** **** {{ card.number.slice(-4) }}
+                    {{ card.type === "CREDIT" ? "CRÉDITO":"DÉBITO" }} ** ** ** {{ card.number.slice(-4) }}
                   </p>
                   <p class="text-sm opacity-80 mt-2 truncate">
                     Titular: {{ card.fullName }}
@@ -135,7 +135,7 @@
                   class="h-8 w-12 mr-2 object-contain"
                 />
                 <p class="text-xl font-semibold mb-2">
-                  {{ selectedCard.type }} **** **** {{ selectedCard.number.slice(-4) }}
+                  {{ selectedCard.type === "CREDIT" ? "CRÉDITO" : "DÉBITO" }} ** ** {{ selectedCard.number.slice(-4) }}
                 </p>
               </div>
               <p class="text-sm opacity-80 mt-2">
@@ -167,7 +167,7 @@
         >
           <div class="bg-white p-6 rounded-lg shadow-xl max-w-sm w-full m-4">
             <h3 class="text-xl font-semibold text-gray-800 mb-4">
-              Confirmar Desvinculación
+              Confirmar desvinculación
             </h3>
             <p class="text-gray-600 mb-6">
               ¿Estás seguro de que quieres desvincular esta tarjeta?
@@ -183,13 +183,21 @@
                 @click="confirmRemoveCard"
                 class="bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-4 rounded-md shadow transition duration-200"
               >
-                Sí, Desvincular
+                Sí, desvincular
               </button>
             </div>
           </div>
         </div>
       </transition>
     </main>
+    <transition name="fade">
+      <div
+        v-if="showToast"
+        class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded shadow-lg z-[100]"
+      >
+        {{ toastMessage }}
+      </div>
+    </transition>
   </div>
 </template>
 
@@ -219,6 +227,17 @@ const showRemoveConfirmModal = ref(false);
 const cardIdToRemove = ref(null);
 const hoveredIndex = ref(null);
 
+const showToast = ref(false);
+const toastMessage = ref("");
+
+function showSuccessToast(message) {
+  toastMessage.value = message;
+  showToast.value = true;
+  setTimeout(() => {
+    showToast.value = false;
+  }, 2500);
+}
+
 const handleMouseEnter = (index) => {
   hoveredIndex.value = index;
 };
@@ -236,12 +255,8 @@ const calculatedZIndex = (index) => {
 
 
 const handleAddCard = async (card) => {
-  try {
-    await cardStore.add(card);
-    showAddCardForm.value = false;
-  } catch (error) {
-    console.error("Error al agregar tarjeta:", error);
-  }
+  showAddCardForm.value = false;
+  showSuccessToast("Tarjeta agregada con éxito");
 };
 
 const viewCardDetails = (card) => {
@@ -251,7 +266,7 @@ const viewCardDetails = (card) => {
 
 const closeCardDetailModal = () => {
   showCardDetailModal.value = false;
-  selectedCard.value = null; 
+  selectedCard.value = null;
 };
 
 const requestRemoveCard = (cardId) => {

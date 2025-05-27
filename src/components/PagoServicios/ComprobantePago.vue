@@ -41,7 +41,7 @@
         @click="$emit('share-receipt')"
       >
         <img src="/images/share.png" alt="Compartir" class="w-5 h-5" />
-        <span>Compartir Comprobante</span>
+        <span>Compartir comprobante</span>
       </button>
       <button
         @click="
@@ -65,12 +65,4 @@ const emit = defineEmits([
   "return-to-home",
   "share-receipt",
 ]);
-
-const formatCurrency = (value) => {
-      if (typeof value !== "number" || isNaN(value)) return "$0.00";
-      return value.toLocaleString("es-AR", {
-        style: "currency",
-        currency: "ARS",
-      });
-};
 </script>

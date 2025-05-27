@@ -5,7 +5,7 @@
     <div
       class="bg-white p-10 rounded-3xl shadow-2xl w-full max-w-3xl flex flex-col items-center"
     >
-      <h2 class="text-3xl text-[#2e4b3f] mb-2 font-bold">Crear tu Cuenta</h2>
+      <h2 class="text-3xl text-[#2e4b3f] mb-2 font-bold">Crear tu cuenta</h2>
       <p class="text-gray-600 mb-6">
         Completa los datos para registrarte en SIM SIM.
       </p>
@@ -92,7 +92,7 @@
           </div>
           <div>
             <label for="birthDate" class="block mb-1 text-gray-800 font-medium"
-              >Fecha de Nacimiento</label
+              >Fecha de nacimiento</label
             >
             <input
               type="date"
@@ -107,7 +107,7 @@
           </div>
           <div>
             <label for="email" class="block mb-1 text-gray-800 font-medium"
-              >Correo Electrónico</label
+              >Correo electrónico</label
             >
             <input
               type="email"
@@ -193,7 +193,7 @@
             <label
               for="confirmPassword"
               class="block mb-1 text-gray-800 font-medium"
-              >Confirmar Contraseña</label
+              >Confirmar contraseña</label
             >
             <div class="relative">
               <input
@@ -301,7 +301,7 @@
       </form>
       <p class="mt-6 text-sm">
         <router-link to="/" class="text-[#2e4b3f] no-underline hover:underline"
-          >Volver al Inicio de Sesión</router-link
+          >Volver al inicio de sesión</router-link
         >
       </p>
     </div>
@@ -343,7 +343,6 @@ export default {
   methods: {
     async register() {
       let valid = true;
-      // Validación campo por campo
       if (!this.firstName) {
         this.errors.firstName = "El nombre es obligatorio.";
         valid = false;
@@ -383,7 +382,6 @@ export default {
       } else {
         this.errors.confirmPassword = "";
       }
-      // Validación de DNI: entre 6 y 9 caracteres
       if (!this.dni) {
         this.errors.dni = "El DNI es obligatorio.";
         valid = false;
@@ -393,7 +391,6 @@ export default {
       } else {
         this.errors.dni = "";
       }
-      // Validación de teléfono: solo verifica que no esté vacío
       if (!this.phone) {
         this.errors.phone = "El teléfono es obligatorio.";
         valid = false;

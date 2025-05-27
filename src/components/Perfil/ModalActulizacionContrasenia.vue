@@ -7,7 +7,7 @@
     >
       <div class="mt-4">
         <h1 class="text-2xl font-bold text-gray-800 mb-2 text-center">
-          Cambiar Contraseña
+          Cambiar contraseña
         </h1>
         <p class="text-gray-600 mb-6 text-center">
           Ingresá el código recibido por email y tu nueva contraseña.
@@ -33,7 +33,7 @@
             <label
               for="newPassword"
               class="block text-gray-700 font-medium mb-2"
-              >Nueva Contraseña</label
+              >Nueva contraseña</label
             >
             <input
               type="password"
@@ -54,7 +54,7 @@
             <label
               for="confirmPassword"
               class="block text-gray-700 font-medium mb-2"
-              >Confirmar Contraseña</label
+              >Confirmar contraseña</label
             >
             <input
               type="password"
@@ -92,7 +92,7 @@
                 type="submit"
                 class="bg-[#5D8C39] text-white py-2 px-4 rounded-lg hover:bg-[#5D8C39]/80"
               >
-                Actualizar Contraseña
+                Actualizar contraseña
               </button>
             </div>
           </div>

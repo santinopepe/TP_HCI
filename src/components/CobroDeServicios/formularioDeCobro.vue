@@ -2,14 +2,14 @@
   <form @submit.prevent="handleSubmit" class="space-y-6">
     <div>
       <label for="title" class="block text-sm font-medium text-gray-700"
-        >Título del Servicio</label
+        >Título del servicio</label
       >
       <input
         v-model="form.title"
         type="text"
         id="title"
         class="mt-1 block w-full border border-gray-300 rounded-lg p-2 shadow-sm focus:ring-green-500 focus:border-green-500"
-        placeholder="Ej: Consultoría de Negocios"
+        placeholder="Ej: Consultoría de negocios"
         :class="{ 'border-red-500': errors.title }"
       />
       <p v-if="errors.title" class="text-red-500 text-sm mt-1">
@@ -19,7 +19,7 @@
 
     <div>
       <label for="description" class="block text-sm font-medium text-gray-700"
-        >Descripción (Opcional)</label
+        >Descripción(Opcional)</label
       >
       <textarea
         v-model="form.description"
@@ -65,7 +65,7 @@
         type="submit"
         class="bg-[#5D8C39] text-white px-4 py-2 rounded-xl text-sm font-medium hover:bg-[#5D8C39]/80 transition"
       >
-        Crear Link
+        Crear link
       </button>
     </div>
   </form>
