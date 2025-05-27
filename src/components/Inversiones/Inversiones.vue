@@ -18,34 +18,30 @@
       </div>
 
       <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <!-- Cambiado: Muestra la cantidad invertida desde account -->
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Valor Total Portafolio</h2>
+          <h2 class="text-lg font-semibold">Cantidad Invertida</h2>
           <p class="text-3xl font-bold mt-2">
-            {{ formatCurrency(totalPortfolioValue) }}
+            {{ formatCurrency(activeInvestments) }}
           </p>
         </div>
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Rendimiento Ponderado (YTD)</h2>
+          <h2 class="text-lg font-semibold">Tasa diaria</h2>
           <p class="text-3xl font-bold mt-2">
-            {{ formatPercentage(overallPerformance) }}
+            {{ formatPercentage(dailyRate) }}
           </p>
         </div>
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Activo Estrella</h2>
-          <p v-if="topPerformingAsset" class="text-xl font-bold mt-2">
-            {{ topPerformingAsset.name }}
-            <br />
-            <span
-              >({{ formatPercentage(topPerformingAsset.performance) }})</span
-            >
+          <h2 class="text-lg font-semibold">Retorno diario</h2>
+          <p class="text-3xl font-bold mt-2">
+            {{ dailyReturns !== null ? formatCurrency(dailyReturns) : '-' }}
           </p>
-          <p v-else class="text-xl font-bold mt-2">-</p>
         </div>
       </div>
 
@@ -160,7 +156,7 @@
             Agregar Nueva Inversión
           </h3>
           <AddInvestmentForm
-            @submit="handleAddInvestment"
+            @success="onInvestmentAdded"
             @cancel="showAddInvestmentModal = false"
           />
         </div>
@@ -238,19 +234,19 @@
 <script>
 import BarraLateral from "../BarraLateral.vue";
 import AddInvestmentForm from "./FormularioAgregarInversion.vue";
-import { defineComponent, ref, computed } from "vue";
+import { defineComponent, ref, computed, onMounted } from "vue";
 import { Pie } from "vue-chartjs";
 import { Chart as ChartJS, Title, Tooltip, Legend, ArcElement } from "chart.js";
+import { useInvestmentStore } from "../store/investmentStore.js";
+import { useAccountStore } from "../store/accountStore.js";
 
 ChartJS.register(Title, Tooltip, Legend, ArcElement);
 
-// Helper para formatear moneda
 const formatCurrency = (value) => {
   if (typeof value !== "number") return "$0.00";
   return value.toLocaleString("es-AR", { style: "currency", currency: "ARS" });
 };
 
-// Helper para formatear porcentaje
 const formatPercentage = (value) => {
   if (typeof value !== "number") return "0.00%";
   return `${value >= 0 ? "+" : ""}${value.toFixed(2)}%`;
@@ -270,92 +266,31 @@ export default defineComponent({
     const showRescueModal = ref(false);
     const selectedInvestment = ref(null);
 
-    const investments = ref([
-      {
-        id: 1,
-        name: "Acciones Apple (AAPL)",
-        quantity: 50,
-        purchasePricePerUnit: 150.0,
-        currentValuePerUnit: 175.5,
-        acquisitionDate: "15 Ene 2023",
-      },
-      {
-        id: 2,
-        name: "Bonos Corp. (MGLO)",
-        quantity: 100,
-        purchasePricePerUnit: 980.0,
-        currentValuePerUnit: 1020.0,
-        acquisitionDate: "20 Feb 2023",
-      },
-      {
-        id: 3,
-        name: 'Fondo Común "Beta Latam"',
-        quantity: 250,
-        purchasePricePerUnit: 100.0,
-        currentValuePerUnit: 95.0,
-        acquisitionDate: "10 Abr 2023",
-      },
-      {
-        id: 4,
-        name: "Ethereum (ETH)",
-        quantity: 5,
-        purchasePricePerUnit: 1800.0,
-        currentValuePerUnit: 2100.0,
-        acquisitionDate: "20 May 2023",
-      },
-      {
-        id: 5,
-        name: "ETF S&P 500 (SPY)",
-        quantity: 30,
-        purchasePricePerUnit: 400.0,
-        currentValuePerUnit: 450.0,
-        acquisitionDate: "05 Jun 2023",
-      },
-      {
-        id: 6,
-        name: "Plazo Fijo Banco Z",
-        quantity: 1,
-        purchasePricePerUnit: 50000.0,
-        currentValuePerUnit: 52500.0,
-        acquisitionDate: "01 Jul 2023",
-      },
-    ]);
+    const investmentStore = useInvestmentStore();
+    const accountStore = useAccountStore();
 
-    const handleAddInvestment = (newInvestment) => {
-      const newId = Math.max(...investments.value.map((inv) => inv.id), 0) + 1;
-      const date = new Date(newInvestment.acquisitionDate);
-      const formattedDate = date.toLocaleDateString("es-AR", {
-        day: "2-digit",
-        month: "short",
-        year: "numeric",
-      });
-      investments.value.push({
-        id: newId,
-        ...newInvestment,
-        currentValuePerUnit: newInvestment.purchasePricePerUnit,
-        acquisitionDate: formattedDate,
-      });
-      showAddInvestmentModal.value = false;
-      toastMessage.value = "Inversión agregada con éxito!";
-      showToast.value = true;
-      setTimeout(() => {
-        showToast.value = false;
-      }, 3000);
-    };
+    onMounted(() => {
+      investmentStore.fetchInvestments();
+      accountStore.getCurrentAccount();
+    });
 
     const processedInvestments = computed(() => {
-      return investments.value.map((inv) => {
-        const costTotal = inv.quantity * inv.purchasePricePerUnit;
-        const currentValueTotal = inv.quantity * inv.currentValuePerUnit;
+      return investmentStore.investments.map((inv) => {
+        const name = inv.assetName || inv.name || "";
+        const purchasePricePerUnit = inv.unitPrice ?? inv.purchasePricePerUnit ?? 0;
+        const currentValuePerUnit = inv.currentValuePerUnit ?? purchasePricePerUnit;
+        const costTotal = inv.quantity * purchasePricePerUnit;
+        const currentValueTotal = inv.quantity * currentValuePerUnit;
         const performance =
-          inv.purchasePricePerUnit === 0
+          purchasePricePerUnit === 0
             ? 0
-            : ((inv.currentValuePerUnit - inv.purchasePricePerUnit) /
-                inv.purchasePricePerUnit) *
-              100;
+            : ((currentValuePerUnit - purchasePricePerUnit) / purchasePricePerUnit) * 100;
         const unrealizedGainLoss = currentValueTotal - costTotal;
         return {
           ...inv,
+          name,
+          purchasePricePerUnit,
+          currentValuePerUnit,
           costTotal,
           currentValueTotal,
           performance,
@@ -364,18 +299,12 @@ export default defineComponent({
       });
     });
 
-    const totalPortfolioValue = computed(() => {
-      return processedInvestments.value.reduce(
-        (sum, inv) => sum + inv.currentValueTotal,
-        0
-      );
-    });
+    const totalPortfolioValue = computed(() =>
+      processedInvestments.value.reduce((sum, inv) => sum + inv.currentValueTotal, 0)
+    );
 
     const overallPerformance = computed(() => {
-      const totalCost = processedInvestments.value.reduce(
-        (sum, inv) => sum + inv.costTotal,
-        0
-      );
+      const totalCost = processedInvestments.value.reduce((sum, inv) => sum + inv.costTotal, 0);
       if (totalCost === 0) return 0;
       const currentTotalValue = totalPortfolioValue.value;
       return ((currentTotalValue - totalCost) / totalCost) * 100;
@@ -383,12 +312,9 @@ export default defineComponent({
 
     const topPerformingAsset = computed(() => {
       if (processedInvestments.value.length === 0) return null;
-      return [...processedInvestments.value].sort(
-        (a, b) => b.performance - a.performance
-      )[0];
+      return [...processedInvestments.value].sort((a, b) => b.performance - a.performance)[0];
     });
 
-    // Eliminamos el filtro por type
     const filteredInvestments = computed(() => {
       if (!searchQuery.value) {
         return processedInvestments.value;
@@ -421,11 +347,30 @@ export default defineComponent({
         if (valA > valB) return sortOrder.value === "asc" ? 1 : -1;
         return 0;
       });
+    }); 
+
+    const activeInvestments = computed(() => {
+      if (!accountStore.account || typeof accountStore.account.invested === "undefined") {
+        return 0;
+      }
+      return accountStore.account.invested;
     });
 
-    // Eliminamos el gráfico de distribución por tipo
+    const dailyRate = computed(() => {
+      if (!accountStore.account || typeof accountStore.account.dailyRate === "undefined") {
+        return 0;
+      }
+      return accountStore.account.dailyRate;
+    });
+
+    const dailyReturns = computed(() => {
+      if (!accountStore.account || typeof accountStore.account.dailyReturns === "undefined") {
+        return 0;
+      }
+      return accountStore.account.dailyReturns;
+    });
+
     const dynamicChartData = computed(() => {
-      // Ahora solo muestra la distribución por nombre de activo
       const distribution = {};
       processedInvestments.value.forEach((inv) => {
         distribution[inv.name] = inv.currentValueTotal;
@@ -449,9 +394,7 @@ export default defineComponent({
         datasets: [
           {
             data,
-            backgroundColor: labels.map(
-              (_, i) => backgroundColors[i % backgroundColors.length]
-            ),
+            backgroundColor: labels.map((_, i) => backgroundColors[i % backgroundColors.length]),
             hoverOffset: 4,
           },
         ],
@@ -480,10 +423,7 @@ export default defineComponent({
               if (context.parsed !== null) {
                 label +=
                   formatCurrency(context.parsed) +
-                  ` (${(
-                    (context.parsed / totalPortfolioValue.value) *
-                    100
-                  ).toFixed(2)}%)`;
+                  ` (${((context.parsed / totalPortfolioValue.value) * 100).toFixed(2)}%)`;
               }
               return label;
             },
@@ -492,16 +432,19 @@ export default defineComponent({
       },
     });
 
+    // Solo muestra inversiones, no agrega
+    // El formulario se encarga de agregar y emite @success
+
     const openRescueModal = (investment) => {
       selectedInvestment.value = investment;
       showRescueModal.value = true;
     };
 
-    const handleRescueInvestment = () => {
+    const handleRescueInvestment = async () => {
       if (selectedInvestment.value) {
-        investments.value = investments.value.filter(
-          (inv) => inv.id !== selectedInvestment.value.id
-        );
+        await investmentStore.divest({ id: selectedInvestment.value.id });
+        await investmentStore.fetchInvestments();
+        await accountStore.getCurrentAccount();
         showRescueModal.value = false;
         selectedInvestment.value = null;
         toastMessage.value = "Inversión rescatada con éxito!";
@@ -510,6 +453,18 @@ export default defineComponent({
           showToast.value = false;
         }, 3000);
       }
+    };
+
+    // Nuevo: manejar el evento de éxito del formulario
+    const onInvestmentAdded = async () => {
+      await investmentStore.fetchInvestments();
+      await accountStore.getCurrentAccount();
+      showAddInvestmentModal.value = false;
+      toastMessage.value = "Inversión agregada con éxito!";
+      showToast.value = true;
+      setTimeout(() => {
+        showToast.value = false;
+      }, 3000);
     };
 
     return {
@@ -527,11 +482,15 @@ export default defineComponent({
       showAddInvestmentModal,
       showToast,
       toastMessage,
-      handleAddInvestment,
       showRescueModal,
       selectedInvestment,
       openRescueModal,
       handleRescueInvestment,
+      onInvestmentAdded,
+      accountStore,
+      activeInvestments,
+      dailyRate,
+      dailyReturns,
     };
   },
 });

@@ -258,11 +258,14 @@ export default defineComponent({
     }
 
     const expenses = computed(() => {
-    return cobrosStore.pagos.reduce((total, pago) => {
-      // Si el pago tiene un amount válido, lo suma
-      return total + (typeof pago.amount === "number" ? pago.amount : 0);
-    }, 0);
-  });
+      return cobrosStore.pagos.reduce((total, pago) => {
+        // Solo suma si el usuario es el payer (envió el pago)
+        if (pago.payer?.id === userId.value && typeof pago.amount === "number") {
+          return total + pago.amount;
+        }
+        return total;
+      }, 0);
+    });
 
   
 
