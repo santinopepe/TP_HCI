@@ -106,32 +106,35 @@
           </div>
           <ul class="mt-4 flex flex-col gap-4">
             <li
-              v-for="transaction in paginaPrincipalStore.transactions"
+              v-for="transaction in ultimasTransferencias"
               :key="transaction.id"
               class="flex justify-between items-center border-b pb-2"
             >
               <div class="flex items-center gap-4">
-                <img
-                  :src="transaction.icon"
-                  :alt="transaction.name"
-                  class="w-12 h-8"
-                />
-                <span class="text-gray-700">{{ transaction.name }}</span>
+              <img
+                :src="transaction.method === 'ACCOUNT' ? '/images/transfer.png' : '/images/card.png'"
+                alt="icono"
+                class="w-10 h-10 object-contain flex-shrink-0"
+                style="display: inline-block;"
+              />
+                <span class="text-gray-700">
+                  {{ userId === transaction.payer?.id ? 'Enviada a' : 'Recibida de' }}
+                  {{ userId === transaction.payer?.id
+                    ? (transaction.receiver?.firstName + ' ' + transaction.receiver?.lastName)
+                    : (transaction.payer?.firstName + ' ' + transaction.payer?.lastName)
+                  }}
+                </span>
               </div>
               <div class="text-right">
                 <span
-                  :class="
-                    transaction.amount < 0 ? 'text-red-500' : 'text-green-500'
-                  "
+                  :class="userId === transaction.payer?.id ? 'text-red-500' : 'text-green-500'"
                   class="block"
                 >
-                  {{ transaction.amount < 0 ? "" : "+" }}${{
-                    Math.abs(transaction.amount).toFixed(2)
-                  }}
+                  {{ userId === transaction.payer?.id ? '-' : '+' }}${{ Math.abs(transaction.amount).toFixed(2) }}
                 </span>
-                <span class="text-gray-400 text-sm">{{
-                  transaction.date
-                }}</span>
+                <span class="text-gray-400 text-sm">
+                  {{ transaction.date ? new Date(transaction.date).toLocaleDateString("es-AR") : '' }}
+                </span>
               </div>
             </li>
           </ul>
@@ -217,6 +220,7 @@ import { useLinkDePagoStore } from "../store/LinkDePagoStore.js";
 import { usePaginaPrincipalStore } from "../store/PaginaPrincipalStore.js";
 import { useAccountStore } from "../store/accountStore.js"; // Asegúrate de que esta ruta sea correcta
 import BarraLateral from "../BarraLateral.vue";
+import { useCobrosStore } from "../store/CobrosStore.js";
 
 // Componentes de Pago de Servicios (ajusta las rutas si es necesario)
 import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
@@ -242,6 +246,7 @@ export default defineComponent({
     const linkDePagoStore = useLinkDePagoStore();
     const paginaPrincipalStore = usePaginaPrincipalStore();
     const accountStore = useAccountStore();
+    const cobrosStore = useCobrosStore();
     const activeButton = ref("inicio");
     const showPayServiceForm = ref(false);
     const currentStep = ref(1);
@@ -267,7 +272,7 @@ export default defineComponent({
       })}`;
     });
 
-    // Cargar la cuenta al montar
+    // Cargar la cuenta y los pagos al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
       // Opcional: Cargar los datos de transacciones/inversiones aquí también si no se hacen en un router view
@@ -338,6 +343,23 @@ export default defineComponent({
       alert("Función de compartir comprobante no implementada aún.");
     };
 
+    const userId = computed(() => accountStore.account?.id);
+
+
+    const ultimasTransferencias = computed(() => {
+  // Tomamos las 5 más recientes
+  return cobrosStore.pagos
+    .slice()
+    .sort((a, b) => new Date(b.date) - new Date(a.date))
+    .slice(0, 5)
+    .map(tx => {
+      // Si el usuario es el receiver, es entrante; si es el payer, es saliente
+      let tipo = "entrante";
+      if (userId.value === tx.payer?.id) tipo = "saliente";
+      return { ...tx, tipo };
+    });
+});
+
     return {
       activeButton,
       showPayServiceForm,
@@ -354,6 +376,8 @@ export default defineComponent({
       formattedAccountBalance,
       isSaldoVisible,
       toggleSaldoVisibility,
+      ultimasTransferencias,
+      userId,
     };
   },
 });
