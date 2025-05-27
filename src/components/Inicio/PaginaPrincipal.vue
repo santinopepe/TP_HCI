@@ -128,7 +128,7 @@
                   "
                   class="block"
                 >
-                  {{ userId === transaction.payer?.id ? "-" : "+" }}${{
+                 ${{
                     Math.abs(transaction.amount).toFixed(2)
                   }}
                 </span>
@@ -290,11 +290,17 @@ export default defineComponent({
           month: "2-digit",
         });
 
+        // Filter only outgoing transfers (where userId is payer.id)
         const transfersForDay = cobrosStore.pagos.filter((payment) => {
-          if (!payment.metadata?.transferDate) return false;
+          if (!payment.metadata?.transferDate || !userId.value) return false;
           const transferDate = new Date(payment.metadata.transferDate);
           transferDate.setHours(0, 0, 0, 0);
-          return transferDate.getTime() === date.getTime();
+          const isSameDay = transferDate.getTime() === date.getTime();
+          const isOutgoing = payment.payer?.id === userId.value;
+          console.log(
+            `Payment ID: ${payment.id}, Date: ${payment.metadata.transferDate}, Is Same Day: ${isSameDay}, Is Outgoing: ${isOutgoing}`
+          ); // Debug: Log filtering
+          return isSameDay && isOutgoing;
         });
 
         const totalAmount = transfersForDay.reduce(
@@ -313,7 +319,7 @@ export default defineComponent({
     });
 
     const ultimasTransferencias = computed(() => {
-      return cobrosStore.pagos
+      const transfers = cobrosStore.pagos
         .filter((payment) => payment.metadata?.transferDate)
         .slice()
         .sort((a, b) => new Date(b.metadata.transferDate) - new Date(a.metadata.transferDate))
@@ -323,6 +329,8 @@ export default defineComponent({
           date: tx.metadata.transferDate,
           tipo: userId.value === tx.payer?.id ? "saliente" : "entrante",
         }));
+      console.log("ultimasTransferencias:", transfers); // Debug: Log transfers
+      return transfers;
     });
 
     // Initialize or update Chart.js
@@ -343,7 +351,7 @@ export default defineComponent({
           labels: lastSevenDaysData.value.map((item) => item.formattedDate),
           datasets: [
             {
-              label: "Transferencias ($)",
+              label: "Transferencias Enviadas ($)",
               data: lastSevenDaysData.value.map((item) => item.amount),
               backgroundColor: "#5D8C39",
               borderColor: "#3C4F2E",
