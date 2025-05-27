@@ -84,7 +84,7 @@
                   :class="payment.receiver?.id === userId ? 'text-green-600' : 'text-red-500'"
                   class="p-3 text-right"
                 >
-                  {{ payment.receiver?.id === userId ? '+' : '-' }}{{ formatCurrency(Math.abs(payment.amount)) }}
+                  {{ formatCurrency(Math.abs(payment.amount)) }}
                 </td>
               </tr>
             </tbody>
