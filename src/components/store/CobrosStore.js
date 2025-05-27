@@ -22,6 +22,22 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
+  async function fetchCobros() {
+    loading.value = true;
+    error.value = null;
+    try {
+      const result = await PaymentApi.getAll();
+      pagos.value = Array.isArray(result?.results)
+        ? result.results.filter(payment => !payment.description.includes('Transferencia'))
+        : [];
+    } catch (e) {
+      error.value = e;
+      pagos.value = [];
+    } finally {
+      loading.value = false;
+    }
+  }
+  
   // Realizar un pago normal
   async function pay(payment) {
     loading.value = true;
@@ -132,6 +148,7 @@ export const useCobrosStore = defineStore("pagos", () => {
     transferByEmail,
     transferByCVU,
     transferByAlias,
+    fetchCobros,
     put,
   };
 });
