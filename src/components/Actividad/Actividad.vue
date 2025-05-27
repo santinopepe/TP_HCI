@@ -27,9 +27,9 @@
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Inversiones Activas</h2>
+          <h2 class="text-lg font-semibold">Ingresos</h2>
           <p class="text-3xl font-bold mt-2">
-            {{ formatCurrency(activeInvestments) }}
+            {{ formatCurrency(income) || 0 }}
           </p>
         </div>
         <div
@@ -239,18 +239,12 @@ export default defineComponent({
     };
 
     const formatCurrency = (value) => {
+      const safeValue = typeof value === "number" && !isNaN(value) ? value : 0;
       return new Intl.NumberFormat("es-AR", {
         style: "currency",
         currency: "ARS",
-      }).format(value);
+      }).format(safeValue);
     };
-
-    const activeInvestments = computed(() => {
-      if (!accountStore.account || typeof accountStore.account.invested === "undefined") {
-        return 0;
-      }
-      return accountStore.account.invested;
-    });
 
     function verDetalle(payment) {
       detalleSeleccionado.value = payment;
@@ -267,7 +261,21 @@ export default defineComponent({
       }, 0);
     });
 
-  
+    const income = computed(() => {
+      const total = cobrosStore.pagos.reduce((total, pago) => {
+        if (
+          pago &&
+          pago.receiver &&
+          pago.receiver.id === userId.value &&
+          typeof pago.amount === "number" &&
+          !isNaN(pago.amount)
+        ) {
+          return total + pago.amount;
+        }
+        return total;
+      }, 0);
+      return isNaN(total) ? 0 : total;
+    });
 
     return {
       activeButton,
@@ -277,12 +285,12 @@ export default defineComponent({
       chartData,
       userId,
       mainAccountBalance,
-      activeInvestments,
       expenses, 
       formatCurrency,
       showDetalle,            
       detalleSeleccionado,    
-      verDetalle,             
+      verDetalle,       
+      income,      
     };
   },
 });

@@ -8,7 +8,6 @@ import PerfilPage from "../components/Perfil/Perfil.vue";
 import Actividad from "../components/Actividad/Actividad.vue";
 import Transferecias from "../components/Transferencias/Transferencias.vue";
 import AdministracionDeTarjetas from "../components/Tarjetas/AdministracionDeTarjetas.vue";
-import Inversiones from "../components/Inversiones/Inversiones.vue";
 import IngresarDinero from "../components/Inicio/IngresarDinero.vue";
 import CobroDeServicios from "../components/CobroDeServicios/cobroDeServicios.vue";
 import TuCVU from "../components/Inicio/CVU.vue";
@@ -38,7 +37,6 @@ const routes = [
     name: "AdministracionDeTarjetas",
     component: AdministracionDeTarjetas,
   },
-  { path: "/inversiones", name: "Inversiones", component: Inversiones },
   {
     path: "/ingresar-dinero",
     name: "IngresarDinero",
