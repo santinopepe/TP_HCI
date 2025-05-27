@@ -35,7 +35,7 @@ class PaymentApi {
     static async get(id, controller) {
         return await Api.get(PaymentApi.getUrl(id), true, controller);
     }
-
+    
     static async pull(payment, controller) {
     return await Api.post(PaymentApi.getUrl("pull"), true, payment, controller);
     }
