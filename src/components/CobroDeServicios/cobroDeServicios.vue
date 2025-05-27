@@ -174,10 +174,31 @@
             >
               Copiar UUID
             </button>
-          </div>    
+          </div> 
+          <div
+      v-if="toastMessage"
+      class="absolute bottom-4 right-4 py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out animate-fade-in"
+      :class="{
+        'bg-[#5D8C39] text-white': toastType === 'success',
+        'bg-red-600 text-white': toastType === 'error'
+      }"
+    >
+      {{ toastMessage }}
+    </div>   
         </div>
       </div>
     </main>
+
+<div
+  v-if="toastMessage"
+  class="fixed bottom-4 right-4 py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out animate-fade-in"
+  :class="{
+    'bg-[#5D8C39] text-white': toastType === 'success',
+    'bg-red-600 text-white': toastType === 'error'
+  }"
+>
+  {{ toastMessage }}
+</div>
   </div>
 </template>
 
@@ -203,7 +224,7 @@ export default defineComponent({
 
     onMounted(async () => {
       try {
-        await cobrosStore.fetchPagos();
+        await cobrosStore.fetchCobros();
       } catch (e) {
         console.error("Error al cargar pagos en onMounted:", e);
       }
@@ -234,7 +255,7 @@ export default defineComponent({
 
       try {
         await cobrosStore.pull(apiPayload);
-        await cobrosStore.fetchPagos();
+        await cobrosStore.fetchCobros();
         showAddLinkModal.value = false;
       } catch (error) {
         console.error('Error al crear link de pago desde el dashboard:', error);
@@ -312,17 +333,24 @@ export default defineComponent({
       return `${uuid.substring(0, 8)}...${uuid.substring(uuid.length - 4)}`;
     }
 
-  async function copyUuidToClipboard() {
-  const toast = useToast();
-  try {
-    await navigator.clipboard.writeText(currentUuid.value); 
-    toast.success("UUID copiado al portapapeles!");
-    showUuidModal.value = false; 
-  } catch (err) {
-    toast.error("Error al copiar el UUID.");
-    console.error("Error al copiar UUID:", err);
-  }
-}
+    async function copyUuidToClipboard() {
+      try {
+        await navigator.clipboard.writeText(this.currentUuid);
+        this.toastMessage = "¡UUID copiado al portapapeles!";
+        this.toastType = "success";
+        this.showUuidModal = false; 
+      } catch (err) {
+        console.error("Error al copiar UUID:", err);
+        this.toastMessage = "Error al copiar el UUID.";
+        this.toastType = "error";
+        this.showUuidModal = false; 
+      } finally {
+        setTimeout(() => {
+          this.toastMessage = "";
+          this.toastType = "";
+        }, 1000);
+      }
+    }
 
     return {
       activeButton,
