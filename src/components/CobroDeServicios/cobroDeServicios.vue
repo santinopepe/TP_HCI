@@ -174,32 +174,21 @@
             >
               Copiar UUID
             </button>
-          </div> 
-          <div
+          </div>   
+        </div>
+      </div>
+    </main>
+  </div>
+   <div
       v-if="toastMessage"
-      class="absolute bottom-4 right-4 py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out animate-fade-in"
+      class="fixed bottom-4 right-4 py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out animate-fade-in"
       :class="{
         'bg-[#5D8C39] text-white': toastType === 'success',
         'bg-red-600 text-white': toastType === 'error'
       }"
     >
       {{ toastMessage }}
-    </div>   
-        </div>
-      </div>
-    </main>
-
-<div
-  v-if="toastMessage"
-  class="fixed bottom-4 right-4 py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out animate-fade-in"
-  :class="{
-    'bg-[#5D8C39] text-white': toastType === 'success',
-    'bg-red-600 text-white': toastType === 'error'
-  }"
->
-  {{ toastMessage }}
-</div>
-  </div>
+    </div>
 </template>
 
 <script>
@@ -222,6 +211,8 @@ export default defineComponent({
     const showUuidModal = ref(false); 
     const currentUuid = ref(''); 
 
+    const toastMessage = ref('');
+    const toastType = ref('');
     onMounted(async () => {
       try {
         await cobrosStore.fetchCobros();
@@ -335,19 +326,19 @@ export default defineComponent({
 
     async function copyUuidToClipboard() {
       try {
-        await navigator.clipboard.writeText(this.currentUuid);
-        this.toastMessage = "¡UUID copiado al portapapeles!";
-        this.toastType = "success";
-        this.showUuidModal = false; 
+        await navigator.clipboard.writeText(currentUuid.value); 
+        toastMessage.value = "¡UUID copiado al portapapeles!"; 
+        toastType.value = "success"; 
+        showUuidModal.value = false; 
       } catch (err) {
         console.error("Error al copiar UUID:", err);
-        this.toastMessage = "Error al copiar el UUID.";
-        this.toastType = "error";
-        this.showUuidModal = false; 
+        toastMessage.value = "Error al copiar el UUID."; 
+        toastType.value = "error"; 
+        showUuidModal.value = false; 
       } finally {
         setTimeout(() => {
-          this.toastMessage = "";
-          this.toastType = "";
+          toastMessage.value = ""; 
+          toastType.value = ""; 
         }, 1000);
       }
     }
@@ -368,7 +359,9 @@ export default defineComponent({
       cobrosStore,
       openUuidModal, 
       truncateUuid, 
-      copyUuidToClipboard, 
+      copyUuidToClipboard,
+      toastMessage, 
+      toastType,   
     };
   },
 });
