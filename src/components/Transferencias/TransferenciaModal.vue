@@ -145,13 +145,9 @@
                   :key="card.id || index"
                   class="absolute w-full transition-all duration-500 ease-in-out"
                   :style="{
-                    transform: `translateX(${
-                      (index - transferenciaStore.selectedCardIndex) * 100
-                    }%)`,
-                    opacity:
-                      index === transferenciaStore.selectedCardIndex ? 1 : 0,
-                    zIndex:
-                      index === transferenciaStore.selectedCardIndex ? 10 : 0,
+                    transform: `translateX(${getCardTranslateX(index)}%)`,
+                    opacity: index === transferenciaStore.selectedCardIndex ? 1 : 0,
+                    zIndex: index === transferenciaStore.selectedCardIndex ? 10 : 0,
                   }"
                 >
                   <div
@@ -521,4 +517,14 @@ const rotateCard = (direction) => {
       (transferenciaStore.selectedCardIndex + 1) % cardsLength;
   }
 };
+function getCardTranslateX(index) {
+  const total = cardStore.cards.length;
+  const current = transferenciaStore.selectedCardIndex;
+  // Distancia directa
+  let diff = index - current;
+  // Ajuste circular para la animación más corta
+  if (diff > total / 2) diff -= total;
+  if (diff < -total / 2) diff += total;
+  return diff * 100;
+}
 </script>
