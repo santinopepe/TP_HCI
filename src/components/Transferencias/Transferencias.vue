@@ -21,7 +21,7 @@
           </label>
           <select
             v-model="identificationType"
-            class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-[#5D8C39]/30 bg-white"
+            class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
           >
             <option value="cvu">CVU</option>
             <option value="alias">Alias</option>
@@ -37,7 +37,7 @@
             v-model="identificationValue"
             type="text"
             :placeholder="getIdentificationPlaceholder"
-            class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-[#5D8C39]/30"
+            class="w-full p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none "
             :class="{ 'border-red-500': identificationError }"
           />
           <p v-if="identificationError" class="mt-1 text-sm text-red-500">
@@ -193,7 +193,7 @@
               v-model="amount"
               type="text"
               placeholder="0,00"
-              class="w-full pl-8 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring focus:ring-[#5D8C39]/30"
+              class="w-full pl-8 p-3 border border-gray-300 rounded-lg shadow-sm focus:outline-none"
               :class="{ 'border-red-500': amountError }"
             />
           </div>
@@ -202,11 +202,10 @@
           </p>
         </div>
 
-        <div class="flex justify-end">
+        <div class="flex justify-center">
           <button
-            @click="showConfirmationModal = true, validateIdentification()"
-            class="bg-[#5D8C39] text-white px-6 py-3 rounded-lg hover:bg-[#5D8C39]/90 disabled:opacity-50 disabled:cursor-not-allowed"
-            :disabled="!isFormValid"
+            @click="validateForm"
+            class="bg-[#5D8C39] text-white px-6 py-3 rounded-lg hover:bg-[#5D8C39]/90"
           >
             Confirmar transferencia
           </button>
@@ -322,8 +321,7 @@ import {
 } from "../store/TarjetasStore.js";
 import { useAccountStore } from "../store/accountStore.js";
 import { useCobrosStore } from "../store/CobrosStore.js";
-
-
+import { AccountApi } from "../../api/account.js";
 
 const router = useRouter();
 const cardStore = useCardStore();
@@ -341,7 +339,6 @@ const amountError = ref("");
 const accountBalance = computed(() => accountStore.account?.balance ?? 0);
 const showConfirmationModal = ref(false);
 const showSuccessModal = ref(false);
-
 
 const getIdentificationLabel = computed(() => {
   const labels = {
@@ -361,35 +358,63 @@ const getIdentificationPlaceholder = computed(() => {
   return placeholders[identificationType.value];
 });
 
-const isFormValid = computed(() => {
-  return (
-    identificationValue.value &&
-    !identificationError.value &&
-    amount.value &&
-    !amountError.value &&
-    (paymentMethod.value === "cuenta" || cardStore.cards.length > 0)
-  );
-});
+// Validar email
+const validateEmail = (email) => {
+  const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return emailRegex.test(email);
+};
 
-const validateIdentification = () => {
+// Validar CVU usando la API
+const validateCVU = async (cvu) => {
+  try {
+    await AccountApi.verifyCVU(cvu);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+// Validar Alias usando la API
+const validateAlias = async (alias) => {
+  try {
+    await AccountApi.verifyAlias(alias);
+    return true;
+  } catch (e) {
+    return false;
+  }
+};
+
+// Validar identificación (CVU, Alias o Email)
+const validateIdentification = async () => {
   if (!identificationValue.value) {
     identificationError.value = "Este campo es requerido";
     return false;
   }
 
   if (identificationType.value === "email") {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(identificationValue.value)) {
+    if (!validateEmail(identificationValue.value)) {
       identificationError.value = "Email inválido";
       return false;
     }
+  } else if (identificationType.value === "cvu") {
+    const isValid = await validateCVU(identificationValue.value);
+    if (!isValid) {
+      identificationError.value = "El CVU no existe";
+      return false;
+    }
+  } else if (identificationType.value === "alias") {
+    const isValid = await validateAlias(identificationValue.value);
+    if (!isValid) {
+      identificationError.value = "El alias no existe";
+      return false;
+    }
   }
-
 
   identificationError.value = "";
   return true;
 };
 
+// Validar monto
 const validateAmount = () => {
   if (!amount.value) {
     amountError.value = "El monto es requerido";
@@ -411,6 +436,16 @@ const validateAmount = () => {
   return true;
 };
 
+// Validar todo el formulario antes de abrir el modal
+const validateForm = async () => {
+  const isIdentificationValid = await validateIdentification();
+  const isAmountValid = validateAmount();
+  if (isIdentificationValid && isAmountValid) {
+    showConfirmationModal.value = true;
+  }
+};
+
+// Manejar la transferencia
 const handleTransfer = async () => {
   const numAmount = parseFloat(amount.value.replace(",", "."));
   const description =
@@ -424,22 +459,28 @@ const handleTransfer = async () => {
     metadata: {},
   };
 
-  let params = `?${identificationType.value}=${encodeURIComponent(identificationValue.value)}`;
+  let params = `?${identificationType.value}=${encodeURIComponent(
+    identificationValue.value
+  )}`;
   if (paymentMethod.value === "tarjeta") {
     const selectedCard = cardStore.cards[selectedCardIndex.value];
     params += `&cardId=${encodeURIComponent(selectedCard.id)}`;
   }
 
-  if (identificationType.value === "cvu") {
-    await cobrosStore.transferByCVU(params, body);
-  } else if (identificationType.value === "alias") {
-    await cobrosStore.transferByAlias(params, body);
-  } else if (identificationType.value === "email") {
-    await cobrosStore.transferByEmail(params, body);
+  try {
+    if (identificationType.value === "cvu") {
+      await cobrosStore.transferByCVU(params, body);
+    } else if (identificationType.value === "alias") {
+      await cobrosStore.transferByAlias(params, body);
+    } else if (identificationType.value === "email") {
+      await cobrosStore.transferByEmail(params, body);
+    }
+    showConfirmationModal.value = false;
+    showSuccessModal.value = true;
+  } catch (e) {
+    identificationError.value = "Error al realizar la transferencia";
+    showConfirmationModal.value = false;
   }
-
-  showConfirmationModal.value = false;
-  showSuccessModal.value = true;
 };
 
 const handleSuccessClose = () => {
@@ -461,7 +502,6 @@ const getCardTranslateX = (index) => {
   const total = cardStore.cards.length;
   const current = selectedCardIndex.value;
   let diff = index - current;
-  // Ajuste circular para la animación más corta
   if (diff > total / 2) diff -= total;
   if (diff < -total / 2) diff += total;
   return diff * 100;
@@ -469,12 +509,12 @@ const getCardTranslateX = (index) => {
 
 const formatAmount = (value) => {
   return new Intl.NumberFormat("es-AR", {
-      style: "currency",
-      currency: "ARS",
-    }).format(value);
+    style: "currency",
+    currency: "ARS",
+  }).format(value);
 };
 
 onMounted(() => {
-  cardStore.getAll && cardStore.getAll(); // Llama a la función que carga las tarjetas
+  cardStore.getAll && cardStore.getAll();
 });
 </script>
