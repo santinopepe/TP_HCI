@@ -108,7 +108,6 @@ export default {
         });
         this.showModal = false;
         this.showSuccessModal = true;
-        // this.successMessage = "¡Contraseña actualizada correctamente!"; // Ya no se usa mensaje, se muestra modal
       } catch (e) {
         this.modalError = e.description || "No se pudo actualizar la contraseña.";
       }

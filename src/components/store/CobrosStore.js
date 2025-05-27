@@ -7,15 +7,12 @@ export const useCobrosStore = defineStore("pagos", () => {
   const loading = ref(false);
   const error = ref(null);
 
-  // Fetch all payments
   async function fetchPagos() {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.getAll();
-      console.log("fetchPagos result:", result); // Debug: Log API response
       pagos.value = Array.isArray(result?.results) ? result.results : [];
-      console.log("pagos after fetchPagos:", pagos.value); // Debug: Log stored payments
     } catch (e) {
       console.error("fetchPagos error:", e);
       error.value = e;
@@ -25,17 +22,14 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Fetch non-transfer payments (excluding those with transferDate)
   async function fetchCobros() {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.getAll();
-      console.log("fetchCobros result:", result); // Debug: Log API response
       pagos.value = Array.isArray(result?.results)
         ? result.results.filter(payment => !payment.metadata?.transferDate)
         : [];
-      console.log("pagos after fetchCobros:", pagos.value); // Debug: Log filtered non-transfers
     } catch (e) {
       console.error("fetchCobros error:", e);
       error.value = e;
@@ -45,21 +39,17 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Fetch transfers (payments with transferDate)
   async function fetchTransfers() {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.getAll();
-      console.log("fetchTransfers result:", result); // Debug: Log API response
       pagos.value = Array.isArray(result?.results)
         ? result.results.filter(payment => {
             const hasTransferDate = !!payment.metadata?.transferDate;
-            console.log("Payment:", payment, "Has transferDate:", hasTransferDate); // Debug: Log each payment
             return hasTransferDate;
           })
         : [];
-      console.log("Filtered transfers in pagos:", pagos.value); // Debug: Log filtered transfers
     } catch (e) {
       console.error("fetchTransfers error:", e);
       error.value = e;
@@ -69,14 +59,13 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Perform a regular payment
+
   async function pay(payment) {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.pay(payment);
-      console.log("pay result:", result); // Debug: Log payment result
-      await fetchPagos(); // Refresh all payments
+      await fetchPagos(); 
       return result;
     } catch (e) {
       console.error("pay error:", e);
@@ -87,14 +76,12 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Update a payment
   async function put(payment) {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.put(payment);
-      console.log("put result:", result); // Debug: Log put result
-      await fetchPagos(); // Refresh all payments
+      await fetchPagos();
       return result;
     } catch (e) {
       console.error("put error:", e);
@@ -105,13 +92,11 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Pull payment
   async function pull(payment) {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.pull(payment);
-      console.log("pull result:", result); // Debug: Log pull result
       return result;
     } catch (e) {
       console.error("pull error:", e);
@@ -122,13 +107,11 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Push payment
   async function push(payment) {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.push(payment);
-      console.log("push result:", result); // Debug: Log push result
       return result;
     } catch (e) {
       console.error("push error:", e);
@@ -139,14 +122,12 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Transfer by CVU
   async function transferByCVU(params, body, controller) {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.transferByCVU(params, body, controller);
-      console.log("transferByCVU result:", result); // Debug: Log transfer result
-      await fetchTransfers(); // Refresh transfers after a new transfer
+      await fetchTransfers(); 
       return result;
     } catch (e) {
       console.error("transferByCVU error:", e);
@@ -157,14 +138,12 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Transfer by Alias
   async function transferByAlias(params, body, controller) {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.transferByAlias(params, body, controller);
-      console.log("transferByAlias result:", result); // Debug: Log transfer result
-      await fetchTransfers(); // Refresh transfers after a new transfer
+      await fetchTransfers(); 
       return result;
     } catch (e) {
       console.error("transferByAlias error:", e);
@@ -175,14 +154,12 @@ export const useCobrosStore = defineStore("pagos", () => {
     }
   }
 
-  // Transfer by Email
   async function transferByEmail(params, body, controller) {
     loading.value = true;
     error.value = null;
     try {
       const result = await PaymentApi.transferByEmail(params, body, controller);
-      console.log("transferByEmail result:", result); // Debug: Log transfer result
-      await fetchTransfers(); // Refresh transfers after a new transfer
+      await fetchTransfers(); 
       return result;
     } catch (e) {
       console.error("transferByEmail error:", e);

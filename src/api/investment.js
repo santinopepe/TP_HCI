@@ -5,28 +5,23 @@ class InvestmentApi {
         return `${Api.baseUrl}/investment${slug ? `/${slug}` : ""}`;
     }
 
-    // GET /api/investment/daily-rate
     static async getDailyRate(controller) {
         return await Api.get(`${Api.baseUrl}/investment/daily-rate`, true, controller);
     }
 
     static async invest(data, controller) {
-        // Envía amount como query param, body null
         const url = InvestmentApi.getUrl(`invest?amount=${data.amount}`);
         return await Api.post(url, true, data, controller);
     }
 
-    // POST /api/investment/divest
     static async divest(data, controller) {
         return await Api.post(InvestmentApi.getUrl("divest"), true, data, controller);
     }
 
-    // GET /api/investment/daily-returns
     static async getDailyReturns(controller) {
         return await Api.get(InvestmentApi.getUrl("daily-returns"), true, controller);
     }
 
-    // (Opcional) Otros métodos generales
     static async getAll(controller) {
         return await Api.get(InvestmentApi.getUrl(), true, controller);
     }

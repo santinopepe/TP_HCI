@@ -4,7 +4,6 @@ export { UserApi, Credentials, User };
 
 class UserApi {
   static getUrl(slug) {
-    // Si hay slug, lo agrega, si no, solo /user
     return `${Api.baseUrl}/user${slug ? `/${slug}` : ""}`;
   }
 
@@ -34,7 +33,6 @@ class UserApi {
     });
     const data = await response.json();
     if (!response.ok) {
-      // Lanza el error con el mismo formato que espera tu catch
       const error = new Error(data.message || "Error");
       error.response = { data };
       throw error;
@@ -42,7 +40,6 @@ class UserApi {
     return data;
   }
   static async verify({ email, code }, controller) {
-    // El código va en la query, el email en el body
     const url = UserApi.getUrl(`verify?code=${encodeURIComponent(code)}`);
     return await Api.post(url, false, { email }, controller);
   }

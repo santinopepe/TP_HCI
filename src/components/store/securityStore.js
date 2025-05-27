@@ -1,6 +1,6 @@
 import { ref, computed } from "vue"
 import { defineStore } from "pinia";
-import { UserApi } from "../../api/user.js";
+import { UserApi, Credentials, User } from "../../api/user.js";
 import { Api } from "../../api/api.js";
 
 const SECURITY_TOKEN_KEY = "security-token";
@@ -38,6 +38,22 @@ export const useSecurityStore = defineStore("security", () => {
         setUser(null);
     }
 
+    function putCredentials(email, password ) {
+        return new Credentials(email, password);
+    }
+
+    function createUser(firstName, lastName, birthDate, email, password, dni, phone) {
+        return new User(firstName, lastName, birthDate, email, password, {dni: dni, phone: phone});
+    }
+
+    async function verify( email, code ) {
+        const response = await UserApi.verify({ email, code });
+        if (response.error) {
+            throw new Error(response.error);
+        }
+        return response;
+    }
+
     async function login(credentials, rememberMe) {
         const result = await UserApi.login(credentials);
         updateToken(result.token, rememberMe);
@@ -59,12 +75,10 @@ export const useSecurityStore = defineStore("security", () => {
     }
 
     async function register(user) {
-    // user es una instancia de User
     return await UserApi.register(user);
     }
 
     async function resetPassword(emailOrDni) {
-        // Puedes adaptar esto si tu backend acepta DNI o solo email
         return await UserApi.resetPassword(emailOrDni);
     }
 
@@ -72,5 +86,5 @@ export const useSecurityStore = defineStore("security", () => {
         return await UserApi.changePassword({ code, password });
     }
 
-    return { user, isLoggedIn, initialize, login, logout, getCurrentUser, register, resetPassword, changePassword };
+    return { user, isLoggedIn, initialize, login, logout, getCurrentUser, register, resetPassword, changePassword, putCredentials, createUser, verify };
 });

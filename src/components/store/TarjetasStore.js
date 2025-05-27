@@ -9,7 +9,6 @@ const useCardStore = defineStore("card", () => {
 
     async function add(card) {
         const result = await CardApi.add(card)
-        console.log("Tarjeta agregada:", result);
         const newCard = Object.assign(new Card(), result);
         cards.value.push(newCard);
         return newCard;

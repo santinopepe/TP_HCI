@@ -61,7 +61,6 @@ const confirmAndProceed = async () => {
     try {
         const success = await linkDePagoStore.confirmPayment();
         if (success) {
-            console.log("ConfirmacionPago.vue: Pago exitoso, emitiendo 'confirm' al padre.");
             emit("confirm");
         } else {
             console.error("ConfirmacionPago.vue: Error al confirmar el pago en el store.");

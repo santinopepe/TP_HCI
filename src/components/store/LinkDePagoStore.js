@@ -1,4 +1,3 @@
-// LinkDePagoStore.js
 import { defineStore } from "pinia";
 import { ref, computed } from "vue";
 import { useCobrosStore } from "./CobrosStore";
@@ -132,12 +131,9 @@ export const useLinkDePagoStore = defineStore("linkDePago", () => {
           : {}),
       };
   
-      console.log("Payment data sent to API:", paymentData);
     
       const result = await cobrosStore.put(paymentData);
-      
-      console.log("Resultado de cobrosStore.put:", result); // <-- Agrega esto
-      console.log("¿cobrosStore.put fue exitoso?", !!result); // <-- Agrega esto
+
 
       if (result) {
         if (metodo.value === "cuenta") {

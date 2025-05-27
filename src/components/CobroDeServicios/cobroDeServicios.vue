@@ -234,16 +234,11 @@ export default defineComponent({
     const sortDirection = ref('asc');
 
     const handleAddLink = async (formData) => {
-      console.log('Datos del formulario recibidos (raw):', formData);
-
       const apiPayload = {
         description: formData.description || formData.title,
         amount: parseFloat(formData.price),
         metadata: {},
       };
-
-      console.log('Datos del formulario adaptados para la API:', apiPayload);
-
       try {
         await cobrosStore.pull(apiPayload);
         await cobrosStore.fetchCobros();

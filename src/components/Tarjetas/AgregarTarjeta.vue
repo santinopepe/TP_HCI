@@ -171,28 +171,27 @@ const errors = ref({
 const emit = defineEmits(["add-card", "cancel"]);
 
 const formatExpiry = (event) => {
-  let value = event.target.value.replace(/\D/g, ""); // Eliminar caracteres no numéricos
+  let value = event.target.value.replace(/\D/g, "");
   if (value.length > 2) {
-    value = value.slice(0, 2) + "/" + value.slice(2, 4); // Insertar la barra después de los primeros 2 dígitos para MM/AA
+    value = value.slice(0, 2) + "/" + value.slice(2, 4);
   }
   newCard.value.expiry = value;
 };
 
 const formatCvv = (event) => {
-  let value = event.target.value.replace(/\D/g, ''); // Eliminar caracteres no numéricos
-  newCard.value.cvv = value.slice(0, 3); // Limitar a 3 dígitos
+  let value = event.target.value.replace(/\D/g, '');
+  newCard.value.cvv = value.slice(0, 3);
 };
 
 const formatCardNumber = (event) => {
-  let value = event.target.value.replace(/\D/g, ""); // Remove non-numeric characters
-  value = value.replace(/(.{4})/g, "$1 ").trim(); // Add space every 4 digits
-  newCard.value.number = value; // Update the card number
+  let value = event.target.value.replace(/\D/g, ""); 
+  value = value.replace(/(.{4})/g, "$1 ").trim(); 
+  newCard.value.number = value; 
 };
 
 const validateForm = () => {
   let isValid = true;
 
-  // Validar número de tarjeta
   if (!newCard.value.number.trim()) {
     errors.value.number = "El número de tarjeta no puede estar vacío.";
     isValid = false;
@@ -200,7 +199,6 @@ const validateForm = () => {
     errors.value.number = "";
   }
 
-  // Validar nombre en la tarjeta
   if (!newCard.value.name.trim()) {
     errors.value.name = "El nombre en la tarjeta no puede estar vacío.";
     isValid = false;
@@ -208,7 +206,6 @@ const validateForm = () => {
     errors.value.name = "";
   }
 
-  // Validar fecha de vencimiento
   if (!/^\d{2}\/\d{2}$/.test(newCard.value.expiry)) {
     errors.value.expiry =
       "La fecha de vencimiento debe tener el formato MM/AA.";
@@ -217,7 +214,6 @@ const validateForm = () => {
     errors.value.expiry = "";
   }
 
-  // Validar tipo de tarjeta
   if (!newCard.value.type) {
     errors.value.type = "Selecciona el tipo de tarjeta.";
     isValid = false;
@@ -225,7 +221,6 @@ const validateForm = () => {
     errors.value.type = "";
   }
 
-  // Validar CVV
   if (!newCard.value.cvv.trim()) {
     errors.value.cvv = "El CVV no puede estar vacío.";
     isValid = false;
@@ -239,7 +234,7 @@ const validateForm = () => {
   return isValid;
 };
 const getCardType = (cardNumber) => {
-  const sanitizedCardNumber = cardNumber.replace(/\s+/g, ""); // Remove spaces
+  const sanitizedCardNumber = cardNumber.replace(/\s+/g, "");
   if (/^4[0-9]{12}(?:[0-9]{3})?$/.test(sanitizedCardNumber)) {
     return "Visa";
   } else if (

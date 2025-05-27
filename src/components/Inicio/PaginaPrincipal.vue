@@ -59,10 +59,8 @@
 
         <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
           <div class="w-full md:col-span-2 overflow-hidden">
-            <!-- Placeholder for saldo and buttons (already included above) -->
           </div>
 
-          <!-- Transferencias en la última semana -->
           <div
             class="bg-white p-6 rounded-lg shadow-md flex flex-col col-span-1 overflow-hidden mt-6 md:mt-0 w-auto md:-ml-16 md:w-[calc(100%+27rem)]"
           >
@@ -204,7 +202,6 @@
         v-else-if="currentStep === 4"
         @make-another-payment="restartPaymentFlow"
         @return-to-home="closePaymentFlow"
-        @share-receipt="shareReceipt"
         @click.stop=""
       />
     </div>
@@ -255,7 +252,7 @@ export default defineComponent({
     const showCvuPopup = ref(false);
     const showIngresarDineroModal = ref(false);
     const isSaldoVisible = ref(true);
-    let chartInstance = null; // Store Chart.js instance
+    let chartInstance = null; 
 
     function toggleSaldoVisibility() {
       isSaldoVisible.value = !isSaldoVisible.value;
@@ -290,16 +287,13 @@ export default defineComponent({
           month: "2-digit",
         });
 
-        // Filter only outgoing transfers (where userId is payer.id)
         const transfersForDay = cobrosStore.pagos.filter((payment) => {
           if (!payment.metadata?.transferDate || !userId.value) return false;
           const transferDate = new Date(payment.metadata.transferDate);
           transferDate.setHours(0, 0, 0, 0);
           const isSameDay = transferDate.getTime() === date.getTime();
           const isOutgoing = payment.payer?.id === userId.value;
-          console.log(
-            `Payment ID: ${payment.id}, Date: ${payment.metadata.transferDate}, Is Same Day: ${isSameDay}, Is Outgoing: ${isOutgoing}`
-          ); // Debug: Log filtering
+        
           return isSameDay && isOutgoing;
         });
 
@@ -314,7 +308,6 @@ export default defineComponent({
           amount: totalAmount,
         });
       }
-      console.log("lastSevenDaysData:", days); // Debug: Log computed data
       return days;
     });
 
@@ -329,7 +322,6 @@ export default defineComponent({
           date: tx.metadata.transferDate,
           tipo: userId.value === tx.payer?.id ? "saliente" : "entrante",
         }));
-      console.log("ultimasTransferencias:", transfers); // Debug: Log transfers
       return transfers;
     });
 
@@ -384,20 +376,16 @@ export default defineComponent({
           },
         },
       });
-      console.log("Chart initialized/updated"); // Debug: Confirm chart creation
     };
 
     onMounted(() => {
       accountStore.getCurrentAccount();
       cobrosStore.fetchTransfers().then(() => {
-        console.log("fetchTransfers completed on mount"); // Debug: Confirm fetch
-        updateChart(); // Initialize chart after data fetch
+        updateChart(); 
       });
     });
 
-    // Watch for changes in lastSevenDaysData to update the chart
     watch(lastSevenDaysData, () => {
-      console.log("lastSevenDaysData changed, updating chart"); // Debug: Confirm reactivity
       updateChart();
     });
 
@@ -412,18 +400,7 @@ export default defineComponent({
 
 
       accountStore.getCurrentAccount();
-      paginaPrincipalStore.addTransaction({
-        id: Date.now(),
-        name: linkDePagoStore.serviceName,
-        type: "Pago de Servicio",
-        icon: "/images/payment_icon.png",
-        date: new Date().toLocaleDateString("es-AR", {
-          day: "2-digit",
-          month: "short",
-          year: "numeric",
-        }),
-        amount: -linkDePagoStore.total,
-      });
+
     };
 
     const restartPaymentFlow = () => {
@@ -438,10 +415,7 @@ export default defineComponent({
       accountStore.getCurrentAccount();
     };
 
-    const shareReceipt = () => {
-      alert("Función de compartir comprobante no implementada aún.");
-    };
-
+   
 
     return {
       activeButton,
@@ -452,7 +426,6 @@ export default defineComponent({
       handlePaymentConfirmation,
       restartPaymentFlow,
       closePaymentFlow,
-      shareReceipt,
       openPaymentFlow,
       showCvuPopup,
       showIngresarDineroModal,

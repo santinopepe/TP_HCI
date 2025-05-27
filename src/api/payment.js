@@ -5,7 +5,6 @@ class PaymentApi {
         return `${Api.baseUrl}/payment${slug ? `/${slug}` : ""}`;
     }
 
-    // Realizar un pago
     static async pay({ cardId, cvu, ...body }, controller) {
         const url = `${PaymentApi.getUrl()}?cardId=${encodeURIComponent(cardId)}&cvu=${encodeURIComponent(cvu)}`;
         return await Api.post(url, true, body, controller);
@@ -19,7 +18,7 @@ class PaymentApi {
         }
         const url = `${PaymentApi.getUrl("push")}${query}`;
         try {
-            return await Api.put(url, true, payment, controller); // Include payment in body
+            return await Api.put(url, true, payment, controller);
         } catch (error) {
             console.error("Error in PaymentApi.put:", error.response?.data || error.message);
             throw error;
@@ -44,7 +43,6 @@ class PaymentApi {
 
     static async transferByEmail(params, body, controller) {
         const url = `${PaymentApi.getUrl("transfer-email")}${params}`;
-        // Add date to metadata
         const updatedBody = {
             ...body,
             metadata: {
@@ -57,7 +55,6 @@ class PaymentApi {
 
     static async transferByCVU(params, body, controller) {
         const url = `${PaymentApi.getUrl("transfer-cvu")}${params}`;
-        // Add date to metadata
         const updatedBody = {
             ...body,
             metadata: {
@@ -70,7 +67,6 @@ class PaymentApi {
 
     static async transferByAlias(params, body, controller) {
         const url = `${PaymentApi.getUrl("transfer-alias")}${params}`;
-        // Add date to metadata
         const updatedBody = {
             ...body,
             metadata: {
@@ -82,7 +78,6 @@ class PaymentApi {
     }
 }
 
-// Clase para representar un pago
 class Payment {
     constructor({ id, description, amount, pending, uuid, method, payer, receiver, card, metadata }) {
         if (id) {
@@ -92,11 +87,11 @@ class Payment {
         this.amount = amount;
         this.pending = pending;
         this.uuid = uuid;
-        this.method = method; // "ACCOUNT" o "CARD"
-        this.payer = payer; // { id, firstName, lastName }
-        this.receiver = receiver; // { id, firstName, lastName }
-        this.card = card; // { id, number }
-        this.metadata = metadata || { transferDate: new Date().toISOString() }; // Default date if metadata is empty
+        this.method = method;
+        this.payer = payer;
+        this.receiver = receiver;
+        this.card = card;
+        this.metadata = metadata || { transferDate: new Date().toISOString() }; 
     }
 }
 

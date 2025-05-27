@@ -2,12 +2,9 @@
   <div
     class="flex justify-center items-center h-screen bg-[#d3e4cd] bg-[url('/images/fondo.png')] bg-cover bg-center bg-no-repeat"
   >
-    <!-- Contenedor principal -->
     <div class="w-full max-w-3xl p-4 box-border">
-      <!-- Card que contiene todo -->
       <div class="bg-white rounded-2xl shadow-md overflow-hidden">
         <div class="flex flex-col md:flex-row">
-          <!-- Sección izquierda con logo y texto -->
           <div
             class="flex-1 p-8 bg-gray-100 flex flex-col justify-center items-center text-center text-black"
           >
@@ -20,7 +17,6 @@
             <p class="text-lg text-gray-600 mb-8">
               Tu dinero, tu ritmo. Pagá fácil, viví sin límites.
             </p>
-            <!-- Iconos de redes sociales -->
             <div class="flex gap-4">
               <a href="#" class="text-[#2e4b3f] text-2xl hover:text-[#3a5c4b]">
                 <i class="fab fa-facebook fa-lg"></i>
@@ -34,13 +30,11 @@
             </div>
           </div>
 
-          <!-- Sección derecha con el formulario -->
           <div class="flex-1 p-8 flex flex-col justify-center">
             <h2 class="text-3xl text-[#2e4b3f] mb-6 text-center">
               Inicio de Sesión
             </h2>
             <form @submit.prevent="handleSubmit">
-              <!-- Campo Email -->
               <div class="mb-6 text-left">
                 <label for="email" class="block mb-2 text-sm text-gray-800"
                   >Email o DNI</label
@@ -58,7 +52,6 @@
                 </p>
               </div>
 
-              <!-- Campo Contraseña -->
               <div class="mb-6 text-left">
                 <label for="password" class="block mb-2 text-sm text-gray-800"
                   >Contraseña</label
@@ -94,12 +87,10 @@
                 </button>
               </div>
 
-              <!-- Mensaje de error arriba del botón de inicio -->
               <p v-if="loginError" class="text-red-500 text-center mb-4">
                 {{ loginError }}
               </p>
 
-              <!-- Botón de Inicio -->
               <button
                 type="submit"
                 class="w-full p-3 bg-[#5D8C39] text-white border-none rounded-md text-base cursor-pointer hover:bg-[#5D8C39]/80"
@@ -108,7 +99,6 @@
               </button>
             </form>
 
-            <!-- Enlace de Registro -->
             <p class="mt-4 text-sm text-gray-600 text-center">
               ¿Aún no tienes cuenta?
               <router-link
@@ -133,7 +123,6 @@
 </template>
 
 <script>
-import { Credentials } from "../../api/user.js";
 import { useSecurityStore } from "../store/securityStore.js";
 
 export default {
@@ -155,14 +144,12 @@ export default {
       this.showPassword = !this.showPassword;
     },
     async handleSubmit() {
-      // Reset errors
       this.errors = {
         email: "",
         password: "",
       };
       this.loginError = "";
 
-      // Validate fields
       let valid = true;
       if (!this.email) {
         this.errors.email = "El correo o DNI es obligatorio.";
@@ -176,7 +163,11 @@ export default {
       if (!valid) return;
 
       try {
-        const credentials = new Credentials(this.email, this.password);
+        const credentials = useSecurityStore().putCredentials(
+          this.email,
+          this.password
+        );
+
         const security = useSecurityStore();
         await security.login(credentials, true);
         await security.getCurrentUser();

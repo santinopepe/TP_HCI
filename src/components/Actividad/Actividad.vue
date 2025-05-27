@@ -41,7 +41,6 @@
       </div>
 
       <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Últimas Transacciones -->
         <div
           class="lg:col-span-2 bg-white p-4 rounded-lg shadow-lg overflow-x-auto h-full"
         >
@@ -94,7 +93,6 @@
           </table>
         </div>
 
-        <!-- Gráfico de Distribución -->
         <div class="bg-white p-4 rounded-lg shadow-lg flex flex-col h-full">
           <div class="relative h-full w-full">
             <Pie :data="chartData" :options="chartOptions" />
@@ -103,7 +101,6 @@
       </div>
     </main>
 
-    <!-- Modal de Detalle de Transacción -->
     <div
       v-if="showDetalle"
       class="fixed inset-0 bg-black bg-opacity-40 flex items-center justify-center z-50"
@@ -122,7 +119,6 @@
           <p><strong>CBU/CVU:</strong> {{ detalleSeleccionado.cvu || '-' }}</p>
           <p><strong>ID de transacción:</strong> {{ detalleSeleccionado.id }}</p>
           <p><strong>UUID:</strong> {{ detalleSeleccionado.uuid }}</p>
-          <!-- Agrega aquí más campos si tu objeto payment los tiene -->
         </div>
       </div>
     </div>
@@ -154,11 +150,9 @@ export default defineComponent({
     const userId = computed(() => accountStore.account?.id);
     
 
-    // Estado y función para el detalle de la transacción
     const showDetalle = ref(false);
     const detalleSeleccionado = ref(null);
 
-    // Traer el saldo principal desde el store de cuenta
     const mainAccountBalance = computed(() => {
       if (!accountStore.account || typeof accountStore.account.balance === "undefined") {
         return 0;
@@ -169,9 +163,7 @@ export default defineComponent({
    const gastosPorDestinatario = computed(() => {
       const map = {};
       cobrosStore.pagos.forEach(pago => {
-        // Solo egresos: el usuario es el payer
         if (pago.payer?.id === userId.value) {
-          // Usar el nombre completo del destinatario (receiver)
           const destinatario = ((pago.receiver?.firstName || "") + " " + (pago.receiver?.lastName || "")).trim() || "Desconocido";
           if (!map[destinatario]) map[destinatario] = 0;
           if (typeof pago.amount === "number") map[destinatario] += pago.amount;
@@ -184,7 +176,6 @@ export default defineComponent({
       const palette = [
         "#5D8C39", "#CBFBA6", "#243219", "#A3E635", "#84CC16", "#FACC15", "#F87171", "#60A5FA", "#A78BFA", "#F472B6"
       ];
-      // Si hay más destinatarios que colores, repetir la paleta
       return Array.from({length: count}, (_, i) => palette[i % palette.length]);
     }
 
@@ -203,7 +194,6 @@ export default defineComponent({
       };
     });
 
-    // Cargar la cuenta y los pagos al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
       cobrosStore.fetchPagos();
@@ -270,7 +260,6 @@ export default defineComponent({
 
     const expenses = computed(() => {
       return cobrosStore.pagos.reduce((total, pago) => {
-        // Solo suma si el usuario es el payer (envió el pago)
         if (pago.payer?.id === userId.value && typeof pago.amount === "number") {
           return total + pago.amount;
         }

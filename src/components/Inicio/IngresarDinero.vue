@@ -4,7 +4,6 @@
     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
   >
     <div class="bg-white rounded-2xl shadow-lg w-full max-w-2xl relative">
-      <!-- Botón cerrar -->
       <button
         class="absolute top-2 right-4 text-gray-400 hover:text-gray-700 text-2xl z-10"
         @click="$emit('close')"
@@ -13,7 +12,6 @@
         ×
       </button>
 
-      <!-- Contenido principal -->
       <div class="grid grid-cols-1 gap-6">
         <div class="text-center mt-12">
           <h2 class="text-2xl font-bold text-gray-800">Ingresar Dinero</h2>
@@ -23,10 +21,8 @@
           </p>
         </div>
 
-        <!-- Bloque con Alias, CVU y campo de ingreso -->
         <div class="bg-white p-6 rounded-b-2xl">
           <div class="flex flex-col gap-4">
-            <!-- Alias -->
             <div class="flex justify-between items-center border-b pb-2">
               <div class="flex flex-col">
                 <span class="text-gray-500 text-sm">Tu alias</span>
@@ -35,7 +31,6 @@
                 }}</span>
               </div>
             </div>
-            <!-- CVU -->
             <div class="flex justify-between items-center border-b pb-2">
               <div class="flex flex-col">
                 <span class="text-gray-500 text-sm">Tu CVU</span>
@@ -50,7 +45,6 @@
                 <img src="/images/share.png" alt="Compartir" class="w-5 h-5" />
                 Compartir datos
             </button>
-            <!-- Campo para ingresar monto -->
             <div class="flex flex-col">
               <label for="depositAmount" class="text-gray-500 text-sm"
                 >Monto a ingresar</label
@@ -82,7 +76,6 @@
         </div>
       </div>
     </div>
-    <!-- Pop-up de éxito -->
     <div
       v-if="showSuccessPopup"
       class="fixed inset-0 flex items-center justify-center z-60"
@@ -133,24 +126,19 @@ export default {
   setup(props, { emit }) {
     const accountStore = useAccountStore();
 
-    // Computed para alias y cvu desde el store
     const alias = computed(() => accountStore.account?.alias || "");
     const cvu = computed(() => accountStore.account?.cvu || "");
 
-    // Estado para el monto a ingresar
     const depositAmount = ref("");
     const showSuccessPopup = ref(false);
     const showAmountError = ref(false);
 
-    // Cargar cuenta al montar
     onMounted(() => {
       accountStore.getCurrentAccount();
     });
 
     function onAmountInput(e) {
-      // Permitir solo números y un punto decimal
       let value = e.target.value.replace(/[^0-9.]/g, "");
-      // Solo un punto decimal permitido
       const parts = value.split(".");
       if (parts.length > 2) {
         value = parts[0] + "." + parts.slice(1).join("");
@@ -165,15 +153,10 @@ export default {
         return;
       }
       showAmountError.value = false;
-
-      try {
-        await accountStore.deposit(amount);
-        await accountStore.getCurrentAccount();
-        showSuccessPopup.value = true;
-        depositAmount.value = "";
-      } catch (e) {
-        alert(`Error al ingresar dinero: ${e.message || e.description || "Intente nuevamente."}`);
-      }
+      await accountStore.deposit(amount);
+      await accountStore.getCurrentAccount();
+      showSuccessPopup.value = true;
+      depositAmount.value = "";
     }
 
     function closeSuccessPopup() {

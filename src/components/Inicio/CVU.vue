@@ -1,7 +1,6 @@
 <template>
   <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
     <div class="bg-white rounded-2xl shadow-lg p-8 w-full max-w-lg relative">
-      <!-- Botón cerrar -->
       <button
         class="absolute top-4 right-4 text-gray-400 hover:text-gray-700 text-2xl"
         @click="$emit('close')"
@@ -12,7 +11,6 @@
         Copia tu cvu o alias para ingresar o transferir dinero desde otra cuenta.
       </p>
 
-      <!-- Mensaje de copiado -->
       <transition
         enter-active-class="transition-opacity duration-300"
         leave-active-class="transition-opacity duration-300"
@@ -27,7 +25,6 @@
         </div>
       </transition>
 
-      <!-- CVU Card -->
       <div class="bg-white rounded-xl shadow-sm p-6 mb-4 flex items-center justify-between border">
         <div>
           <div class="text-2xl font-semibold text-simsim-green-dark">CVU</div>
@@ -41,7 +38,6 @@
         </button>
       </div>
 
-      <!-- Alias Card -->
       <div class="bg-white rounded-xl shadow-sm p-6 mb-0 flex items-center justify-between border">
         <div>
           <div class="text-2xl font-semibold text-simsim-green-dark">Alias</div>

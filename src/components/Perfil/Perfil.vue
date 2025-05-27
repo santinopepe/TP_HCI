@@ -60,7 +60,6 @@
         </div>
       </div>
 
-      <!-- Password Update Modal (unificado, sin paso intermedio) -->
       <PasswordUpdateModal
         v-if="showFormModal"
         :code="code"
@@ -74,7 +73,6 @@
         @cancel="cancel"
       />
 
-      <!-- Success Modal -->
       <SuccessModal v-if="showSuccessModal" @close="closeSuccessModal" />
     </main>
   </div>
@@ -125,7 +123,6 @@ export default defineComponent({
       cvu: "",
     });
 
-    // Cargar datos al montar el componente usando securityStore
     onMounted(async () => {
       try {
         const user = await securityStore.getCurrentUser();

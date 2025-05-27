@@ -251,7 +251,7 @@ const viewCardDetails = (card) => {
 
 const closeCardDetailModal = () => {
   showCardDetailModal.value = false;
-  selectedCard.value = null; // Limpiar la tarjeta seleccionada al cerrar el modal
+  selectedCard.value = null; 
 };
 
 const requestRemoveCard = (cardId) => {
@@ -281,7 +281,6 @@ const cancelRemoveCard = () => {
 </script>
 
 <style scoped>
-/* Puedes añadir tus estilos aquí si es necesario */
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

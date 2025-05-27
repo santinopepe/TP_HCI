@@ -15,7 +15,6 @@
       </div>
 
       <div class="max-w-md mx-auto">
-        <!-- Selector de tipo de identificador -->
         <div class="mb-6">
           <label class="block text-sm font-medium text-gray-700 mb-2">
             Tipo de identificador
@@ -30,7 +29,6 @@
           </select>
         </div>
 
-        <!-- Campo de entrada según el tipo seleccionado -->
         <div class="mb-6">
           <label class="block text-sm font-medium text-gray-700 mb-2">
             {{ getIdentificationLabel }}
@@ -47,7 +45,6 @@
           </p>
         </div>
 
-        <!-- Selector de método de pago -->
         <div class="mb-4">
           <p class="text-sm font-medium mb-2">Seleccionar método de pago</p>
           <div class="flex gap-4">
@@ -99,7 +96,6 @@
           </div>
         </div>
 
-        <!-- Selector de tarjeta -->
         <div v-if="paymentMethod === 'tarjeta'" class="mb-6">
           <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
           <div
@@ -176,7 +172,6 @@
           </div>
         </div>
 
-        <!-- Información de cuenta -->
         <div v-if="paymentMethod === 'cuenta'" class="mb-6">
           <div
             class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-4 rounded-xl text-white shadow"
@@ -188,7 +183,6 @@
           </div>
         </div>
 
-        <!-- Campo de monto -->
         <div class="mb-6">
           <label class="block text-sm font-medium text-gray-700 mb-2">
             Monto a transferir
@@ -208,7 +202,6 @@
           </p>
         </div>
 
-        <!-- Botón de confirmar -->
         <div class="flex justify-end">
           <button
             @click="showConfirmationModal = true, validateIdentification()"
@@ -221,7 +214,6 @@
       </div>
     </div>
 
-    <!-- Modal de confirmación -->
     <div
       v-if="showConfirmationModal"
       class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
@@ -271,7 +263,6 @@
       </div>
     </div>
 
-    <!-- Modal de éxito -->
     <div
       v-if="showSuccessModal"
       class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
@@ -329,7 +320,6 @@ import {
   getCardLogo,
   getCardBackground,
 } from "../store/TarjetasStore.js";
-//import { useTransferenciaStore } from "../store/TransferenciasStore.js";
 import { useAccountStore } from "../store/accountStore.js";
 import { useCobrosStore } from "../store/CobrosStore.js";
 
@@ -337,7 +327,6 @@ import { useCobrosStore } from "../store/CobrosStore.js";
 
 const router = useRouter();
 const cardStore = useCardStore();
-//const transferenciaStore = useTransferenciaStore();
 const accountStore = useAccountStore();
 const cobrosStore = useCobrosStore();
 
@@ -395,13 +384,7 @@ const validateIdentification = () => {
       return false;
     }
   }
-/*
-  if (identificationType.value === "cvu") {
-    if (!/^\d{6,22}$/.test(identificationValue.value)) {
-      identificationError.value = "CVU inválido";
-      return false;
-    }
-  }*/
+
 
   identificationError.value = "";
   return true;
@@ -429,41 +412,34 @@ const validateAmount = () => {
 };
 
 const handleTransfer = async () => {
-  try {
-    const numAmount = parseFloat(amount.value.replace(",", "."));
-    const description =
-      paymentMethod.value === "tarjeta"
-        ? "Transferencia con tarjeta"
-        : "Transferencia desde la app";
+  const numAmount = parseFloat(amount.value.replace(",", "."));
+  const description =
+    paymentMethod.value === "tarjeta"
+      ? "Transferencia con tarjeta"
+      : "Transferencia desde la app";
 
-    const body = {
-      description,
-      amount: numAmount,
-      metadata: {},
-    };
+  const body = {
+    description,
+    amount: numAmount,
+    metadata: {},
+  };
 
-    let params = `?${identificationType.value}=${encodeURIComponent(identificationValue.value)}`;
-    if (paymentMethod.value === "tarjeta") {
-      const selectedCard = cardStore.cards[selectedCardIndex.value];
-      params += `&cardId=${encodeURIComponent(selectedCard.id)}`;
-    }
-
-    if (identificationType.value === "cvu") {
-      await cobrosStore.transferByCVU(params, body);
-    } else if (identificationType.value === "alias") {
-      await cobrosStore.transferByAlias(params, body);
-    } else if (identificationType.value === "email") {
-      await cobrosStore.transferByEmail(params, body);
-    }
-
-    showConfirmationModal.value = false;
-    showSuccessModal.value = true;
-  } catch (e) {
-    alert(
-      "Error al realizar la transferencia: " +
-        (e?.response?.data?.message || e?.message || JSON.stringify(e))
-    );
+  let params = `?${identificationType.value}=${encodeURIComponent(identificationValue.value)}`;
+  if (paymentMethod.value === "tarjeta") {
+    const selectedCard = cardStore.cards[selectedCardIndex.value];
+    params += `&cardId=${encodeURIComponent(selectedCard.id)}`;
   }
+
+  if (identificationType.value === "cvu") {
+    await cobrosStore.transferByCVU(params, body);
+  } else if (identificationType.value === "alias") {
+    await cobrosStore.transferByAlias(params, body);
+  } else if (identificationType.value === "email") {
+    await cobrosStore.transferByEmail(params, body);
+  }
+
+  showConfirmationModal.value = false;
+  showSuccessModal.value = true;
 };
 
 const handleSuccessClose = () => {

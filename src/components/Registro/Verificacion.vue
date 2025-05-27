@@ -55,8 +55,7 @@
 </template>
 
 <script>
-import { UserApi } from "../../api/user.js";
-import { ContactsApi, Contact } from "../../api/contacts.js";
+import { useSecurityStore } from "../store/securityStore.js";
 
 export default {
   name: "VerificacionPage",
@@ -76,14 +75,12 @@ export default {
   },
   methods: {
     async verifyCode() {
-      // Reset errors
       this.errors = {
         email: "",
         verificationCode: "",
       };
       this.apiMessage = "";
 
-      // Validate fields
       let valid = true;
       if (!this.email) {
         this.errors.email = "El correo electrónico es obligatorio.";
@@ -95,7 +92,10 @@ export default {
         valid = false;
       }
       try {
-        await UserApi.verify({ email: this.email, code: this.verificationCode });
+        await useSecurityStore().verify(
+          this.email,
+          this.verificationCode
+        );
 
         this.apiMessage = '¡Cuenta verificada correctamente! Ahora puedes iniciar sesión.';
       } catch (e) {

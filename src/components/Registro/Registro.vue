@@ -9,7 +9,6 @@
       <p class="text-gray-600 mb-6">
         Completa los datos para registrarte en SIM SIM.
       </p>
-      <!-- Modal de éxito -->
       <div
         v-if="showSuccessModal"
         class="fixed inset-0 flex items-center justify-center bg-black bg-opacity-40 z-50"
@@ -51,7 +50,6 @@
           </button>
         </div>
       </div>
-      <!-- Mensaje de la API -->
       <p
         v-if="apiMessage && !showSuccessModal"
         class="w-full mb-4 text-center text-base font-semibold text-red-600"
@@ -124,7 +122,6 @@
             </p>
           </div>
         </div>
-        <!-- Contraseña y Confirmar Contraseña en divs separados, cada uno con su propio botón de ojo -->
         <div class="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
             <label for="password" class="block mb-1 text-gray-800 font-medium"
@@ -312,7 +309,6 @@
 </template>
 
 <script>
-import { UserApi, User } from "../../api/user.js";
 import { useSecurityStore } from "../store/securityStore.js";
 
 
@@ -409,14 +405,16 @@ export default {
       try {
         this.apiMessage = "";
 
-        const user = new User(
+        const user = useSecurityStore().createUser(
           this.firstName,
           this.lastName,
           this.birthDate,
           this.email,
           this.password,
-          { dni: this.dni, phone: this.phone }
+          this.dni,
+          this.phone
         );
+
         const security = useSecurityStore();
         await security.register(user);
         this.showSuccessModal = true;

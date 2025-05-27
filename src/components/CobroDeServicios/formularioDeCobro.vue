@@ -93,7 +93,6 @@ export default defineComponent({
     const validateForm = () => {
       let isValid = true;
 
-      // Validar título
       if (!form.value.title.trim()) {
         errors.value.title = "El título no puede estar vacío.";
         isValid = false;
@@ -101,7 +100,6 @@ export default defineComponent({
         errors.value.title = "";
       }
 
-      // Validar descripción (opcional, pero puedes agregar validaciones si es necesario)
       if (form.value.description.length > 200) {
         errors.value.description =
           "La descripción no puede exceder los 200 caracteres.";
@@ -110,9 +108,7 @@ export default defineComponent({
         errors.value.description = "";
       }
 
-      // Validar monto
-      // Aquí es donde el parseFloat(form.value.price) puede ser NaN
-      // Por eso, la validación ahora verifica si el parseo resulta en NaN o si es <= 0
+     
       const parsedPrice = parseFloat(form.value.price);
       if (isNaN(parsedPrice) || parsedPrice <= 0) {
         errors.value.price = "El monto debe ser un número mayor a 0.";
@@ -139,10 +135,8 @@ export default defineComponent({
     const validatePrice = (event) => {
       let value = event.target.value;
 
-      // Permitir solo números y un punto decimal
       value = value.replace(/[^\d.]/g, "");
 
-      // Solo un punto decimal
       const parts = value.split(".");
       if (parts.length > 2) {
         value = parts[0] + "." + parts.slice(1).join("");

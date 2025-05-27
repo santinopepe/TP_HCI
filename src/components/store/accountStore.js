@@ -37,7 +37,7 @@ export const useAccountStore = defineStore("account", () => {
     error.value = null;
     try {
       await AccountApi.updateAlias({ alias: newAlias });
-      // Refresca los datos de la cuenta después de actualizar el alias
+      
       await getCurrentAccount();
     } catch (e) {
       error.value = e;
@@ -55,7 +55,6 @@ export const useAccountStore = defineStore("account", () => {
       if (!numericAmount || numericAmount <= 0) {
         throw new Error("El monto debe ser mayor a 0.");
       }
-      // Llama al endpoint recharge con el monto como número
       await AccountApi.recharge(numericAmount);
       await getCurrentAccount();
       return account.value;
