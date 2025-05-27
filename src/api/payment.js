@@ -35,24 +35,26 @@ class PaymentApi {
     static async get(id, controller) {
         return await Api.get(PaymentApi.getUrl(id), true, controller);
     }
-
+    
     static async pull(payment, controller) {
     return await Api.post(PaymentApi.getUrl("pull"), true, payment, controller);
     }
     static async push(payment, controller) {
     return await Api.put(PaymentApi.getUrl("push"), true, payment, controller);
     }
-    static async transferByEmail(data, controller) {
-    return await Api.post(PaymentApi.getUrl("transfer-email"), true, data, controller);
+    static async transferByEmail(params, body, controller) {
+        const url = `${PaymentApi.getUrl("transfer-email")}${params}`;
+        return await Api.post(url, true, body, controller);
     }
     static async transferByCVU(params, body, controller) {
-    const url = `${PaymentApi.getUrl("transfer-cvu")}${params}`;
-    return await Api.post(url, true, body, controller);
+        const url = `${PaymentApi.getUrl("transfer-cvu")}${params}`;
+        return await Api.post(url, true, body, controller);
     }
-    static async transferByAlias(data, controller) {
-    return await Api.post(PaymentApi.getUrl("transfer-alias"), true, data, controller);
+    static async transferByAlias(params, body, controller) {
+        const url = `${PaymentApi.getUrl("transfer-alias")}${params}`;
+        return await Api.post(url, true, body, controller);
     }
-    
+     
 }
 
 

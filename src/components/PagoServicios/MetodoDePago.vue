@@ -1,4 +1,3 @@
-// MetodoDePago.vue
 <template>
   <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 relative">
     <div
@@ -103,9 +102,7 @@
             :key="card.id || index"
             class="absolute w-full transition-all duration-500 ease-in-out"
             :style="{
-              transform: `translateX(${
-                (index - linkDePagoStore.tarjetaSeleccionada) * 100
-              }%)`,
+              transform: `translateX(${getCardTranslateX(index)}%)`,
               opacity: index === linkDePagoStore.tarjetaSeleccionada ? 1 : 0,
               zIndex: index === linkDePagoStore.tarjetaSeleccionada ? 10 : 0,
             }"
@@ -233,6 +230,7 @@ const formatCurrency = (value) => {
 };
 
 onMounted(async () => {
+  linkDePagoStore.metodo = "tarjeta";
   await cardStore.getAll();
   await linkDePagoStore.fetchAccountBalance(); // Obtener saldo al montar el componente
 });
@@ -247,5 +245,15 @@ const rotateCard = (direction) => {
     linkDePagoStore.tarjetaSeleccionada =
       (linkDePagoStore.tarjetaSeleccionada + 1) % cardsLength;
   }
+};
+
+const getCardTranslateX = (index) => {
+  const total = cardStore.cards.length;
+  const current = linkDePagoStore.tarjetaSeleccionada;
+  let diff = index - current;
+  // Ajuste circular para la animación más corta
+  if (diff > total / 2) diff -= total;
+  if (diff < -total / 2) diff += total;
+  return diff * 100;
 };
 </script>

@@ -101,7 +101,23 @@
 
         <!-- Selector de tarjeta -->
         <div v-if="paymentMethod === 'tarjeta'" class="mb-6">
-          <div class="flex items-center gap-4 relative overflow-hidden">
+          <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
+          <div
+            v-if="cardStore.loading"
+            class="text-center text-blue-600 py-8"
+          >
+            Cargando tarjetas...
+          </div>
+          <div
+            v-else-if="cardStore.cards.length === 0"
+            class="text-center text-gray-500 py-8"
+          >
+            No hay tarjetas disponibles.
+            <p v-if="cardStore.error" class="text-red-500 text-sm mt-2">
+              Error al cargar tarjetas: {{ cardStore.error.message }}
+            </p>
+          </div>
+          <div v-else class="flex items-center gap-4 relative overflow-hidden">
             <button
               @click="rotateCard('anterior')"
               class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-30"
@@ -141,6 +157,7 @@
                   </div>
                   <div class="absolute bottom-4 right-4">
                     <img
+                      v-if="cardStore.getCardLogo"
                       :src="getCardLogo(card.number)"
                       alt="Card Logo"
                       class="h-8 w-12 object-contain"
@@ -312,16 +329,17 @@ import {
   getCardLogo,
   getCardBackground,
 } from "../store/TarjetasStore.js";
-import { useTransferenciaStore } from "../store/TransferenciasStore.js";
+//import { useTransferenciaStore } from "../store/TransferenciasStore.js";
 import { useAccountStore } from "../store/accountStore.js";
-import { PaymentApi } from "../../api/payment.js";
+import { useCobrosStore } from "../store/CobrosStore.js";
 
 
 
 const router = useRouter();
 const cardStore = useCardStore();
-const transferenciaStore = useTransferenciaStore();
+//const transferenciaStore = useTransferenciaStore();
 const accountStore = useAccountStore();
+const cobrosStore = useCobrosStore();
 
 const activeButton = ref("transferir");
 const identificationType = ref("cvu");
@@ -424,22 +442,19 @@ const handleTransfer = async () => {
       metadata: {},
     };
 
-    // Construir los query params según el tipo de identificador
-    let params = "";
-    if (identificationType.value === "cvu") {
-      params = `?cvu=${encodeURIComponent(identificationValue.value)}`;
-    } else if (identificationType.value === "alias") {
-      params = `?alias=${encodeURIComponent(identificationValue.value)}`;
-    } else if (identificationType.value === "email") {
-      params = `?email=${encodeURIComponent(identificationValue.value)}`;
-    }
-
+    let params = `?${identificationType.value}=${encodeURIComponent(identificationValue.value)}`;
     if (paymentMethod.value === "tarjeta") {
       const selectedCard = cardStore.cards[selectedCardIndex.value];
       params += `&cardId=${encodeURIComponent(selectedCard.id)}`;
     }
 
-    await PaymentApi.transferByCVU(params, body);
+    if (identificationType.value === "cvu") {
+      await cobrosStore.transferByCVU(params, body);
+    } else if (identificationType.value === "alias") {
+      await cobrosStore.transferByAlias(params, body);
+    } else if (identificationType.value === "email") {
+      await cobrosStore.transferByEmail(params, body);
+    }
 
     showConfirmationModal.value = false;
     showSuccessModal.value = true;
