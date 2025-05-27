@@ -70,18 +70,6 @@
         href="#"
         class="flex items-center gap-2 p-2 rounded"
         :class="{
-          'bg-[#3C4F2E]': activeButton === 'inversiones',
-          'hover:bg-[#3C4F2E]/80': activeButton !== 'inversiones',
-        }"
-        @click.prevent="goToInversiones"
-      >
-        <img src="/images/Inversiones.png" alt="Inversiones" class="w-6 h-6" />
-        <span>Inversiones</span>
-      </a>
-      <a
-        href="#"
-        class="flex items-center gap-2 p-2 rounded"
-        :class="{
           'bg-[#3C4F2E]': activeButton === 'tarjetas',
           'hover:bg-[#3C4F2E]/80': activeButton !== 'tarjetas',
         }"
@@ -147,9 +135,6 @@ export default {
     },
     goToTransferir() {
       if (this.$router) this.$router.push("/transferir");
-    },
-    goToInversiones() {
-      if (this.$router) this.$router.push("/inversiones");
     },
     goToTarjetas() {
       if (this.$router) this.$router.push("/tarjetas");
