@@ -70,7 +70,12 @@
                 @click="verDetalle(payment)"
               >
                 <td class="p-3">
-                  {{ payment.payer?.firstName }} {{ payment.payer?.lastName }}
+                  <span v-if="payment.payer?.id === userId">
+                    {{ payment.receiver?.firstName }} {{ payment.receiver?.lastName }}
+                  </span>
+                  <span v-else>
+                    {{ payment.payer?.firstName }} {{ payment.payer?.lastName }}
+                  </span>
                 </td>
                 <td class="p-3">
                   {{ payment.method === "ACCOUNT" ? "Transferencia Bancaria" : "Pago con Tarjeta" }}
@@ -156,15 +161,18 @@ export default defineComponent({
       return accountStore.account.balance;
     });
 
-    const gastosPorDestinatario = computed(() => {
-    const map = {};
-    cobrosStore.pagos.forEach(pago => {
-      // Usar el nombre completo del destinatario (payer)
-      const destinatario = ((pago.payer?.firstName || "") + " " + (pago.payer?.lastName || "")).trim() || "Desconocido";
-      if (!map[destinatario]) map[destinatario] = 0;
-      if (typeof pago.amount === "number") map[destinatario] += pago.amount;
-    });
-    return map;
+   const gastosPorDestinatario = computed(() => {
+      const map = {};
+      cobrosStore.pagos.forEach(pago => {
+        // Solo egresos: el usuario es el payer
+        if (pago.payer?.id === userId.value) {
+          // Usar el nombre completo del destinatario (receiver)
+          const destinatario = ((pago.receiver?.firstName || "") + " " + (pago.receiver?.lastName || "")).trim() || "Desconocido";
+          if (!map[destinatario]) map[destinatario] = 0;
+          if (typeof pago.amount === "number") map[destinatario] += pago.amount;
+        }
+      });
+      return map;
     });
 
     function getColors(count) {
