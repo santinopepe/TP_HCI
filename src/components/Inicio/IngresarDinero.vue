@@ -3,7 +3,10 @@
     v-if="isOpen"
     class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4"
   >
-    <div class="bg-white rounded-2xl shadow-lg w-full max-w-2xl relative">
+    <div
+      v-if="!showSuccessPopup"
+      class="bg-white rounded-2xl shadow-lg w-full max-w-2xl relative"
+    >
       <button
         class="absolute top-2 right-4 text-gray-400 hover:text-gray-700 text-2xl z-10"
         @click="$emit('close')"
@@ -40,10 +43,10 @@
               </div>
             </div>
             <button
-                class="bg-[#5D8C39] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#5D8C39]/80 transition-colors flex items-center justify-center gap-2 flex-1"
-              >
-                <img src="/images/share.png" alt="Compartir" class="w-5 h-5" />
-                Compartir datos
+              class="bg-[#5D8C39] text-white font-bold py-3 px-6 rounded-lg shadow-md hover:bg-[#5D8C39]/80 transition-colors flex items-center justify-center gap-2 flex-1"
+            >
+              <img src="/images/share.png" alt="Compartir" class="w-5 h-5" />
+              Compartir datos
             </button>
             <div class="flex flex-col">
               <label for="depositAmount" class="text-gray-500 text-sm"
@@ -76,37 +79,36 @@
         </div>
       </div>
     </div>
+
     <div
       v-if="showSuccessPopup"
-      class="fixed inset-0 flex items-center justify-center z-60"
+      class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center"
     >
-      <div class="bg-white rounded-xl shadow-lg p-8 flex flex-col items-center">
-        <div
-          class="w-16 h-16 bg-[#5D8C39] rounded-full flex items-center justify-center mx-auto mb-4"
+      <div
+        class="w-16 h-16 bg-[#5D8C39] rounded-full flex items-center justify-center mx-auto mb-4"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          class="h-8 w-8 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
         >
-          <svg
-            xmlns="http://www.w3.org/2000/svg"
-            class="h-8 w-8 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              stroke-linecap="round"
-              stroke-linejoin="round"
-              stroke-width="2"
-              d="M5 13l4 4L19 7"
-            />
-          </svg>
-        </div>
-        <p class="text-lg font-semibold mb-4">Dinero ingresado exitosamente.</p>
-        <button
-          @click="closeSuccessPopup"
-          class="bg-[#5D8C39] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#5D8C39]/80"
-        >
-          Cerrar
-        </button>
+          <path
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            stroke-width="2"
+            d="M5 13l4 4L19 7"
+          />
+        </svg>
       </div>
+      <p class="text-lg font-semibold mb-4">Dinero ingresado exitosamente.</p>
+      <button
+        @click="closeSuccessPopup"
+        class="bg-[#5D8C39] text-white px-6 py-2 rounded-lg font-bold hover:bg-[#5D8C39]/80"
+      >
+        Cerrar
+      </button>
     </div>
   </div>
 </template>

@@ -80,7 +80,7 @@
         >
           <div class="flex justify-between items-center">
             <h2 class="text-lg font-bold text-gray-700">
-              Últimas Transacciones
+              Últimas Transferencias
             </h2>
           </div>
           <ul class="mt-4 flex flex-col gap-4">
