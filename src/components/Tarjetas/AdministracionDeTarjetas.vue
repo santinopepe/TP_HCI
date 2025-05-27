@@ -73,6 +73,7 @@
                 </div>
                 <div class="mt-auto flex justify-end">
                   <img
+                    v-if="getCardLogo(card.number)"
                     :src="getCardLogo(card.number)"
                     alt="Card Logo"
                     class="h-8 w-12 object-contain"
@@ -128,6 +129,7 @@
             >
               <div class="flex items-center mb-2">
                 <img
+                  v-if="getCardLogo(selectedCard.number)"
                   :src="getCardLogo(selectedCard.number)"
                   alt="Card Logo"
                   class="h-8 w-12 mr-2 object-contain"

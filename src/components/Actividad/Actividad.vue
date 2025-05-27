@@ -205,15 +205,15 @@ export default defineComponent({
       cobrosStore.fetchPagos();
     });
 
-    // Filtro de búsqueda sobre pagos
     const filteredTransactions = computed(() => {
       const pagosValidos = cobrosStore.pagos.filter(p => p && typeof p.amount === "number");
       if (!searchQuery.value) return pagosValidos;
-      return pagosValidos.filter(payment =>
-        ((payment.payer?.firstName || "") + " " + (payment.payer?.lastName || ""))
-          .toLowerCase()
-          .includes(searchQuery.value.toLowerCase())
-      );
+      return pagosValidos.filter(payment => {
+        const payerName = ((payment.payer?.firstName || "") + " " + (payment.payer?.lastName || "")).toLowerCase();
+        const receiverName = ((payment.receiver?.firstName || "") + " " + (payment.receiver?.lastName || "")).toLowerCase();
+        return payerName.includes(searchQuery.value.toLowerCase()) ||
+              receiverName.includes(searchQuery.value.toLowerCase());
+      });
     });
 
     const chartOptions = {
@@ -258,11 +258,14 @@ export default defineComponent({
     }
 
     const expenses = computed(() => {
-    return cobrosStore.pagos.reduce((total, pago) => {
-      // Si el pago tiene un amount válido, lo suma
-      return total + (typeof pago.amount === "number" ? pago.amount : 0);
-    }, 0);
-  });
+      return cobrosStore.pagos.reduce((total, pago) => {
+        // Solo suma si el usuario es el payer (envió el pago)
+        if (pago.payer?.id === userId.value && typeof pago.amount === "number") {
+          return total + pago.amount;
+        }
+        return total;
+      }, 0);
+    });
 
   
 
