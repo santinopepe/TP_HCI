@@ -101,7 +101,23 @@
 
         <!-- Selector de tarjeta -->
         <div v-if="paymentMethod === 'tarjeta'" class="mb-6">
-          <div class="flex items-center gap-4 relative overflow-hidden">
+          <p class="text-sm font-medium mb-2">Seleccionar tarjeta</p>
+          <div
+            v-if="cardStore.loading"
+            class="text-center text-blue-600 py-8"
+          >
+            Cargando tarjetas...
+          </div>
+          <div
+            v-else-if="cardStore.cards.length === 0"
+            class="text-center text-gray-500 py-8"
+          >
+            No hay tarjetas disponibles.
+            <p v-if="cardStore.error" class="text-red-500 text-sm mt-2">
+              Error al cargar tarjetas: {{ cardStore.error.message }}
+            </p>
+          </div>
+          <div v-else class="flex items-center gap-4 relative overflow-hidden">
             <button
               @click="rotateCard('anterior')"
               class="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg hover:bg-gray-400 transform relative z-30"

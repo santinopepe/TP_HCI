@@ -1,4 +1,3 @@
-// MetodoDePago.vue
 <template>
   <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 relative">
     <div
