@@ -1,20 +1,14 @@
 <template>
-  <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 relative">
+  <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-2 relative">
     <div
       class="absolute top-4 right-4 bg-[#3C4F2E] rounded-lg px-3 py-1 text-sm text-white font-medium shadow-sm"
     >
       Paso 2 de 4
     </div>
-    <div class="flex items-center gap-4 mb-6">
+    <div class="flex items-center gap-4 mb-6 mt-12">
       <div>
-        <p class="text-lg font-semibold">
-          {{ linkDePagoStore.serviceName || "Cargando servicio..." }}
-        </p>
         <p class="text-sm text-gray-500">
           UUID: {{ linkDePagoStore.paymentLink || "N/A" }}
-        </p>
-        <p class="text-sm text-gray-500">
-          Monto a pagar: {{ formatCurrency(linkDePagoStore.total) }} (Servicio: {{ formatCurrency(linkDePagoStore.amount) }} + Cargo: {{ formatCurrency(linkDePagoStore.cargo) }})
         </p>
       </div>
     </div>
@@ -124,6 +118,7 @@
               </div>
               <div class="absolute bottom-4 right-4">
                 <img
+                  v-if="getCardLogo(card.number)"
                   :src="getCardLogo(card.number)"
                   alt="Card Logo"
                   class="h-8 w-12 object-contain"
@@ -232,7 +227,7 @@ const formatCurrency = (value) => {
 onMounted(async () => {
   linkDePagoStore.metodo = "tarjeta";
   await cardStore.getAll();
-  await linkDePagoStore.fetchAccountBalance(); // Obtener saldo al montar el componente
+  await linkDePagoStore.fetchAccountBalance(); 
 });
 
 const rotateCard = (direction) => {
@@ -251,7 +246,6 @@ const getCardTranslateX = (index) => {
   const total = cardStore.cards.length;
   const current = linkDePagoStore.tarjetaSeleccionada;
   let diff = index - current;
-  // Ajuste circular para la animación más corta
   if (diff > total / 2) diff -= total;
   if (diff < -total / 2) diff += total;
   return diff * 100;

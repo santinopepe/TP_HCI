@@ -11,21 +11,9 @@
     <div class="bg-gray-50 p-4 rounded-lg mb-6">
       <div class="space-y-2">
         <p class="text-sm">
-          <span class="font-medium">Servicio:</span>
-          {{ linkDePagoStore.serviceName }}
-        </p>
-        <p class="text-sm">
           <span class="font-medium">UUID:</span> {{ linkDePagoStore.paymentLink }}
         </p>
-        <p class="text-sm">
-          <span class="font-medium">Monto del servicio:</span> {{ formatCurrency(linkDePagoStore.amount) }}
-        </p>
-        <p class="text-sm">
-          <span class="font-medium">Cargo:</span> {{ formatCurrency(linkDePagoStore.cargo) }}
-        </p>
-        <p class="text-sm font-bold text-green-600 border-t border-dashed pt-2">
-          <span class="font-medium">Total a pagar:</span> {{ formatCurrency(linkDePagoStore.total) }}
-        </p>
+        
         <p class="text-sm">
           <span class="font-medium">Método:</span>
           {{ linkDePagoStore.metodo === "tarjeta" ? `Tarjeta ****${linkDePagoStore.selectedCard?.number.slice(-4)}` : "Dinero en Cuenta" }}
@@ -36,10 +24,6 @@
         </p>
       </div>
     </div>
-
-    <p v-if="linkDePagoStore.errors.api" class="text-red-500 text-sm mb-4 text-center">
-        Error al procesar el pago: {{ linkDePagoStore.errors.api.message || 'Error desconocido' }}
-    </p>
 
     <div class="flex justify-between mt-auto">
       <button
@@ -68,13 +52,22 @@ const emit = defineEmits(["confirm", "go-to-step-2"]);
 
 const confirmAndProceed = async () => {
     linkDePagoStore.errors.api = null;
+    linkDePagoStore.loading = true; // Empieza a cargar
 
-    const success = await linkDePagoStore.confirmPayment();
-    if (success) {
-        emit("confirm");
+    try {
+        const success = await linkDePagoStore.confirmPayment();
+        if (success) {
+            console.log("ConfirmacionPago.vue: Pago exitoso, emitiendo 'confirm' al padre.");
+            emit("confirm");
+        } else {
+            console.error("ConfirmacionPago.vue: Error al confirmar el pago en el store.");
+        }
+    } catch (error) {
+        console.error("ConfirmacionPago.vue: Error inesperado en confirmAndProceed:", error);
+    } finally {
+        linkDePagoStore.loading = false; 
     }
 };
-
 const formatCurrency = (value) => {
       if (typeof value !== "number" || isNaN(value)) return "$0.00";
       return value.toLocaleString("es-AR", {

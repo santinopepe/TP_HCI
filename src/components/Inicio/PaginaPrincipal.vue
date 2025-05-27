@@ -243,11 +243,10 @@ import { useAccountStore } from "../store/accountStore.js"; // Asegúrate de que
 import BarraLateral from "../BarraLateral.vue";
 import { useCobrosStore } from "../store/CobrosStore.js";
 
-// Componentes de Pago de Servicios (ajusta las rutas si es necesario)
 import IngresarLinkPago from "../PagoServicios/PagoServicio.vue";
 import SeleccionarMetodoPago from "../PagoServicios/MetodoDePago.vue";
 import ConfirmacionPago from "../PagoServicios/ConfirmacionDePago.vue";
-import ComprobantePago from "../PagoServicios/ComprobantePago.vue"; // Usar el nombre de archivo consistente
+import ComprobantePago from "../PagoServicios/ComprobantePago.vue"; 
 
 import CvuPopup from "../Inicio/CVU.vue";
 import IngresarDinero from "../Inicio/IngresarDinero.vue";
@@ -274,21 +273,18 @@ export default defineComponent({
     const showCvuPopup = ref(false);
     const showIngresarDineroModal = ref(false);
 
-    // Control de visibilidad del saldo
     const isSaldoVisible = ref(true);
     function toggleSaldoVisibility() {
       isSaldoVisible.value = !isSaldoVisible.value;
     }
 
-    // Sincronizar el balance con el store de cuenta
     const formattedAccountBalance = computed(() => {
       if (!isSaldoVisible.value) return "••••••";
-      // Asegúrate de que `accountStore.account` y `accountStore.account.balance` existan.
       if (
         !accountStore.account ||
         typeof accountStore.account.balance === "undefined"
       ) {
-        return "Cargando..."; // O un valor predeterminado como "$0.00"
+        return "Cargando..."; 
       }
       return `$${Number(accountStore.account.balance).toLocaleString("es-AR", {
         minimumFractionDigits: 2,
@@ -296,24 +292,20 @@ export default defineComponent({
       })}`;
     });
 
-    // Generar datos para los últimos 7 días
     const lastSevenDaysData = computed(() => {
       const days = [];
       const today = new Date();
 
-      // Crear array con los últimos 7 días (hoy y los 6 días anteriores)
       for (let i = 6; i >= 0; i--) {
         const date = new Date();
         date.setDate(today.getDate() - i);
 
-        // Formato de fecha como "DD/MM"
         const formattedDate = date.toLocaleDateString("es-AR", {
           day: "2-digit",
           month: "2-digit",
         });
 
-        // Usar los colores y valores del store actual, o generar valores aleatorios si es necesario
-        // Obtener el índice correspondiente del arreglo existente, con límite para evitar errores
+
         const storeDataIndex = Math.min(
           6 - i,
           paginaPrincipalStore.transferChartData.length - 1
@@ -338,48 +330,28 @@ export default defineComponent({
     });
 
     const openPaymentFlow = () => {
-      linkDePagoStore.resetPayment(); // Limpiar el estado del store de pago al iniciar un nuevo flujo
-      currentStep.value = 1; // Volver al primer paso
-      showPayServiceForm.value = true; // Mostrar el modal
+      linkDePagoStore.resetPayment(); 
+      currentStep.value = 1; 
+      showPayServiceForm.value = true; 
     };
 
-    // `handleLinkSubmit` ya no es necesario aquí, IngresarLinkPago.vue lo maneja internamente.
-    // Simplemente avanzamos al siguiente paso cuando IngresarLinkPago emite `submit-link`.
-    // const handleLinkSubmit = () => {
-    //   currentStep.value = 2;
-    // };
+    const handlePaymentConfirmation = () => {
+      currentStep.value = 4; 
 
-    // `handleMethodSelection` ya no es necesario aquí, SeleccionarMetodoPago.vue lo maneja internamente.
-    // Simplemente avanzamos al siguiente paso cuando SeleccionarMetodoPago emite `proceed-to-confirmation`.
-    // const handleMethodSelection = () => {
-    //   currentStep.value = 3;
-    // };
 
-    const handlePaymentConfirmation = async () => {
-      // La acción confirmPayment del store ya no necesita parámetros, toma la información del estado.
-      const success = await linkDePagoStore.confirmPayment();
-      if (success) {
-        // Actualizar el saldo de la cuenta principal después de un pago exitoso
-        // En un caso real, esto debería venir de una API que actualice el saldo.
-        // Aquí actualizamos el accountStore si el linkDePagoStore.accountBalance se actualizó.
-        // Asegúrate de que accountStore.updateAccountBalance acepte el nuevo saldo.
-        accountStore.getCurrentAccount(); // Mejor: volver a obtener el saldo desde la API
-
-        // Agregar la transacción a la lista de transacciones
-        paginaPrincipalStore.addTransaction({
-          id: Date.now(), // Un ID único simple, en producción usarías un ID del backend
-          name: linkDePagoStore.serviceName, // Nombre del servicio pagado
-          type: "Pago de Servicio",
-          icon: "/images/payment_icon.png", // Icono genérico para pagos
-          date: new Date().toLocaleDateString("es-AR", {
-            day: "2-digit",
-            month: "short",
-            year: "numeric",
-          }),
-          amount: -linkDePagoStore.total, // El monto es negativo porque es una salida
-        });
-        currentStep.value = 4; // Avanzar al comprobante
-      }
+      accountStore.getCurrentAccount();
+      paginaPrincipalStore.addTransaction({
+        id: Date.now(),
+        name: linkDePagoStore.serviceName,
+        type: "Pago de Servicio",
+        icon: "/images/payment_icon.png",
+        date: new Date().toLocaleDateString("es-AR", {
+          day: "2-digit",
+          month: "short",
+          year: "numeric",
+        }),
+        amount: -linkDePagoStore.total,
+      });
     };
 
     const restartPaymentFlow = () => {
@@ -402,13 +374,11 @@ export default defineComponent({
     const userId = computed(() => accountStore.account?.id);
 
     const ultimasTransferencias = computed(() => {
-      // Tomamos las 5 más recientes
       return cobrosStore.pagos
         .slice()
         .sort((a, b) => new Date(b.date) - new Date(a.date))
         .slice(0, 5)
         .map((tx) => {
-          // Si el usuario es el receiver, es entrante; si es el payer, es saliente
           let tipo = "entrante";
           if (userId.value === tx.payer?.id) tipo = "saliente";
           return { ...tx, tipo };

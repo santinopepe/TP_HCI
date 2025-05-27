@@ -1,4 +1,3 @@
-// ComprobanteDePago.vue
 <template>
   <div class="bg-white p-6 rounded-xl shadow-xl max-w-md w-full m-4 relative">
     <div
@@ -28,12 +27,6 @@
           </svg>
         </div>
         <h3 class="text-xl font-semibold text-gray-800">¡Pago exitoso!</h3>
-        <p class="text-gray-600 text-sm mt-2">
-            El pago para "{{ linkDePagoStore.serviceName }}" ha sido procesado.
-        </p>
-        <p class="text-gray-600 text-sm">
-            Monto: {{ formatCurrency(linkDePagoStore.total) }}
-        </p>
         <p class="text-gray-600 text-sm">
             UUID: {{ linkDePagoStore.paymentLink }}
         </p>

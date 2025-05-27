@@ -117,7 +117,7 @@ export const useLinkDePagoStore = defineStore("linkDePago", () => {
   async function confirmPayment() {
     loading.value = true;
     errors.value.api = null;
-
+  
     try {
       const paymentData = {
         id: paymentDetails.value?.id,
@@ -131,20 +131,24 @@ export const useLinkDePagoStore = defineStore("linkDePago", () => {
           ? { cvu: accountCvu.value }
           : {}),
       };
-
+  
       console.log("Payment data sent to API:", paymentData);
-
+    
       const result = await cobrosStore.put(paymentData);
+      
+      console.log("Resultado de cobrosStore.put:", result); // <-- Agrega esto
+      console.log("¿cobrosStore.put fue exitoso?", !!result); // <-- Agrega esto
 
       if (result) {
         if (metodo.value === "cuenta") {
           accountBalance.value -= total.value;
         }
-        await cobrosStore.fetchPagos();
-        paymentDetails.value = cobrosStore.pagos.results.find((pago) => pago.uuid === paymentLink.value);
         return true;
       } else {
-        errors.value.api = { message: "Error al procesar el pago", status: 400 };
+        errors.value.api = {
+          message: "Error al procesar el pago. Intente nuevamente.",
+          status: 500,
+        };
         return false;
       }
     } catch (e) {
