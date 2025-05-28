@@ -26,7 +26,7 @@
     </div>
     
     <p v-if="linkDePagoStore.errors.api" class="text-red-500 text-sm mb-4 text-center">
-        Error al procesar el pago: {{ linkDePagoStore.errors.api.message || 'Error desconocido' }}
+        Error al procesar el pago: {{ translateErrorMessage(linkDePagoStore.errors.api.message) || 'Error desconocido' }}
     </p>
 
     <div class="flex justify-between mt-auto">
@@ -66,16 +66,23 @@ const confirmAndProceed = async () => {
             console.error("ConfirmacionPago.vue: Error al confirmar el pago en el store.");
         }
     } catch (error) {
-        console.error("ConfirmacionPago.vue: Error inesperado en confirmAndProceed:", error);
+        console.error("ConfirmacionPago.vue: Error inesperado en la confirmación del pago.");
     } finally {
         linkDePagoStore.loading = false; 
     }
 };
-const formatCurrency = (value) => {
-      if (typeof value !== "number" || isNaN(value)) return "$0.00";
-      return value.toLocaleString("es-AR", {
-        style: "currency",
-        currency: "ARS",
-      });
-};
+const translateErrorMessage = (error)=>{
+    if (typeof error === 'string') {
+        if (error.includes("Payment must be pushed with another user")) {
+            return "El pago debe realizarse a otro usuario diferente.";
+        }
+        return error;
+    }
+      if (error?.message) {
+        if (error.message.includes("Payment must be pushed with another user")) {
+            return "El pago debe realizarse a otro usuario diferente.";
+        }
+        return error.message;
+      }
+}
 </script>
