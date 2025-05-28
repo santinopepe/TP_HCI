@@ -15,7 +15,7 @@
           @click="showAddLinkModal = true"
           class="bg-[#5D8C39] hover:bg-[#4A7030] text-white font-bold py-2 px-4 rounded-lg shadow-md transition duration-150 ease-in-out"
         >
-          + Crear link de pago
+          + Crear código de pago
         </button>
       </div>
 
@@ -38,20 +38,20 @@
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Links activos</h2>
+          <h2 class="text-lg font-semibold">Códigos activos</h2>
           <p class="text-3xl font-bold mt-2">{{ activeLinks }}</p>
         </div>
         <div
           class="bg-gradient-to-r from-[#243219] to-[#CBFBA6] p-6 rounded-lg shadow-lg text-center text-white"
         >
-          <h2 class="text-lg font-semibold">Total links generados</h2>
+          <h2 class="text-lg font-semibold">Total códigos generados</h2>
           <p class="text-3xl font-bold mt-2">{{ totalLinks }}</p>
         </div>
       </div>
 
       <div class="bg-white p-4 rounded-lg shadow-lg">
         <div class="flex justify-between items-center mb-4">
-          <h2 class="text-lg font-semibold text-gray-700">Links de pago</h2>
+          <h2 class="text-lg font-semibold text-gray-700">Códigos de pago</h2>
           <input
             v-model="searchQuery"
             type="text"
@@ -135,7 +135,7 @@
             id="modal-title"
             class="text-2xl font-semibold mb-6 text-gray-800"
           >
-            Crear nuevo link de pago
+            Crear nuevo código de pago
           </h3>
           <AddPaymentLinkForm
             @submit="handleAddLink"
