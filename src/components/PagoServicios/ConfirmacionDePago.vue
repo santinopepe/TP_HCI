@@ -76,6 +76,9 @@ const translateErrorMessage = (error)=>{
         if (error.includes("Payment must be pushed with another user")) {
             return "El pago debe realizarse a otro usuario diferente.";
         }
+        if (error.includes("Payment already pushed")) {
+            return "El pago ya ha sido realizado.";
+        }
         return error;
     }
       if (error?.message) {
