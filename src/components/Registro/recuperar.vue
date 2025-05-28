@@ -35,6 +35,7 @@
       :newPassword="newPassword"
       :confirmPassword="confirmPassword"
       :errorMessage="modalError"
+      :darkBackground="false"
       @update:code="code = $event"
       @update:newPassword="newPassword = $event"
       @update:confirmPassword="confirmPassword = $event"

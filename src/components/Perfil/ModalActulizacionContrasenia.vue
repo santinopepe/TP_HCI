@@ -1,6 +1,7 @@
 <template>
   <div
     class="fixed inset-0 flex items-center justify-center z-50"
+    :class="{ 'bg-black bg-opacity-40': darkBackground }"
   >
     <div
       class="bg-white p-6 rounded-lg shadow-md w-full max-w-md relative min-h-[400px] flex flex-col"
@@ -110,6 +111,10 @@ export default {
     newPassword: String,
     confirmPassword: String,
     errorMessage: String,
+    darkBackground: {
+      type: Boolean,
+      default: false
+    }
   },
   data() {
     return {
