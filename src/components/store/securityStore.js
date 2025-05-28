@@ -75,7 +75,7 @@ export const useSecurityStore = defineStore("security", () => {
     }
 
     async function register(user) {
-    return await UserApi.register(user);
+        return await UserApi.register(user);
     }
 
     async function resetPassword(emailOrDni) {
@@ -86,5 +86,9 @@ export const useSecurityStore = defineStore("security", () => {
         return await UserApi.changePassword({ code, password });
     }
 
-    return { user, isLoggedIn, initialize, login, logout, getCurrentUser, register, resetPassword, changePassword, putCredentials, createUser, verify };
+    async function resendVerificationCode(email) {
+        return await UserApi.resendVerification({ email });
+    }
+
+    return { user, isLoggedIn, initialize, login, logout, getCurrentUser, register, resetPassword, changePassword, putCredentials, createUser, verify, resendVerificationCode };
 });
