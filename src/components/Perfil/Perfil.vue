@@ -197,8 +197,8 @@ export default defineComponent({
         confirmPassword.value = "";
         code.value = "";
       } catch (error) {
-        if (error.response?.data?.message) {
-          errorMessage.value = error.response.data.message;
+        if (error.response?.data?.message === "Invalid code.") {
+          errorMessage.value = "El código ingresado es inválido.";
         } else if (error.description) {
           errorMessage.value = error.description;
         } else {

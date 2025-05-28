@@ -44,7 +44,7 @@
     />
     <ModalDeCambioExitoso
       v-if="showSuccessModal"
-      @close="showSuccessModal = false"
+      @close="handleSuccessClose"
     />
   </div>
 </template>
@@ -73,6 +73,10 @@ export default {
     };
   },
   methods: {
+    handleSuccessClose() {
+      this.showSuccessModal = false;
+      this.$router.push("/");
+    },
     async handleRecoverPassword() {
       this.errorEmailOrDni = "";
       this.errorMessage = "";
@@ -97,6 +101,12 @@ export default {
         this.modalError = "Todos los campos son obligatorios.";
         return;
       }
+      // Validación de contraseña segura
+      const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/;
+      if (!passwordRegex.test(this.newPassword)) {
+        this.modalError = "La contraseña debe tener al menos 8 caracteres, un carácter especial (!@#$%^&*) y un número.";
+        return;
+      }
       if (this.newPassword !== this.confirmPassword) {
         this.modalError = "Las contraseñas no coinciden.";
         return;
@@ -110,7 +120,16 @@ export default {
         this.showModal = false;
         this.showSuccessModal = true;
       } catch (e) {
-        this.modalError = e.description || "No se pudo actualizar la contraseña.";
+          if (
+            e?.response?.data?.message === "Invalid code." ||
+            e?.description === "Invalid code."
+          ) {
+            this.modalError = "Código inválido";
+          } else if (e.description) {
+            this.modalError = e.description;
+          } else {
+            this.modalError = "No se pudo actualizar la contraseña.";
+          }      
       }
     },
   },

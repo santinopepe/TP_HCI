@@ -371,7 +371,13 @@ export default {
         this.errors.password = "La contraseña es obligatoria.";
         valid = false;
       } else {
-        this.errors.password = "";
+        const passwordRegex = /^(?=.*[!@#$%^&*])(?=.*\d).{8,}$/;
+        if (!passwordRegex.test(this.password)) {
+          this.errors.password = "La contraseña debe tener al menos 8 caracteres, un número y un carácter especial (!@#$%^&*).";
+          valid = false;
+        } else {
+          this.errors.password = "";
+        }
       }
       if (!this.confirmPassword) {
         this.errors.confirmPassword = "Debes confirmar la contraseña.";
