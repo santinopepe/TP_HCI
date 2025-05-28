@@ -59,6 +59,11 @@ class UserApi {
       controller
     );
   }
+
+  static async resendVerification({ email }, controller) {
+    const url = `${Api.baseUrl}/user/resend-verification?email=${encodeURIComponent(email)}`;
+    return await Api.post(url, false, {}, controller);
+  }
 }
 
 class Credentials {

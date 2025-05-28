@@ -39,6 +39,13 @@
       >
         Verificar
       </button>
+      <button
+        @click="resendCode"
+        class="w-full mt-2 p-3 text-[#5D8C39] border border-[#5D8C39] rounded-lg text-base cursor-pointer bg-white hover:bg-[#eaf5e1] transition"
+        type="button"
+      >
+        Reenviar código
+      </button>
       <p
         v-if="apiMessage"
         class="w-full mt-4 text-center text-base font-semibold text-green-600"
@@ -91,23 +98,37 @@ export default {
           "El código de verificación es obligatorio.";
         valid = false;
       }
+      if (!valid) return;
       try {
         await useSecurityStore().verify(
           this.email,
           this.verificationCode
         );
-
         this.apiMessage = '¡Cuenta verificada correctamente! Ahora puedes iniciar sesión.';
       } catch (e) {
         let msg = "";
-        if (e?.response?.data?.message) {
-          msg = e.response.data.message;
+        if (e?.response?.data?.message==="User already verified.") {
+          msg = "Tu cuenta ya está verificada. Puedes iniciar sesión.";
         } else if (e?.message) {
           msg = e.message;
         } else {
           msg = "Error al verificar el código.";
         }
         this.errors.verificationCode = msg;
+      }
+    },
+    async resendCode() {
+      this.apiMessage = "";
+      this.errors.email = "";
+      if (!this.email) {
+        this.errors.email = "El correo electrónico es obligatorio.";
+        return;
+      }
+      try {
+        await useSecurityStore().resendVerificationCode(this.email);
+        this.apiMessage = "El código de verificación fue reenviado a tu correo.";
+      } catch (e) {
+        this.errors.email = "No se pudo reenviar el código. Verifica el correo.";
       }
     },
     cancelVerification() {
