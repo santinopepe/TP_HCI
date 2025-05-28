@@ -28,7 +28,7 @@ Para instalar y ejecutar SIMSIM, sigue estos pasos:
 
 ## Integrantes 
 
-   Manuel Araujo Feltrin, 64090
-   Martín Gallardo Bertuzzi, 63510
-   Santiago Nogueira, 64113
-   Santino Pepe, 64147   
+   - Manuel Araujo Feltrin, 64090
+   - Martín Gallardo Bertuzzi, 63510
+   - Santiago Nogueira, 64113
+   - Santino Pepe, 64147   
