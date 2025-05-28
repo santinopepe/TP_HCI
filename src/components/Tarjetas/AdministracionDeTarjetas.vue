@@ -34,7 +34,7 @@
                   d="M12 4v16m8-8H4"
                 />
               </svg>
-              Añadir Tarjeta
+              Añadir tarjeta
             </button>
           </div>
 
@@ -121,7 +121,7 @@
               </svg>
             </button>
             <h2 class="text-2xl font-semibold text-gray-800 mb-6">
-              Detalles de Tarjeta
+              Detalles de tarjeta
             </h2>
             <div
               class="text-white p-4 rounded-lg shadow mb-6"
@@ -153,7 +153,7 @@
                 @click="requestRemoveCard(selectedCard.id)"
                 class="text-base bg-red-600 hover:bg-red-700 text-white font-bold py-2 px-6 rounded-md shadow-lg transition duration-200"
               >
-                Desvincular Tarjeta
+                Desvincular tarjeta
               </button>
             </div>
           </div>
