@@ -460,7 +460,7 @@ const handleTransfer = async () => {
 
 const handleSuccessClose = () => {
   showSuccessModal.value = false;
-  router.push("/paginaprincipal");
+  router.push("/transferir");
 };
 
 const rotateCard = (direction) => {

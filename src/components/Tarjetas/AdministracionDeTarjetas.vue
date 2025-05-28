@@ -191,12 +191,16 @@
       </transition>
     </main>
     <transition name="fade">
-      <div
-        v-if="showToast"
-        class="fixed top-6 left-1/2 transform -translate-x-1/2 bg-green-600 text-white px-6 py-3 rounded shadow-lg z-[100]"
-      >
-        {{ toastMessage }}
-      </div>
+    <div
+      v-if="showToast"
+      class="fixed top-8 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-lg shadow-lg z-50 text-white transition-opacity duration-300 ease-in-out"
+      :class="{
+        'bg-[#5D8C39]': toastType === 'success',
+        'bg-red-600': toastType === 'error'
+      }"
+    >
+      {{ toastMessage }}
+    </div>
     </transition>
   </div>
 </template>
@@ -228,13 +232,16 @@ const cardIdToRemove = ref(null);
 const hoveredIndex = ref(null);
 
 const showToast = ref(false);
+const toastType = ref("");
 const toastMessage = ref("");
 
 function showSuccessToast(message) {
   toastMessage.value = message;
+  toastType.value = "success";
   showToast.value = true;
   setTimeout(() => {
     showToast.value = false;
+    toastType.value = "";
   }, 2500);
 }
 
