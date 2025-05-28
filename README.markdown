@@ -21,11 +21,14 @@ Para instalar y ejecutar SIMSIM, sigue estos pasos:
 
 ## Uso
 
-Una vez que la aplicación esté corriendo, puedes acceder a ella a través de tu navegador. Las funcionalidades incluyen:
-
 - Inicio de sesión y registro de usuarios
 - Transferencias de dinero
 - Pagos de servicios
 - Consultas de saldo y movimientos
 
-*Nota: Este README puede requerir ajustes si se proporcionan detalles adicionales sobre el uso o la configuración.*
+## Integrantes 
+
+   Manuel Araujo Feltrin, 64090
+   Martín Gallardo Bertuzzi, 63510
+   Santiago Nogueira, 64113
+   Santino Pepe, 64147   
