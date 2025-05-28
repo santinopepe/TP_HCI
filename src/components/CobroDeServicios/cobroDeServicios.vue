@@ -181,7 +181,7 @@
   </div>
    <div
       v-if="toastMessage"
-      class="fixed bottom-4 right-4 py-2 px-4 rounded-lg shadow-md transition-all duration-300 ease-in-out animate-fade-in"
+      class="fixed top-8 left-1/2 transform -translate-x-1/2 px-6 py-2 rounded-lg shadow-lg z-50 text-white transition-opacity duration-300 ease-in-out"
       :class="{
         'bg-[#5D8C39] text-white': toastType === 'success',
         'bg-red-600 text-white': toastType === 'error'
